@@ -1,7 +1,7 @@
 const prayerTranslations = { 
-    'Imsaak': 'اذان صبح', 
+    'Fajr': 'اذان صبح', 
     'Sunrise': 'طلوع آفتاب', 
-    'Midday': 'اذان ظهر', 
+    'Dhuhr': 'اذان ظهر', 
     'Sunset': 'غروب آفتاب', 
     'Maghrib': 'اذان مغرب' 
 };
@@ -17,10 +17,12 @@ const prayerGrid = document.getElementById('prayerTimesGrid');
 
 // متغیر سراسری برای ذخیره زاویه قبله
 let qiblaDegree = 0;
+let magneticDeclination = 0; // انحراف مغناطیسی
 
 // مدیریت کلیک دکمه وسط
 startBtn.addEventListener('click', async () => {
     try {
+        // درخواست مجوز برای iOS
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
             const permission = await DeviceOrientationEvent.requestPermission();
             if (permission !== 'granted') throw new Error('مجوز چرخش دستگاه داده نشد.');
@@ -33,6 +35,7 @@ startBtn.addEventListener('click', async () => {
         
         await initializeSystem();
         
+        // اضافه کردن event listener برای جهت‌یابی
         window.addEventListener('deviceorientationabsolute', handleOrientation, true);
         window.addEventListener('deviceorientation', handleOrientation, true);
         
@@ -79,7 +82,21 @@ async function getLocationFromIP() {
     }
 }
 
-// محاسبه زاویه قبله با فرمول ریاضی (دقیق‌تر از API)
+// محاسبه انحراف مغناطیسی (Magnetic Declination)
+async function getMagneticDeclination(lat, lng) {
+    try {
+        // استفاده از NOAA API برای دریافت declination
+        const year = new Date().getFullYear();
+        const response = await fetch(`https://www.ngdc.noaa.gov/geomag-web/calculators/calculateDeclination?lat1=${lat}&lon1=${lng}&year1=${year}&model=WMM&resultFormat=json`);
+        const data = await response.json();
+        return data[0]?.declination || 0;
+    } catch (error) {
+        console.warn('خطا در دریافت declination، از مقدار پیش‌فرض استفاده می‌شود:', error);
+        return 0; // اگر API در دسترس نبود، از 0 استفاده کن
+    }
+}
+
+// محاسبه زاویه قبله با فرمول ریاضی
 function calculateQibla(lat, lng) {
     const kaabaLat = 21.4225;
     const kaabaLng = 39.8262;
@@ -98,21 +115,29 @@ function calculateQibla(lat, lng) {
     return (bearing + 360) % 360;
 }
 
-// دریافت اوقات شرعی از سرور ایرانی
-async function getPrayerTimesFromIranAPI(lat, lng) {
+// دریافت اوقات شرعی از AlAdhan API با متد دانشگاه تهران
+async function getPrayerTimes(lat, lng) {
     try {
-        // استفاده از API آوینی (سرور داخلی ایران)
-        const response = await fetch(`https://prayer.aviny.com/api/prayertimes/1`);
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        
+        // method=7: Institute of Geophysics, University of Tehran
+        const response = await fetch(`https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=${lat}&longitude=${lng}&method=7`);
         const data = await response.json();
         
-        // تبدیل به فرمت مورد نیاز
-        return {
-            Imsaak: data.Imsaak?.substring(0, 5) || '00:00',
-            Sunrise: data.Sunrise?.substring(0, 5) || '00:00',
-            Midday: data.Midday?.substring(0, 5) || '00:00',
-            Sunset: data.Sunset?.substring(0, 5) || '00:00',
-            Maghrib: data.Maghrib?.substring(0, 5) || '00:00'
-        };
+        if (data.code === 200) {
+            const timings = data.data.timings;
+            return {
+                Fajr: timings.Fajr.substring(0, 5),
+                Sunrise: timings.Sunrise.substring(0, 5),
+                Dhuhr: timings.Dhuhr.substring(0, 5),
+                Sunset: timings.Sunset.substring(0, 5),
+                Maghrib: timings.Maghrib.substring(0, 5)
+            };
+        }
+        return null;
     } catch (error) {
         console.error('خطا در دریافت اوقات شرعی:', error);
         return null;
@@ -132,15 +157,18 @@ async function initializeSystem() {
     locationSourceText.innerText = loc.source;
     statusText.innerText = "در حال دریافت داده‌های نجومی...";
 
-    // محاسبه زاویه قبله با فرمول ریاضی
+    // دریافت انحراف مغناطیسی برای تصحیح جهت‌یابی در Android
+    magneticDeclination = await getMagneticDeclination(loc.lat, loc.lng);
+    
+    // محاسبه زاویه قبله
     qiblaDegree = calculateQibla(loc.lat, loc.lng);
     
     // تنظیم اولیه عقربه
     qiblaPointer.style.transform = `rotate(${qiblaDegree}deg)`;
-    statusText.innerHTML = `لطفاً گوشی خود را کاملاً افقی و موازی با زمین نگه دارید. (زاویه: ${qiblaDegree.toFixed(1)}°)`;
+    statusText.innerHTML = `لطفاً گوشی خود را کاملاً افقی و موازی با زمین نگه دارید. (زاویه قبله: ${qiblaDegree.toFixed(1)}°)`;
 
-    // دریافت اوقات شرعی از سرور ایرانی
-    const timings = await getPrayerTimesFromIranAPI(loc.lat, loc.lng);
+    // دریافت اوقات شرعی
+    const timings = await getPrayerTimes(loc.lat, loc.lng);
     
     if (!timings) {
         statusText.innerText = "خطا در دریافت اوقات شرعی";
@@ -160,24 +188,30 @@ async function initializeSystem() {
     });
 }
 
-// ✅ تابع اصلاح شده - فقط عقربه حرکت می‌کنه، صفحه ثابت
+// تابع جهت‌یابی - فقط عقربه حرکت می‌کنه، صفحه ثابت
 function handleOrientation(event) {
     let heading = null;
     
-    // iOS
+    // iOS: webkitCompassHeading شمال واقعی را می‌دهد
     if (event.webkitCompassHeading != null) {
         heading = event.webkitCompassHeading;
     } 
-    // Android
+    // Android: alpha نسبت به شمال مغناطیسی است
     else if (event.alpha != null) {
-        heading = 360 - event.alpha;
+        // اگر absolute باشد، یعنی نسبت به شمال واقعی است
+        if (event.absolute) {
+            heading = 360 - event.alpha;
+        } else {
+            // در غیر این صورت، باید declination را اضافه کنیم
+            heading = 360 - event.alpha + magneticDeclination;
+        }
     }
 
     if (heading !== null) {
-        // ❌ صفحه قطب‌نما ثابت می‌مونه
-        // compassDial.style.transform = `rotate(${-heading}deg)`;
+        // نرمال‌سازی heading بین 0 تا 360
+        heading = ((heading % 360) + 360) % 360;
         
-        // ✅ فقط عقربه قبله حرکت می‌کنه
+        // محاسبه زاویه عقربه قبله نسبت به heading فعلی
         let qiblaAngle = qiblaDegree - heading;
         
         // نرمال‌سازی زاویه بین 0 تا 360
