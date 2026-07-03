@@ -14,21 +14,58 @@ body::after { content: ''; position: fixed; bottom: -20%; right: -10%; width: 60
 .phone-indicator::after { content: 'بالای گوشی'; font-size: 0.7rem; opacity: 0.7; margin-top: 5px; }
 
 .compass-outer { width: clamp(260px, 65vw, 320px); height: clamp(260px, 65vw, 320px); border-radius: 50%; background: radial-gradient(circle, rgba(2,44,34,0.9), rgba(6,78,59,0.9)); display: flex; justify-content: center; align-items: center; border: 2px solid rgba(251,191,36,0.3); position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,0,0,0.8); margin-top: 3.5rem; overflow: hidden; }
-.compass-dial { width: 100%; height: 100%; border-radius: 50%; position: absolute; transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1); }
+
+/* ✅ صفحه قطب‌نما ثابت - بدون transition */
+.compass-dial { 
+    width: 100%; 
+    height: 100%; 
+    border-radius: 50%; 
+    position: absolute;
+    /* transition حذف شد چون صفحه ثابت می‌مونه */
+}
+
 .compass-marks { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: repeating-conic-gradient(from 0deg, transparent 0deg, transparent 4deg, rgba(255,255,255,0.05) 4deg, rgba(255,255,255,0.05) 5deg); mask-image: radial-gradient(transparent 62%, black 65%); -webkit-mask-image: radial-gradient(transparent 62%, black 65%); }
+
 .direction-letter { position: absolute; font-weight: bold; font-size: 1.2rem; transform: translate(-50%, -50%); }
 .dir-n { top: 10%; left: 50%; color: #ef4444; }
 .dir-s { bottom: 2%; left: 50%; color: var(--emerald-200); }
 .dir-e { top: 50%; right: 2%; color: var(--emerald-200); }
 .dir-w { top: 50%; left: 10%; color: var(--emerald-200); }
 
-.qibla-pointer-container { width: 100%; height: 100%; position: absolute; display: flex; justify-content: center; align-items: center; transition: transform 1.5s ease-in-out; }
+/* ✅ فقط عقربه حرکت می‌کنه - transition نرم */
+.qibla-pointer-container { 
+    width: 100%; 
+    height: 100%; 
+    position: absolute; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    transition: transform 0.3s ease-out;
+}
 
-/* عقربه تغییر یافته */
-.qibla-pointer { width: 3px; height: 50%; background: linear-gradient(to top, transparent 10%, var(--gold-400) 90%); position: absolute; top: 0; transform-origin: bottom center; filter: drop-shadow(0 0 8px rgba(251,191,36,0.8)); display: flex; justify-content: center; }
+/* عقربه قبله */
+.qibla-pointer { 
+    width: 3px; 
+    height: 50%; 
+    background: linear-gradient(to top, transparent 10%, var(--gold-400) 90%); 
+    position: absolute; 
+    top: 0; 
+    transform-origin: bottom center; 
+    filter: drop-shadow(0 0 8px rgba(251,191,36,0.8)); 
+    display: flex; 
+    justify-content: center; 
+}
 
-/* ایموجی کعبه به جای ایکون قبلی */
-.kaaba-emoji { position: absolute; top: 10px; font-size: 2.2rem; transform: rotate(0deg); filter: drop-shadow(0 5px 15px rgba(0,0,0,0.9)); line-height: 1; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+/* ایموجی کعبه */
+.kaaba-emoji { 
+    position: absolute; 
+    top: 10px; 
+    font-size: 2.2rem; 
+    transform: rotate(0deg); 
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.9)); 
+    line-height: 1; 
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); 
+}
 
 .compass-center { width: 14px; height: 14px; background: var(--gold-400); border-radius: 50%; position: absolute; z-index: 10; box-shadow: 0 0 10px rgba(0,0,0,0.8); border: 2px solid #022c22; }
 
@@ -57,3 +94,14 @@ body::after { content: ''; position: fixed; bottom: -20%; right: -10%; width: 60
 
 /* Animations */
 .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
