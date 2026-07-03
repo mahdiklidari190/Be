@@ -1,0 +1,153 @@
+{
+  "videos": [
+    {
+      "id": "grdifxt",
+      "title": "ویدیوی اول",
+      "thumbnail": "https://raw.githubusercontent.com/mahdiklidari190/Be/main/file_000000003ac0720a8f7ba572c9d567e4.png"
+    },
+    {
+      "id": "grdifxt",
+      "title": "ویدیوی اول",
+      "thumbnail": "https://raw.githubusercontent.com/mahdiklidari190/Be/main/file_000000003ac0720a8f7ba572c9d567e4.png"
+    },
+    {
+      "id": "wez96t1",
+      "title": "ویدیوی دوم",
+      "thumbnail": "https://raw.githubusercontent.com/mahdiklidari190/Be/main/file_000000003ac0720a8f7ba572c9d567e4.png"
+    }
+  ],
+  "photos": [
+   {
+      "src": "/Hajiya-Khanum/image/1.jpg",
+      "alt": "خاطره اول"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/2.webp",
+      "alt": "خاطره دوم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/3.webp",
+      "alt": "خاطره سوم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/4.webp",
+      "alt": "خاطره چهارم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/5.webp",
+      "alt": "خاطره پنجم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/6.webp",
+      "alt": "خاطره ششم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/7.webp",
+      "alt": "خاطره هفتم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/8.webp",
+      "alt": "خاطره هشتم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/9.webp",
+      "alt": "خاطره نهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/10.webp",
+      "alt": "خاطره دهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/11.webp",
+      "alt": "خاطره یازدهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/12.webp",
+      "alt": "خاطره دوازدهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/13.webp",
+      "alt": "خاطره سیزدهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/14.webp",
+      "alt": "خاطره چهاردهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/15.webp",
+      "alt": "خاطره پانزدهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/16.webp",
+      "alt": "خاطره شانزدهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/17.webp",
+      "alt": "خاطره هفدهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/18.webp",
+      "alt": "خاطره هجدهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/19.webp",
+      "alt": "خاطره نوزدهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/20.webp",
+      "alt": "خاطره بیستم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/21.webp",
+      "alt": "خاطره بیست و یکم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/22.webp",
+      "alt": "خاطره بیست و دوم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/23.webp",
+      "alt": "خاطره بیست و سوم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/24.webp",
+      "alt": "خاطره بیست و چهارم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/25.webp",
+      "alt": "خاطره بیست و پنجم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/26.webp",
+      "alt": "خاطره بیست و ششم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/27.webp",
+      "alt": "خاطره بیست و هفتم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/28.webp",
+      "alt": "خاطره بیست و هشتم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/29.webp",
+      "alt": "خاطره بیست و نهم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/30.webp",
+      "alt": "خاطره سی‌ام"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/31.webp",
+      "alt": "خاطره سی و یکم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/32.webp",
+      "alt": "خاطره سی و دوم"
+    },
+    {
+      "src": "/Hajiya-Khanum/image/33.webp",
+      "alt": "خاطره سی و سوم"
+    }
+  ]
+}
