@@ -45,7 +45,6 @@ const surahNames = [
 ];
 
 const quranServers = [
-    (i) => `https://server11.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
     (i) => `https://server13.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
     (i) => `https://server16.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
     (i) => `https://server17.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
