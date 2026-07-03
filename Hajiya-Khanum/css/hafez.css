@@ -1,0 +1,210 @@
+/* ===== HAFEZ SECTION ===== */
+.hafez-section {
+    padding: 3rem 1rem;
+    position: relative;
+    background: url('https://images.unsplash.com/photo-1584281722802-540e1150c766?q=80&w=2000&auto=format&fit=crop') center/cover fixed;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .hafez-section {
+        padding: 5rem 1rem;
+    }
+}
+
+.hafez-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 44, 34, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.hafez-inner {
+    max-width: 56rem;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+    text-align: center;
+}
+
+.hafez-title {
+    font-size: 2rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    font-family: 'IranNastaliq', serif;
+}
+
+@media (min-width: 768px) {
+    .hafez-title {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.hafez-subtitle {
+    color: var(--emerald-100);
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+}
+
+@media (min-width: 768px) {
+    .hafez-subtitle {
+        font-size: 1.125rem;
+        margin-bottom: 3rem;
+    }
+}
+
+.hafez-box {
+    padding: 1.5rem;
+    border-radius: 2rem;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .hafez-box {
+        padding: 4rem;
+        border-radius: 3rem;
+        min-height: 500px;
+    }
+}
+
+.hafez-btn {
+    background: linear-gradient(to left, var(--gold-600), var(--gold-500), var(--gold-400));
+    color: var(--emerald-950);
+    font-weight: 900;
+    font-size: 1.125rem;
+    padding: 1rem 2rem;
+    border-radius: 9999px;
+    transition: all 0.3s;
+    cursor: pointer;
+    box-shadow: 0 0 40px rgba(217, 119, 6, 0.6);
+    border: none;
+    font-family: inherit;
+}
+
+@media (min-width: 768px) {
+    .hafez-btn {
+        font-size: 1.5rem;
+        padding: 1.5rem 3rem;
+    }
+}
+
+.hafez-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 60px rgba(217, 119, 6, 0.8);
+}
+
+.hafez-btn:active {
+    transform: scale(0.98);
+}
+
+.hafez-poem {
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    color: white;
+    font-family: 'IranNastaliq', serif;
+    line-height: 3rem;
+    white-space: pre-line;
+    width: 100%;
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    .hafez-poem {
+        font-size: 2.5rem;
+        line-height: 4rem;
+        margin-bottom: 2.5rem;
+        padding: 2rem;
+    }
+}
+
+.hafez-tafsir-box {
+    padding: 1rem;
+    border-radius: 1rem;
+    text-align: justify;
+    border-top: 4px solid var(--gold-500);
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .hafez-tafsir-box {
+        padding: 1.5rem;
+    }
+}
+
+.hafez-tafsir-title {
+    color: var(--gold-400);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    font-size: 1.125rem;
+}
+
+@media (min-width: 768px) {
+    .hafez-tafsir-title {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.hafez-tafsir-text {
+    color: var(--emerald-50);
+    font-size: 1rem;
+    line-height: 2;
+    font-weight: 300;
+}
+
+@media (min-width: 768px) {
+    .hafez-tafsir-text {
+        font-size: 1.25rem;
+        line-height: 2.5;
+    }
+}
+
+.hafez-reset {
+    margin-top: 1.5rem;
+    background: var(--emerald-800);
+    color: white;
+    padding: 0.625rem 1.5rem;
+    border-radius: 9999px;
+    transition: background 0.3s;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+}
+
+@media (min-width: 768px) {
+    .hafez-reset {
+        margin-top: 2.5rem;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+    }
+}
+
+.hafez-reset:hover {
+    background: var(--emerald-700);
+    transform: translateY(-2px);
+}
+
+/* ===== افکت ظاهر شدن نتیجه فال ===== */
+#hafez-result {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
