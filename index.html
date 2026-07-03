@@ -71,6 +71,18 @@
             padding: 2rem 1rem;
             position: relative;
             z-index: 1;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .top-section h1 {
@@ -81,6 +93,16 @@
             background-clip: text;
             margin-bottom: 1rem;
             text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6));
+            }
         }
 
         .top-section p {
@@ -88,6 +110,16 @@
             font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             max-width: 500px;
             line-height: 2;
+            animation: fadeIn 1.5s ease-out 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         /* === بخش دکمه‌های پایینی === */
@@ -100,6 +132,18 @@
             align-items: center;
             gap: clamp(1.5rem, 5vw, 4rem);
             flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* === دکمه گرد === */
@@ -110,6 +154,32 @@
             text-decoration: none;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        .round-btn:nth-child(1) {
+            animation-delay: 0.6s;
+        }
+
+        .round-btn:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         .round-btn:hover {
@@ -169,6 +239,7 @@
             position: relative;
             z-index: 2;
             font-size: clamp(2.5rem, 6vw, 3.5rem);
+            transition: all 0.3s ease;
         }
 
         .round-btn:hover .btn-circle {
@@ -176,6 +247,11 @@
             box-shadow: 
                 0 0 50px rgba(212, 175, 55, 0.4),
                 inset 0 0 40px rgba(212, 175, 55, 0.2);
+        }
+
+        .round-btn:hover .btn-icon {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));
         }
 
         .btn-label {
@@ -191,18 +267,32 @@
         .round-btn:hover .btn-label {
             color: #fcd34d;
             text-shadow: 0 0 15px rgba(252, 211, 77, 0.5);
+            transform: translateY(-5px);
         }
 
         /* === ریسپانسیو - موبایل === */
         @media (max-width: 480px) {
             .buttons-section {
-                gap: 1.5rem;
-                padding-bottom: 2rem;
+                flex-direction: column;
+                gap: 2rem;
+                padding: 1.5rem 1rem 2rem;
             }
 
             .btn-circle {
-                width: 110px;
-                height: 110px;
+                width: 130px;
+                height: 130px;
+            }
+
+            .round-btn:hover {
+                transform: translateY(-5px) scale(1.03);
+            }
+
+            .top-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .top-section h1 {
+                margin-bottom: 0.8rem;
             }
         }
 
@@ -215,6 +305,42 @@
             .buttons-section {
                 padding: 3rem 2rem 4rem;
             }
+        }
+
+        /* === افکت لمسی برای موبایل === */
+        @media (hover: none) and (pointer: coarse) {
+            .round-btn:active .btn-circle {
+                border-color: rgba(251, 191, 36, 0.8);
+                box-shadow: 
+                    0 0 50px rgba(212, 175, 55, 0.4),
+                    inset 0 0 40px rgba(212, 175, 55, 0.2);
+            }
+
+            .round-btn:active .btn-icon {
+                transform: scale(1.1);
+            }
+
+            .round-btn:active .btn-label {
+                color: #fcd34d;
+            }
+        }
+
+        /* === انیمیشن پالس برای دکمه‌ها === */
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 
+                    0 0 30px rgba(212, 175, 55, 0.2),
+                    inset 0 0 30px rgba(212, 175, 55, 0.1);
+            }
+            50% {
+                box-shadow: 
+                    0 0 40px rgba(212, 175, 55, 0.3),
+                    inset 0 0 35px rgba(212, 175, 55, 0.15);
+            }
+        }
+
+        .btn-circle {
+            animation: pulse 3s ease-in-out infinite;
         }
     </style>
 </head>
@@ -229,20 +355,20 @@
     <!-- بخش دکمه‌های پایینی -->
     <div class="buttons-section">
         
-        <!-- دکمه حاجیه خانوم کلیدری -->
+        <!-- دکمه حاجیه خانم کلیدری -->
         <a href="https://klidari.ir/Hajiya-Khanum/home.html" class="round-btn">
             <div class="btn-circle">
                 <span class="btn-icon">🕌</span>
             </div>
-            <span class="btn-label">حاجیه خانوم کلیدری</span>
+            <span class="btn-label">حاجیه خانم کلیدری</span>
         </a>
 
-        <!-- دکمه گل خانوم کلیدری -->
+        <!-- دکمه گل خانم کلیدری -->
         <a href="https://klidari.ir/Gol-Khanum/home.html" class="round-btn">
             <div class="btn-circle">
                 <span class="btn-icon">🌹</span>
             </div>
-            <span class="btn-label">گل خانوم کلیدری</span>
+            <span class="btn-label">گل خانم کلیدری</span>
         </a>
 
     </div>
