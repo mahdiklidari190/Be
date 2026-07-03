@@ -1,5 +1,11 @@
-const prayerTranslations = { 'Fajr': 'اذان صبح', 'Sunrise': 'طلوع آفتاب', 'Dhuhr': 'اذان ظهر', 'Sunset': 'غروب آفتاب', 'Maghrib': 'اذان مغرب' };
-    
+const prayerTranslations = { 
+    'Imsaak': 'اذان صبح', 
+    'Sunrise': 'طلوع آفتاب', 
+    'Midday': 'اذان ظهر', 
+    'Sunset': 'غروب آفتاب', 
+    'Maghrib': 'اذان مغرب' 
+};
+
 const startBtn = document.getElementById('startBtn');
 const statusText = document.getElementById('statusText');
 const locationBox = document.getElementById('locationBox');
@@ -73,6 +79,46 @@ async function getLocationFromIP() {
     }
 }
 
+// محاسبه زاویه قبله با فرمول ریاضی (دقیق‌تر از API)
+function calculateQibla(lat, lng) {
+    const kaabaLat = 21.4225;
+    const kaabaLng = 39.8262;
+    
+    const lat1 = lat * Math.PI / 180;
+    const lng1 = lng * Math.PI / 180;
+    const lat2 = kaabaLat * Math.PI / 180;
+    const lng2 = kaabaLng * Math.PI / 180;
+    
+    const dLng = lng2 - lng1;
+    
+    const x = Math.sin(dLng) * Math.cos(lat2);
+    const y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+    
+    let bearing = Math.atan2(x, y) * 180 / Math.PI;
+    return (bearing + 360) % 360;
+}
+
+// دریافت اوقات شرعی از سرور ایرانی
+async function getPrayerTimesFromIranAPI(lat, lng) {
+    try {
+        // استفاده از API آوینی (سرور داخلی ایران)
+        const response = await fetch(`https://prayer.aviny.com/api/prayertimes/1`);
+        const data = await response.json();
+        
+        // تبدیل به فرمت مورد نیاز
+        return {
+            Imsaak: data.Imsaak?.substring(0, 5) || '00:00',
+            Sunrise: data.Sunrise?.substring(0, 5) || '00:00',
+            Midday: data.Midday?.substring(0, 5) || '00:00',
+            Sunset: data.Sunset?.substring(0, 5) || '00:00',
+            Maghrib: data.Maghrib?.substring(0, 5) || '00:00'
+        };
+    } catch (error) {
+        console.error('خطا در دریافت اوقات شرعی:', error);
+        return null;
+    }
+}
+
 async function initializeSystem() {
     const loc = await getUserLocation();
     
@@ -86,22 +132,22 @@ async function initializeSystem() {
     locationSourceText.innerText = loc.source;
     statusText.innerText = "در حال دریافت داده‌های نجومی...";
 
-    const [timesRes, qiblaRes] = await Promise.all([
-        fetch(`https://api.aladhan.com/v1/timings?latitude=${loc.lat}&longitude=${loc.lng}&method=8`),
-        fetch(`https://api.aladhan.com/v1/qibla/${loc.lat}/${loc.lng}`)
-    ]);
-
-    const timesData = await timesRes.json();
-    const qiblaData = await qiblaRes.json();
-
-    // ذخیره زاویه قبله در متغیر سراسری
-    qiblaDegree = qiblaData.data.direction;
+    // محاسبه زاویه قبله با فرمول ریاضی
+    qiblaDegree = calculateQibla(loc.lat, loc.lng);
     
-    // تنظیم اولیه عقربه (بعداً در handleOrientation آپدیت میشه)
+    // تنظیم اولیه عقربه
     qiblaPointer.style.transform = `rotate(${qiblaDegree}deg)`;
     statusText.innerHTML = `لطفاً گوشی خود را کاملاً افقی و موازی با زمین نگه دارید. (زاویه: ${qiblaDegree.toFixed(1)}°)`;
 
-    const timings = timesData.data.timings;
+    // دریافت اوقات شرعی از سرور ایرانی
+    const timings = await getPrayerTimesFromIranAPI(loc.lat, loc.lng);
+    
+    if (!timings) {
+        statusText.innerText = "خطا در دریافت اوقات شرعی";
+        return;
+    }
+
+    // رندر اوقات شرعی
     prayerGrid.innerHTML = '';
     Object.keys(prayerTranslations).forEach((key, index) => {
         const time = timings[key];
@@ -114,7 +160,7 @@ async function initializeSystem() {
     });
 }
 
-// ✅ تابع اصلاح شده - عقربه قبله حالا داینامیک حرکت می‌کنه
+// ✅ تابع اصلاح شده - فقط عقربه حرکت می‌کنه، صفحه ثابت
 function handleOrientation(event) {
     let heading = null;
     
@@ -128,10 +174,10 @@ function handleOrientation(event) {
     }
 
     if (heading !== null) {
-        // چرخش صفحه قطب‌نما
-        compassDial.style.transform = `rotate(${-heading}deg)`;
+        // ❌ صفحه قطب‌نما ثابت می‌مونه
+        // compassDial.style.transform = `rotate(${-heading}deg)`;
         
-        // ✅ محاسبه زاویه عقربه قبله نسبت به جهت فعلی دستگاه
+        // ✅ فقط عقربه قبله حرکت می‌کنه
         let qiblaAngle = qiblaDegree - heading;
         
         // نرمال‌سازی زاویه بین 0 تا 360
