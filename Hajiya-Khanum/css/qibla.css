@@ -15,13 +15,12 @@ body::after { content: ''; position: fixed; bottom: -20%; right: -10%; width: 60
 
 .compass-outer { width: clamp(260px, 65vw, 320px); height: clamp(260px, 65vw, 320px); border-radius: 50%; background: radial-gradient(circle, rgba(2,44,34,0.9), rgba(6,78,59,0.9)); display: flex; justify-content: center; align-items: center; border: 2px solid rgba(251,191,36,0.3); position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,0,0,0.8); margin-top: 3.5rem; overflow: hidden; }
 
-/* ✅ صفحه قطب‌نما ثابت - بدون transition */
+/* صفحه قطب‌نما ثابت - فقط عقربه حرکت می‌کنه */
 .compass-dial { 
     width: 100%; 
     height: 100%; 
     border-radius: 50%; 
     position: absolute;
-    /* transition حذف شد چون صفحه ثابت می‌مونه */
 }
 
 .compass-marks { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: repeating-conic-gradient(from 0deg, transparent 0deg, transparent 4deg, rgba(255,255,255,0.05) 4deg, rgba(255,255,255,0.05) 5deg); mask-image: radial-gradient(transparent 62%, black 65%); -webkit-mask-image: radial-gradient(transparent 62%, black 65%); }
@@ -32,7 +31,7 @@ body::after { content: ''; position: fixed; bottom: -20%; right: -10%; width: 60
 .dir-e { top: 50%; right: 2%; color: var(--emerald-200); }
 .dir-w { top: 50%; left: 10%; color: var(--emerald-200); }
 
-/* ✅ فقط عقربه حرکت می‌کنه - transition نرم */
+/* فقط عقربه حرکت می‌کنه - transition نرم */
 .qibla-pointer-container { 
     width: 100%; 
     height: 100%; 
@@ -74,7 +73,7 @@ body::after { content: ''; position: fixed; bottom: -20%; right: -10%; width: 60
 .permission-btn:active { transform: translate(-50%, -50%) scale(0.95); }
 .permission-btn:hover { background: rgba(2, 44, 34, 0.95); color: var(--gold-400); box-shadow: 0 0 40px rgba(217,119,6,0.6); }
 
-/* وضعیت و نمایش لوکیشن (پایین قطب‌نما) */
+/* وضعیت و نمایش لوکیشن */
 .location-section { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; }
 
 .location-display { display: none; padding: 1rem 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 16px; color: var(--emerald-50); font-weight: 500; font-size: 1.1rem; align-items: center; justify-content: center; gap: 0.8rem; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); backdrop-filter: blur(10px); }
