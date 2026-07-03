@@ -45,7 +45,6 @@ const surahNames = [
 ];
 
 const quranServers = [
-    (i) => `https://server13.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
     (i) => `https://server16.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
     (i) => `https://server17.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
     (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.abdulbasitmurattal/${i}.mp3`
