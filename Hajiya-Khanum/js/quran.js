@@ -45,48 +45,7 @@ const surahNames = [
 ];
 
 const quranServers = [
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.abdulbasitmurattal/${i}.mp3`,
-     // --- مشاری راشد العفاسی ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${i}.mp3`,
-
-    // --- عبدالرحمن السدیس ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/192/ar.sudais/${i}.mp3`,
-
-    // --- سعود الشريم ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.shuraim/${i}.mp3`,
-
-    // --- محمود خلیل الحصری ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.husary/${i}.mp3`,
-
-    // --- محمد صدیق المنشاوی (مرتّل) ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.minshawi/${i}.mp3`,
-
-    // --- محمد صدیق المنشاوی (مجوّد) ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/64/ar.minshawimujawwad/${i}.mp3`,
-
-    // --- عبد الباسط عبد الصمد (مرتّل) ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/192/ar.abdulbasit/${i}.mp3`,
-
-    // --- عبد الباسط عبد الصمد (مجوّد) ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/192/ar.abdulbasitmujawwad/${i}.mp3`,
-
-    // --- عبد الباسط عبد الصمد (مرتّل - همان سرور خودت) ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.abdulbasitmurattal/${i}.mp3`,
-
-    // --- احمد بن علی العجمی ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.ajamy/${i}.mp3`,
-
-    // --- محمد ایوب ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.muhammadayoub/${i}.mp3`,
-
-    // --- علی بن عبدالرحمن الحذیفی ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.hudhaify/${i}.mp3`,
-
-    // --- محمد جبریل ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.muhammadjibreel/${i}.mp3`,
-
-    // --- محمود الحصری (معلّم) ---
-    (i) => `https://cdn.islamic.network/quran/audio-surah/64/ar.parhizgar/${i}.mp3`
+    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.abdulbasitmurattal/${i}.mp3`
 ];
 
 const quranList = surahNames.map((name, i) => ({
