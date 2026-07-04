@@ -1,6 +1,8 @@
 // ============================================
-// 🎴 سیستم فال حافظ - نسخه پایدار (اصلاح شده)
+// 🎴 سیستم فال حافظ - نسخه با فایل JSON محلی
 // ============================================
+
+let faalsCache = null; // کش برای جلوگیری از درخواست مجدد
 
 async function getHafezFal() {
     const btn = document.getElementById('hafez-btn');
@@ -11,107 +13,49 @@ async function getHafezFal() {
     if(loading) loading.style.display = 'block';
     if(res) res.style.display = 'none';
     
-    let poemData = null;
-    let falData = null;
-    
     // ============================================
-    // مرحله 1: گرفتن شعر از گنجور (با CORS proxy)
+    // مرحله 1: دریافت فایل JSON فال‌ها
     // ============================================
     try {
-        console.log('📖 دریافت شعر از گنجور...');
+        console.log('📖 دریافت فایل فال‌ها...');
         
-        // استفاده از CORS proxy برای دور زدن محدودیت CORS
-        const corsProxy = 'https://api.allorigins.win/raw?url=';
-        const ganjoorUrl = 'https://api.ganjoor.net/api/ganjoor/hafez/faal';
-        
-        const poemResponse = await fetch(corsProxy + encodeURIComponent(ganjoorUrl));
-        
-        if (poemResponse.ok) {
-            poemData = await poemResponse.json();
-            console.log('✅ شعر دریافت شد');
-        }
-    } catch (error) {
-        console.warn('⚠️ خطا در دریافت شعر:', error.message);
-        
-        // تلاش بدون proxy (شاید در برخی محیط‌ها کار کند)
-        try {
-            console.log('🔄 تلاش مستقیم بدون proxy...');
-            const poemResponse = await fetch('https://api.ganjoor.net/api/ganjoor/hafez/faal');
-            if (poemResponse.ok) {
-                poemData = await poemResponse.json();
-                console.log('✅ شعر مستقیم دریافت شد');
+        // اگر قبلاً دریافت نشده، از سرور بگیر
+        if (!faalsCache) {
+            const response = await fetch('/Hajiya-Khanum/data/Faals.json');
+            
+            if (!response.ok) {
+                throw new Error(`خطا در دریافت فایل: ${response.status}`);
             }
-        } catch (directError) {
-            console.warn('⚠️ خطا در دریافت مستقیم:', directError.message);
+            
+            faalsCache = await response.json();
+            console.log(`✅ ${faalsCache.length} فال با موفقیت دریافت شد`);
         }
-    }
-    
-    // ============================================
-    // مرحله 2: گرفتن فال/تفسیر از API فال
-    // ============================================
-    try {
-        console.log('🔮 دریافت فال...');
         
-        const falResponse = await fetch('https://hafez-dxle.onrender.com/fal');
+        // ============================================
+        // مرحله 2: انتخاب تصادفی یک فال
+        // ============================================
+        const randomIndex = Math.floor(Math.random() * faalsCache.length);
+        const selectedFal = faalsCache[randomIndex];
         
-        if (falResponse.ok) {
-            falData = await falResponse.json();
-            console.log('✅ فال دریافت شد');
-        }
+        console.log(`🔮 فال شماره ${randomIndex + 1} انتخاب شد`);
+        
+        // ============================================
+        // مرحله 3: نمایش نتیجه
+        // ============================================
+        const finalFal = {
+            poem: selectedFal.poem.replace(/\r\n/g, '\n'),
+            tafsir: selectedFal.interpretation,
+            id: randomIndex + 1,
+            title: `غزل شماره ${randomIndex + 1}`,
+            source: 'دیوان حافظ'
+        };
+        
+        displayFal(finalFal);
+        
     } catch (error) {
-        console.warn('⚠️ خطا در دریافت فال:', error.message);
-        
-        // تلاش دوم: استفاده از poemSummary از گنجور به عنوان تفسیر
-        if (poemData && poemData.poemSummary) {
-            falData = {
-                id: poemData.id,
-                interpreter: poemData.poemSummary
-            };
-            console.log('✅ تفسیر از poemSummary استفاده شد');
-        } else {
-            // تلاش سوم: API جایگزین با CORS proxy
-            try {
-                console.log('🔄 تلاش با API جایگزین...');
-                const corsProxy = 'https://api.allorigins.win/raw?url=';
-                const altUrl = 'https://api.ganjoor.net/api/ganjoor/hafez/faal';
-                
-                const altResponse = await fetch(corsProxy + encodeURIComponent(altUrl));
-                
-                if (altResponse.ok) {
-                    const altData = await altResponse.json();
-                    falData = {
-                        id: altData.id,
-                        interpreter: altData.poemSummary || "به کلیت غزل توجه کنید و با دل پاک نیت نمایید."
-                    };
-                    console.log('✅ فال جایگزین دریافت شد');
-                }
-            } catch (altError) {
-                console.warn('⚠️ خطا در API جایگزین:', altError.message);
-            }
-        }
+        console.error('❌ خطا:', error.message);
+        showError("متأسفانه امکان دریافت فال وجود ندارد. لطفاً دوباره تلاش کنید.");
     }
-    
-    // ============================================
-    // مرحله 3: ترکیب و نمایش نتیجه
-    // ============================================
-    
-    // اگر هیچ داده‌ای نگرفتیم
-    if (!poemData && !falData) {
-        showError("متأسفانه امکان دریافت فال وجود ندارد. لطفاً اتصال اینترنت خود را بررسی کنید.");
-        return;
-    }
-    
-    // ساخت داده نهایی
-    const finalFal = {
-        poem: poemData?.plainText || poemData?.htmlText || "شعر در دسترس نیست",
-        tafsir: falData?.interpreter || "تفسیری برای این غزل ثبت نشده است.",
-        id: poemData?.id || falData?.id || Math.floor(Math.random() * 495) + 1,
-        title: poemData?.title || falData?.title || `غزل شماره ${poemData?.id || falData?.id || ''}`,
-        source: poemData && falData ? "گنجور + Hafez Fortune" : (poemData ? "گنجور" : "Hafez Fortune")
-    };
-    
-    // نمایش نتیجه
-    displayFal(finalFal);
 }
 
 // ============================================
@@ -130,7 +74,12 @@ function displayFal(fal) {
     if(sourceEl) sourceEl.innerText = `منبع: ${fal.source}`;
     
     const poemElement = document.getElementById('hafez-poem');
-    if(poemElement) poemElement.innerText = fal.poem;
+    if(poemElement) {
+        poemElement.innerText = fal.poem;
+        // حفظ خط‌های جدید در نمایش
+        poemElement.style.whiteSpace = 'pre-wrap';
+        poemElement.style.lineHeight = '2';
+    }
     
     const tafsirElement = document.getElementById('hafez-tafsir');
     if(tafsirElement) tafsirElement.innerText = fal.tafsir;
