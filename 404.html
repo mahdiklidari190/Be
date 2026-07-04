@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>صفحه یافت نشد | 404</title>
-       <!-- ===== FAVICON ===== -->
-    <link rel="icon" type="image/jpg" href="/Hajiya-Khanum/icon/icon.webp">
-    <link rel="apple-touch-icon" href="/Hajiya-Khanum/icon/icon.webp">
-    <link rel="shortcut icon" href="/Hajiya-Khanum/icon/icon.webp">
+    
     <!-- فونت وزیرمتن -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     
@@ -206,26 +203,6 @@
             80% { transform: translate(-3px, 2px); }
         }
 
-        /* === آیکون با افکت چرخش === */
-        .error-icon {
-            font-size: clamp(3.5rem, 10vw, 5rem);
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            animation: iconFloat 3s ease-in-out infinite, fadeIn 1s ease-out 0.3s both;
-            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
-        }
-
-        @keyframes iconFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-10px) rotate(-5deg); }
-            75% { transform: translateY(-10px) rotate(5deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* === عنوان === */
         .error-title {
             font-size: clamp(1.5rem, 4.5vw, 2.5rem);
@@ -278,25 +255,25 @@
             animation: fadeIn 1.5s ease-out 0.7s both;
         }
 
-        /* === دکمه بازگشت مستطیلی فوق‌حرفه‌ای === */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === دکمه بازگشت مستطیلی با لبه‌های گرد === */
         .back-btn {
             display: inline-block;
             text-decoration: none;
             cursor: pointer;
             position: relative;
             animation: fadeIn 1s ease-out 0.9s both;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .back-btn:hover {
-            transform: translateY(-8px) scale(1.05);
         }
 
         /* Wrapper برای حلقه چرخان */
         .btn-wrapper {
             position: relative;
             padding: 3px;
-            border-radius: 20px;
+            border-radius: 50px;
             background: conic-gradient(
                 from 0deg,
                 transparent 0deg,
@@ -320,9 +297,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            padding: 1.2rem 3rem;
-            border-radius: 18px;
+            padding: 1.2rem 3.5rem;
+            border-radius: 48px;
             background: radial-gradient(circle at 30% 30%, #0a4a38, #022c22 70%);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
@@ -335,7 +311,7 @@
         .pulse-ring {
             position: absolute;
             inset: 0;
-            border-radius: 18px;
+            border-radius: 48px;
             box-shadow: 
                 0 0 40px rgba(212, 175, 55, 0.3),
                 inset 0 0 40px rgba(212, 175, 55, 0.15);
@@ -361,7 +337,7 @@
         .ripple {
             position: absolute;
             inset: 0;
-            border-radius: 18px;
+            border-radius: 48px;
             border: 2px solid rgba(212, 175, 55, 0.5);
             animation: ripple 2.5s ease-out infinite;
             z-index: 0;
@@ -404,14 +380,6 @@
             left: 100%;
         }
 
-        .btn-icon {
-            position: relative;
-            z-index: 2;
-            font-size: clamp(2rem, 5vw, 2.5rem);
-            transition: all 0.4s ease;
-            filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.5));
-        }
-
         .btn-text {
             position: relative;
             z-index: 2;
@@ -425,11 +393,6 @@
 
         .back-btn:hover .btn-rectangle {
             background: radial-gradient(circle at 30% 30%, #0d5a45, #043d2f 70%);
-        }
-
-        .back-btn:hover .btn-icon {
-            transform: scale(1.2) rotate(10deg);
-            filter: drop-shadow(0 0 25px rgba(251, 191, 36, 1));
         }
 
         .back-btn:hover .btn-text {
@@ -489,18 +452,9 @@
                 margin-bottom: 2rem;
             }
 
-            .back-btn:hover {
-                transform: translateY(-5px) scale(1.03);
-            }
-
             .btn-rectangle {
                 padding: 1rem 2rem;
-                min-width: 240px;
-                gap: 0.8rem;
-            }
-
-            .btn-icon {
-                font-size: 1.8rem;
+                min-width: 220px;
             }
 
             .btn-text {
@@ -525,25 +479,16 @@
             .orb-2 { width: 450px; height: 450px; }
 
             .btn-rectangle {
-                padding: 1.5rem 4rem;
+                padding: 1.5rem 4.5rem;
                 min-width: 320px;
             }
         }
 
         /* === افکت لمسی برای موبایل === */
         @media (hover: none) and (pointer: coarse) {
-            .back-btn:active {
-                transform: translateY(-5px) scale(1.03);
-            }
-
             .back-btn:active .btn-rectangle {
                 background: radial-gradient(circle at 30% 30%, #0d5a45, #043d2f 70%);
                 box-shadow: 0 0 60px rgba(212, 175, 55, 0.6);
-            }
-
-            .back-btn:active .btn-icon {
-                transform: scale(1.15) rotate(5deg);
-                filter: drop-shadow(0 0 20px rgba(251, 191, 36, 1));
             }
 
             .back-btn:active .btn-text {
@@ -594,7 +539,7 @@
             می‌توانید از طریق دکمه زیر به صفحه اصلی بازگردید.
         </p>
 
-        <!-- دکمه بازگشت مستطیلی -->
+        <!-- دکمه بازگشت مستطیلی با لبه‌های گرد -->
         <a href="https://klidari.ir/" class="back-btn">
             <div class="btn-wrapper">
                 <div class="btn-rectangle">
@@ -602,7 +547,6 @@
                     <div class="ripple"></div>
                     <div class="ripple"></div>
                     <div class="ripple"></div>
-                    <span class="btn-icon">🏠</span>
                     <span class="btn-text">بازگشت به صفحه اصلی</span>
                 </div>
             </div>
@@ -650,15 +594,12 @@
             }
 
             update() {
-                // حرکت عادی
                 this.x += this.speedX;
                 this.y += this.speedY;
 
-                // برگشت از لبه‌ها
                 if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
                 if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
 
-                // واکنش به ماوس
                 if (mouse.x != null && mouse.y != null) {
                     let dx = mouse.x - this.x;
                     let dy = mouse.y - this.y;
@@ -690,7 +631,6 @@
 
         function initParticles() {
             particles = [];
-            // تعداد ذرات بر اساس اندازه صفحه
             const numberOfParticles = Math.min(Math.floor((canvas.width * canvas.height) / 12000), 120);
             for (let i = 0; i < numberOfParticles; i++) {
                 particles.push(new Particle());
