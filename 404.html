@@ -1,1 +1,686 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحه یافت نشد | 404</title>
+    
+    <!-- فونت وزیرمتن -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #021a14;
+            position: relative;
+            padding: 2rem 1rem;
+            color: #fff;
+        }
+
+        /* === پس‌زمینه گرادیانت متحرک === */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(251, 191, 36, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(6, 78, 59, 0.8) 0%, transparent 70%),
+                linear-gradient(135deg, #022c22 0%, #064e3b 50%, #022c22 100%);
+            z-index: -3;
+            animation: bgShift 15s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+            50% { filter: hue-rotate(10deg) brightness(1.1); }
+        }
+
+        /* === شبکه ذرات Canvas === */
+        #particles-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* === اورب‌های نورانی === */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #d4af37;
+            top: -150px;
+            right: -150px;
+            animation: orbFloat1 12s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: #fbbf24;
+            bottom: -120px;
+            left: -120px;
+            animation: orbFloat2 14s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: #10b981;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.15;
+            animation: orbFloat3 18s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, 80px) scale(1.1); }
+            66% { transform: translate(-30px, 40px) scale(0.95); }
+        }
+
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-60px, -50px) scale(1.15); }
+            66% { transform: translate(40px, -30px) scale(0.9); }
+        }
+
+        @keyframes orbFloat3 {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
+        }
+
+        /* === کانتینر اصلی با Parallax === */
+        .parallax-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* === عدد 404 با افکت Glitch === */
+        .error-code-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+            animation: fadeInScale 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.5) rotate(-5deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .error-code {
+            font-size: clamp(8rem, 25vw, 16rem);
+            font-weight: 900;
+            line-height: 0.9;
+            position: relative;
+            background: linear-gradient(135deg, #fbbf24 0%, #d4af37 25%, #f59e0b 50%, #d4af37 75%, #fbbf24 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+            letter-spacing: -0.05em;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* افکت Glitch */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fbbf24, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glitch::before {
+            animation: glitch-1 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            opacity: 0.8;
+        }
+
+        .glitch::after {
+            animation: glitch-2 2.5s infinite linear alternate-reverse;
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+            opacity: 0.8;
+        }
+
+        @keyframes glitch-1 {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(-3px, 2px); }
+            40% { transform: translate(-3px, -2px); }
+            60% { transform: translate(3px, 2px); }
+            80% { transform: translate(3px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(3px, -2px); }
+            40% { transform: translate(3px, 2px); }
+            60% { transform: translate(-3px, -2px); }
+            80% { transform: translate(-3px, 2px); }
+        }
+
+        /* === عنوان === */
+        .error-title {
+            font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fbbf24, #d4af37, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease-out 0.5s both;
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+        }
+
+        /* === خط تزئینی === */
+        .divider {
+            width: 120px;
+            height: 3px;
+            margin: 1.5rem auto;
+            position: relative;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        /* === متن توضیح === */
+        .error-message {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+            line-height: 2;
+            margin-bottom: 3rem;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeIn 1.5s ease-out 0.7s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === دکمه بازگشت مستطیلی با لبه‌های گرد (بدون چرخش) === */
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            animation: fadeIn 1s ease-out 0.9s both;
+        }
+
+        /* Wrapper با border طلایی ثابت و درخشش متغیر */
+        .btn-wrapper {
+            position: relative;
+            padding: 3px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #d4af37, #fbbf24, #d4af37, #f59e0b);
+            background-size: 200% 200%;
+            animation: borderGlow 4s ease-in-out infinite;
+            box-shadow: 
+                0 0 20px rgba(212, 175, 55, 0.3),
+                0 0 40px rgba(212, 175, 55, 0.15);
+            transition: all 0.4s ease;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { 
+                background-position: 0% 50%;
+                box-shadow: 
+                    0 0 20px rgba(212, 175, 55, 0.3),
+                    0 0 40px rgba(212, 175, 55, 0.15);
+            }
+            50% { 
+                background-position: 100% 50%;
+                box-shadow: 
+                    0 0 30px rgba(212, 175, 55, 0.5),
+                    0 0 60px rgba(212, 175, 55, 0.25);
+            }
+        }
+
+        /* لایه داخلی دکمه */
+        .btn-rectangle {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem 3.5rem;
+            border-radius: 48px;
+            background: radial-gradient(circle at 30% 30%, #0a4a38, #022c22 70%);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            transition: all 0.4s ease;
+            overflow: hidden;
+            min-width: 280px;
+        }
+
+        /* افکت Ripple */
+        .ripple {
+            position: absolute;
+            inset: 0;
+            border-radius: 48px;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            animation: ripple 2.5s ease-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ripple:nth-child(2) { animation-delay: 0.8s; }
+        .ripple:nth-child(3) { animation-delay: 1.6s; }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        /* افکت درخشش متحرک */
+        .btn-rectangle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(251, 191, 36, 0.25),
+                transparent
+            );
+            transition: left 0.6s ease;
+            z-index: 1;
+        }
+
+        .back-btn:hover .btn-rectangle::before {
+            left: 100%;
+        }
+
+        .back-btn:hover .btn-wrapper {
+            box-shadow: 
+                0 0 40px rgba(212, 175, 55, 0.6),
+                0 0 80px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-text {
+            position: relative;
+            z-index: 2;
+            color: #fbbf24;
+            font-size: clamp(1rem, 2.8vw, 1.3rem);
+            font-weight: 700;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6);
+            transition: all 0.4s ease;
+            white-space: nowrap;
+        }
+
+        .back-btn:hover .btn-rectangle {
+            background: radial-gradient(circle at 30% 30%, #0d5a45, #043d2f 70%);
+        }
+
+        .back-btn:hover .btn-text {
+            color: #fcd34d;
+            text-shadow: 0 0 20px rgba(252, 211, 77, 0.8);
+        }
+
+        /* === ذرات شناور CSS (برای موبایل) === */
+        .floating-dots {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #d4af37;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #d4af37;
+            animation: floatDot 20s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes floatDot {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* === ریسپانسیو - موبایل کوچک === */
+        @media (max-width: 480px) {
+            body {
+                padding: 1.5rem 1rem;
+            }
+
+            .orb-1, .orb-2, .orb-3 {
+                filter: blur(60px);
+                opacity: 0.3;
+            }
+
+            .orb-1 { width: 250px; height: 250px; }
+            .orb-2 { width: 200px; height: 200px; }
+            .orb-3 { width: 180px; height: 180px; }
+
+            .error-message {
+                margin-bottom: 2rem;
+            }
+
+            .btn-rectangle {
+                padding: 1rem 2rem;
+                min-width: 220px;
+            }
+
+            .btn-text {
+                font-size: 1rem;
+            }
+        }
+
+        /* === ریسپانسیو - تبلت === */
+        @media (min-width: 481px) and (max-width: 1024px) {
+            .parallax-container {
+                max-width: 600px;
+            }
+        }
+
+        /* === ریسپانسیو - دسکتاپ === */
+        @media (min-width: 1025px) {
+            .parallax-container {
+                max-width: 800px;
+            }
+
+            .orb-1 { width: 500px; height: 500px; }
+            .orb-2 { width: 450px; height: 450px; }
+
+            .btn-rectangle {
+                padding: 1.5rem 4.5rem;
+                min-width: 320px;
+            }
+        }
+
+        /* === افکت لمسی برای موبایل === */
+        @media (hover: none) and (pointer: coarse) {
+            .back-btn:active .btn-rectangle {
+                background: radial-gradient(circle at 30% 30%, #0d5a45, #043d2f 70%);
+            }
+
+            .back-btn:active .btn-wrapper {
+                box-shadow: 
+                    0 0 40px rgba(212, 175, 55, 0.6),
+                    0 0 80px rgba(212, 175, 55, 0.3);
+            }
+
+            .back-btn:active .btn-text {
+                color: #fcd34d;
+            }
+        }
+
+        /* === کاهش انیمیشن برای کاربرانی که ترجیح می‌دهند === */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- پس‌زمینه گرادیانت -->
+    <div class="bg-gradient"></div>
+
+    <!-- شبکه ذرات Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- اورب‌های نورانی -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- ذرات شناور CSS -->
+    <div class="floating-dots" id="floating-dots"></div>
+
+    <!-- محتوای اصلی -->
+    <div class="parallax-container" id="parallax">
+
+        <div class="error-code-wrapper">
+            <h1 class="error-code glitch" data-text="404">404</h1>
+        </div>
+        
+        <h2 class="error-title">صفحه مورد نظر یافت نشد</h2>
+        
+        <div class="divider"></div>
+        
+        <p class="error-message">
+            به نظر می‌رسد صفحه‌ای که به دنبال آن هستید وجود ندارد، حذف شده یا آدرس آن تغییر کرده است.
+            <br>
+            می‌توانید از طریق دکمه زیر به صفحه اصلی بازگردید.
+        </p>
+
+        <!-- دکمه بازگشت مستطیلی با لبه‌های گرد -->
+        <a href="https://klidari.ir/" class="back-btn">
+            <div class="btn-wrapper">
+                <div class="btn-rectangle">
+                    <div class="ripple"></div>
+                    <div class="ripple"></div>
+                    <div class="ripple"></div>
+                    <span class="btn-text">بازگشت به صفحه اصلی</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <script>
+        // === شبکه ذرات Canvas با اتصال به ماوس ===
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.density = (Math.random() * 30) + 1;
+                this.color = `rgba(212, 175, 55, ${Math.random() * 0.5 + 0.3})`;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        let forceDirectionX = dx / distance;
+                        let forceDirectionY = dy / distance;
+                        let maxDistance = mouse.radius;
+                        let force = (maxDistance - distance) / maxDistance;
+                        let directionX = (forceDirectionX * force * this.density);
+                        let directionY = (forceDirectionY * force * this.density);
+                        
+                        if (distance < mouse.radius / 2) {
+                            this.x -= directionX * 0.5;
+                            this.y -= directionY * 0.5;
+                        }
+                    }
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const numberOfParticles = Math.min(Math.floor((canvas.width * canvas.height) / 12000), 120);
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a + 1; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 120) {
+                        let opacity = 1 - (distance / 120);
+                        ctx.strokeStyle = `rgba(212, 175, 55, ${opacity * 0.3})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // === Mouse Parallax ===
+        const parallax = document.getElementById('parallax');
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            parallax.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+        });
+
+        // === ایجاد ذرات شناور CSS ===
+        const dotsContainer = document.getElementById('floating-dots');
+        const numberOfDots = window.innerWidth < 768 ? 10 : 20;
+        for (let i = 0; i < numberOfDots; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.animationDelay = Math.random() * 20 + 's';
+            dot.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            dotsContainer.appendChild(dot);
+        }
+    </script>
+
+</body>
+</html>
