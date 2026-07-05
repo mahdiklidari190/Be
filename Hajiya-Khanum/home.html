@@ -22,9 +22,9 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://yourdomain.com/Hajiya-Khanum/">
     
-    <!-- ===== STRUCTURED DATA (JSON-LD) ===== -->
+    <!-- ===== STRUCTURED DATA (JSON-LD) - مهم‌ترین بخش SEO مدرن ===== -->
     
-    <!-- Schema 1: Person -->
+    <!-- Schema 1: Person (شخص مرحومه) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -58,7 +58,7 @@
     }
     </script>
     
-    <!-- Schema 2: Article -->
+    <!-- Schema 2: Memorial/BlogPosting (صفحه یادبود) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -90,7 +90,7 @@
     }
     </script>
     
-    <!-- Schema 3: BreadcrumbList -->
+    <!-- Schema 3: BreadcrumbList (مسیر ناوبری) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -118,7 +118,7 @@
     }
     </script>
     
-    <!-- Schema 4: Cemetery -->
+    <!-- Schema 4: Place (مکان آرامگاه) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -140,7 +140,7 @@
     }
     </script>
     
-    <!-- Schema 5: FAQPage -->
+    <!-- Schema 5: FAQPage (سوالات متداول) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -182,7 +182,7 @@
     }
     </script>
     
-    <!-- Schema 6: VideoObject -->
+    <!-- Schema 6: VideoObject (برای ویدیوها) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -196,7 +196,7 @@
     }
     </script>
     
-    <!-- Schema 7: ImageGallery -->
+    <!-- Schema 7: ImageGallery (برای گالری تصاویر) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -207,7 +207,7 @@
     }
     </script>
     
-    <!-- ===== OPEN GRAPH ===== -->
+    <!-- ===== OPEN GRAPH (Social Media - بهینه‌سازی شده) ===== -->
     <meta property="og:type" content="article">
     <meta property="og:title" content="حجیه خانم کلیدری | یادبود مادری فداکار از روستای کلیدر">
     <meta property="og:description" content="یادبود جاودانه حجیه خانم کلیدری (حاجیه خانم کلیدری) - مادری فداکار و عزیز از روستای کلیدر که با ۷ فرزند به تنهایی زندگی کرد. زندگینامه، خاطرات و یادبود">
@@ -226,7 +226,7 @@
     <meta property="article:tag" content="روستای کلیدر">
     <meta property="article:tag" content="مادر فداکار">
     
-    <!-- ===== TWITTER CARD ===== -->
+    <!-- ===== TWITTER CARD (بهینه‌سازی شده) ===== -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="حجیه خانم کلیدری | یادبود مادری فداکار از روستای کلیدر">
     <meta name="twitter:description" content="یادبود جاودانه حجیه خانم کلیدری (حاجیه خانم کلیدری) - مادری فداکار و عزیز از روستای کلیدر">
@@ -235,7 +235,7 @@
     <meta name="twitter:site" content="@yourdomain">
     <meta name="twitter:creator" content="@yourdomain">
     
-    <!-- ===== FAVICON (اصلاح شده - بدون تکرار) ===== -->
+    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/webp" href="/Hajiya-Khanum/icon/icon.webp">
     <link rel="apple-touch-icon" href="/Hajiya-Khanum/icon/icon.webp">
     <link rel="shortcut icon" href="/Hajiya-Khanum/icon/icon.webp">
@@ -248,12 +248,36 @@
     <link rel="stylesheet" href="/Hajiya-Khanum/css/global.css">
     <link rel="stylesheet" href="/Hajiya-Khanum/css/home.css">
     
-    <!-- Preconnect -->
+    <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 </head>
 <body>
-    <main style="padding-top: 4rem; min-height: 100vh;">
+    <!-- Breadcrumb Navigation (برای SEO و کاربر) -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav" style="padding: 1rem 2rem; background: rgba(0,0,0,0.3);">
+        <ol itemscope itemtype="https://schema.org/BreadcrumbList" style="list-style: none; display: flex; gap: 0.5rem; margin: 0; padding: 0;">
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a itemprop="item" href="/" style="color: var(--gold-400); text-decoration: none;">
+                    <span itemprop="name">خانه</span>
+                </a>
+                <meta itemprop="position" content="1">
+            </li>
+            <span style="color: var(--gold-400);">›</span>
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a itemprop="item" href="/memorials/" style="color: var(--gold-400); text-decoration: none;">
+                    <span itemprop="name">یادبودها</span>
+                </a>
+                <meta itemprop="position" content="2">
+            </li>
+            <span style="color: var(--gold-400);">›</span>
+            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <span itemprop="name" style="color: var(--gold-200);">حجیه خانم کلیدری</span>
+                <meta itemprop="position" content="3">
+            </li>
+        </ol>
+    </nav>
+
+    <main style="padding-top: 1rem; min-height: 100vh;">
 
         <section id="tab-home" class="tab-content active">
             <div class="hero">
@@ -263,6 +287,7 @@
                 <div class="hero-content reveal">
                     <div class="portrait-wrap animate-float">
                         <div class="portrait-glow animate-spin-slow"></div>
+                        <!-- بهینه‌سازی Alt تصویر - بسیار مهم برای SEO -->
                         <img src="/Hajiya-Khanum/image/1.jpg" 
                              alt="تصویر یادبود حجیه خانم کلیدری - حاجیه خانم کلیدری - مادری فداکار از روستای کلیدر" 
                              class="portrait"
@@ -272,6 +297,14 @@
                     </div>
                     <h1 class="hero-title gold-gradient">حجیه خانم کلیدری</h1>
                     <p class="hero-subtitle">یادبود مادری فداکار و عزیز از روستای کلیدر</p>
+                    
+                    <!-- اضافه کردن محتوای غنی با کلمات کلیدی -->
+                    <div class="hero-keywords" style="margin-top: 1rem; font-size: 0.9rem; color: var(--gold-300); opacity: 0.8;">
+                        <span>حاجیه خانم کلیدری</span> • 
+                        <span>حجیه خانوم کلیدری</span> • 
+                        <span>مادر بزرگ عزیز</span> • 
+                        <span>روستای کلیدر</span>
+                    </div>
                     
                     <div class="timer-panel glass-panel">
                         <p class="timer-title">لحظه‌های گذشتن از پرواز ابدی ایشان</p>
@@ -291,7 +324,7 @@
                 </div>
             </div>
 
-            <!-- Biography -->
+            <!-- Biography - بهینه‌سازی شده با کلمات کلیدی بیشتر -->
             <div class="bio-section">
                 <div class="section-inner reveal">
                     <div class="bio-box">
@@ -325,7 +358,7 @@
                             <p>روحش قرین رحمت واسعه الهی، یادش جاودان و راهش همیشه روشن باد.</p>
                         </div>
                         
-                        <!-- FAQ Section -->
+                        <!-- بخش سوالات متداول - برای SEO و Rich Snippets -->
                         <div class="faq-section" style="margin-top: 3rem; padding: 2rem; background: rgba(255,255,255,0.03); border-radius: 1rem; border: 1px solid rgba(212,175,55,0.2);">
                             <h2 class="bio-title" style="text-align: center;">سوالات متداول درباره حجیه خانم کلیدری</h2>
                             
@@ -373,63 +406,63 @@
                 </div>
             </div>
 
-            <!-- Videos Carousel -->
-            <div class="section section-dark">
-                <div class="section-inner reveal">
-                    <div class="section-title-wrap">
-                        <div class="section-title-line right"></div>
-                        <h2 class="section-title gold-gradient">ویدیوهای ماندگار از یادبود حجیه خانم کلیدری</h2>
-                        <div class="section-title-line left"></div>
-                    </div>
-                    <div class="carousel-container" id="videoCarousel">
-                        <div class="carousel-track" id="videoTrack">
-                        </div>
-                        <button class="carousel-btn prev" onclick="moveCarousel('video', -1)" aria-label="ویدیوی قبلی">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                        </button>
-                        <button class="carousel-btn next" onclick="moveCarousel('video', 1)" aria-label="ویدیوی بعدی">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                        </button>
-                    </div>
-                    <div class="carousel-dots" id="videoDots"></div>
-                </div>
+         <!-- Videos Carousel - بهینه‌سازی شده -->
+<div class="section section-dark">
+    <div class="section-inner reveal">
+        <div class="section-title-wrap">
+            <div class="section-title-line right"></div>
+            <h2 class="section-title gold-gradient">ویدیوهای ماندگار از یادبود حجیه خانم کلیدری</h2>
+            <div class="section-title-line left"></div>
+        </div>
+        <div class="carousel-container" id="videoCarousel">
+            <div class="carousel-track" id="videoTrack">
             </div>
+            <button class="carousel-btn prev" onclick="moveCarousel('video', -1)" aria-label="ویدیوی قبلی">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <button class="carousel-btn next" onclick="moveCarousel('video', 1)" aria-label="ویدیوی بعدی">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+        </div>
+        <div class="carousel-dots" id="videoDots"></div>
+    </div>
+</div>
 
-            <!-- Photo Gallery -->
-            <div class="section">
-                <div class="section-inner reveal">
-                    <div class="section-title-wrap">
-                        <div class="section-title-line right"></div>
-                        <h2 class="section-title gold-gradient">نگارخانه خاطرات حجیه خانم کلیدری</h2>
-                        <div class="section-title-line left"></div>
-                    </div>
-                    <div class="carousel-container" id="photoCarousel">
-                        <div class="carousel-track" id="photoTrack">
-                        </div>
-                        <button class="carousel-btn prev" onclick="moveCarousel('photo', -1)" aria-label="تصویر قبلی">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                        </button>
-                        <button class="carousel-btn next" onclick="moveCarousel('photo', 1)" aria-label="تصویر بعدی">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                        </button>
-                    </div>
-                    <div class="carousel-dots" id="photoDots"></div>
-                </div>
+<!-- Photo Gallery - بهینه‌سازی شده -->
+<div class="section">
+    <div class="section-inner reveal">
+        <div class="section-title-wrap">
+            <div class="section-title-line right"></div>
+            <h2 class="section-title gold-gradient">نگارخانه خاطرات حجیه خانم کلیدری</h2>
+            <div class="section-title-line left"></div>
+        </div>
+        <div class="carousel-container" id="photoCarousel">
+            <div class="carousel-track" id="photoTrack">
             </div>
+            <button class="carousel-btn prev" onclick="moveCarousel('photo', -1)" aria-label="تصویر قبلی">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <button class="carousel-btn next" onclick="moveCarousel('photo', 1)" aria-label="تصویر بعدی">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+        </div>
+        <div class="carousel-dots" id="photoDots"></div>
+    </div>
+</div>
 
-            <!-- Memorial Text -->
-            <div class="memorial-section">
-                <div class="memorial-box glass-panel reveal">
-                    <svg class="memorial-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-                    <h2 class="memorial-title">مرگ، پایان کبوتر نیست...</h2>
-                    <p class="memorial-text">بعضی آدم‌ها بوی خدا می‌دهند؛ بوی آرامش، بوی مهربانی، بوی بهشت.</p>
-                    <p class="memorial-text"><strong>مادربزرگ عزیزمان</strong>، <strong>حجیه خانم کلیدری</strong>، از همان فرشتگان زمینی بود؛ بانویی که هر نگاهش دعایی از سر عشق بود، هر لبخندش امیدی تازه در دل‌ها می‌نشاند و هر قدمش، سرشار از مهر و برکت بود.</p>
-                    <p class="memorial-text">امروز، نبودنش داغی سنگین بر دل‌هایمان نهاده است؛ اما ایمان داریم که عشق، نیکی و خاطرات زیبایش هرگز از میان نخواهد رفت. یاد او همچون چراغی فروزان، مسیر زندگی‌مان را روشن خواهد کرد و عطر حضورش تا همیشه در جان و قلبمان باقی خواهد ماند.</p>
-                    <p class="memorial-text" style="text-align: center; color: var(--gold-400); font-family: 'IranNastaliq', serif; font-weight: 600; margin-top: 1.5rem;">روحش در آرامش و رحمت بی‌پایان الهی، همنشین بهشتیان باد.</p>
-                </div>
-            </div>
+           <!-- Memorial Text -->
+<div class="memorial-section">
+    <div class="memorial-box glass-panel reveal">
+        <svg class="memorial-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+        <h2 class="memorial-title">مرگ، پایان کبوتر نیست...</h2>
+        <p class="memorial-text">بعضی آدم‌ها بوی خدا می‌دهند؛ بوی آرامش، بوی مهربانی، بوی بهشت.</p>
+        <p class="memorial-text"><strong>مادربزرگ عزیزمان</strong>، <strong>حجیه خانم کلیدری</strong>، از همان فرشتگان زمینی بود؛ بانویی که هر نگاهش دعایی از سر عشق بود، هر لبخندش امیدی تازه در دل‌ها می‌نشاند و هر قدمش، سرشار از مهر و برکت بود.</p>
+        <p class="memorial-text">امروز، نبودنش داغی سنگین بر دل‌هایمان نهاده است؛ اما ایمان داریم که عشق، نیکی و خاطرات زیبایش هرگز از میان نخواهد رفت. یاد او همچون چراغی فروزان، مسیر زندگی‌مان را روشن خواهد کرد و عطر حضورش تا همیشه در جان و قلبمان باقی خواهد ماند.</p>
+        <p class="memorial-text" style="text-align: center; color: var(--gold-400); font-family: 'IranNastaliq', serif; font-weight: 600; margin-top: 1.5rem;">روحش در آرامش و رحمت بی‌پایان الهی، همنشین بهشتیان باد.</p>
+    </div>
+</div>
 
-            <!-- Map -->
+            <!-- Map - بهینه‌سازی شده -->
             <div class="map-section">
                 <div class="map-wrapper reveal">
                     <div class="section-title-wrap">
@@ -466,7 +499,7 @@
             </div>
         </section>
 
-        <!-- Modals -->
+        <!-- Modals (Shared by Home Tab) -->
         <div id="videoPlayerModal" class="video-player-modal" onclick="handleModalBackdropClick(event)">
             <div class="video-player-container">
                 <div class="video-top-bar">
