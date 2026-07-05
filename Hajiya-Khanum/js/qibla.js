@@ -6,7 +6,6 @@ const prayerTranslations = {
     'Maghrib': 'اذان مغرب' 
 };
 
-// انتخاب المان‌ها
 const startBtn = document.getElementById('startBtn');
 const statusText = document.getElementById('statusText');
 const locationBox = document.getElementById('locationBox');
@@ -16,80 +15,62 @@ const compassDial = document.getElementById('compassDial');
 const qiblaPointer = document.getElementById('qiblaPointer');
 const prayerGrid = document.getElementById('prayerTimesGrid');
 
-// متغیرهای سراسری
+// متغیر سراسری برای ذخیره زاویه قبله
 let qiblaDegree = 0;
 let magneticDeclination = 0;
-let isTracking = false;
+let currentRotation = 0; // برای حرکت نرم
 
-// تابع کمکی برای نرمال‌سازی زاویه
-const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
-
-// مدیریت کلیک دکمه شروع
+// مدیریت کلیک دکمه وسط
 startBtn.addEventListener('click', async () => {
     console.log('دکمه کلیک شد');
     
     try {
-        // درخواست مجوز iOS
+        // درخواست مجوز برای iOS
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            console.log('درخواست مجوز iOS...');
             const permission = await DeviceOrientationEvent.requestPermission();
-            console.log('نتیجه مجوز:', permission);
-            if (permission !== 'granted') {
-                throw new Error('مجوز دسترسی به سنسور حرکت داده نشد.');
-            }
+            if (permission !== 'granted') throw new Error('مجوز چرخش دستگاه داده نشد.');
         }
         
-        // مخفی کردن دکمه
         startBtn.style.opacity = '0';
-        startBtn.style.pointerEvents = 'none';
-        setTimeout(() => startBtn.style.display = 'none', 500);
+        setTimeout(() => startBtn.style.display = 'none', 300);
         
-        statusText.innerText = "در حال دریافت موقعیت مکانی...";
+        statusText.innerText = "در حال تحلیل موقعیت مکانی شما...";
         
-        // شروع فرآیند
         await initializeSystem();
         
-        // اضافه کردن لیسنر جهت‌یابی
-        console.log('اضافه کردن event listener...');
-        window.addEventListener('deviceorientation', handleOrientation, true);
+        // اضافه کردن event listener برای جهت‌یابی
         window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+        window.addEventListener('deviceorientation', handleOrientation, true);
+        
+        console.log('Event listener اضافه شد');
         
     } catch (error) {
         console.error('خطا:', error);
         statusText.innerText = `خطا: ${error.message}`;
         startBtn.style.opacity = '1';
-        startBtn.style.pointerEvents = 'auto';
         startBtn.style.display = 'flex';
-        startBtn.innerHTML = 'تلاش مجدد';
+        startBtn.innerHTML = 'تلاش<br>مجدد';
     }
 });
 
 async function getUserLocation() {
-    console.log('دریافت موقعیت مکانی...');
-    
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    console.log('GPS موفق:', lat, lng);
-                    
                     try {
-                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`);
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
                         const data = await res.json();
                         const city = data.address.city || data.address.town || data.address.county || data.address.state || "مکان نامشخص";
-                        resolve({ lat, lng, city, source: 'GPS دقیق' });
+                        resolve({ lat, lng, city, source: 'دریافت شده از سنسور GPS' });
                     } catch(e) {
-                        console.warn('خطا در reverse geocoding:', e);
-                        resolve({ lat, lng, city: 'مکان‌یابی شد', source: 'GPS' });
+                        resolve({ lat, lng, city: 'مکان‌یابی شد', source: 'دریافت شده از سنسور GPS' });
                     }
                 },
-                async (err) => {
-                    console.warn('GPS خطا داد، استفاده از IP:', err);
-                    resolve(await getLocationFromIP());
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                async () => resolve(await getLocationFromIP()),
+                { enableHighAccuracy: true, timeout: 7000 }
             );
         } else {
             resolve(await getLocationFromIP());
@@ -99,68 +80,45 @@ async function getUserLocation() {
 
 async function getLocationFromIP() {
     try {
-        console.log('دریافت موقعیت از IP...');
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
-        
-        if(data.latitude && data.longitude) {
-            console.log('IP موفق:', data.latitude, data.longitude);
-            return { 
-                lat: data.latitude, 
-                lng: data.longitude, 
-                city: data.city || data.region, 
-                source: 'حدودی (IP)' 
-            };
-        }
-        throw new Error("No location data");
+        return { lat: data.latitude, lng: data.longitude, city: data.city || data.region, source: 'شناسایی شده از طریق IP' };
     } catch (error) {
-        console.error('خطا در IP API:', error);
-        return { error: true, message: 'امکان شناسایی موقعیت وجود ندارد.' };
+        return { error: true, message: 'ارتباط با سرور مکان‌یاب برقرار نشد.' };
     }
 }
 
-// محاسبه Magnetic Declination به صورت آفلاین (بدون نیاز به API)
-function calculateMagneticDeclination(lat, lng) {
-    // فرمول ساده‌شده برای محاسبه declination
-    // این یک تقریب است اما برای اکثر کاربردها کافی است
-    const year = new Date().getFullYear();
-    const yearFraction = (new Date() - new Date(year, 0, 1)) / (365 * 24 * 60 * 60 * 1000);
-    
-    // محاسبه ساده بر اساس موقعیت
+// محاسبه انحراف مغناطیسی (بدون نیاز به API)
+function getMagneticDeclination(lat, lng) {
     // برای ایران معمولاً بین 2 تا 4 درجه شرقی است
-    let declination = 0;
-    
-    // فرمول تقریبی بر اساس longitude
-    if (lng > 0) { // نیمکره شرقی
-        declination = Math.max(-10, Math.min(10, (lng - 100) * 0.05));
-    } else { // نیمکره غربی
-        declination = Math.max(-10, Math.min(10, (lng + 100) * 0.05));
-    }
-    
-    console.log('Declination محاسبه شد:', declination);
+    // این یک تخمین ساده است
+    const declination = 3.0; // مقدار ثابت برای ایران
+    console.log('Declination:', declination);
     return declination;
 }
 
-// فرمول ریاضی قبله
+// محاسبه زاویه قبله با فرمول دقیق‌تر
 function calculateQibla(lat, lng) {
     const kaabaLat = 21.422487;
     const kaabaLng = 39.826206;
     
-    const phiK = kaabaLat * Math.PI / 180.0;
-    const lambdaK = kaabaLng * Math.PI / 180.0;
-    const phi = lat * Math.PI / 180.0;
-    const lambda = lng * Math.PI / 180.0;
+    const lat1 = lat * Math.PI / 180;
+    const lng1 = lng * Math.PI / 180;
+    const lat2 = kaabaLat * Math.PI / 180;
+    const lng2 = kaabaLng * Math.PI / 180;
     
-    const y = Math.sin(lambdaK - lambda);
-    const x = Math.cos(phi) * Math.tan(phiK) - Math.sin(phi) * Math.cos(lambdaK - lambda);
+    const dLng = lng2 - lng1;
     
-    let bearing = Math.atan2(y, x) * 180.0 / Math.PI;
-    return normalizeAngle(bearing);
+    const x = Math.sin(dLng) * Math.cos(lat2);
+    const y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+    
+    let bearing = Math.atan2(x, y) * 180 / Math.PI;
+    return (bearing + 360) % 360;
 }
 
+// دریافت اوقات شرعی از AlAdhan API
 async function getPrayerTimes(lat, lng) {
     try {
-        console.log('دریافت اوقات شرعی...');
         const today = new Date();
         const dd = String(today.getDate()).padStart(2, '0');
         const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -169,10 +127,15 @@ async function getPrayerTimes(lat, lng) {
         const response = await fetch(`https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=${lat}&longitude=${lng}&method=7`);
         const data = await response.json();
         
-        console.log('اوقات شرعی دریافت شد:', data.code);
-        
         if (data.code === 200) {
-            return data.data.timings;
+            const timings = data.data.timings;
+            return {
+                Fajr: timings.Fajr.substring(0, 5),
+                Sunrise: timings.Sunrise.substring(0, 5),
+                Dhuhr: timings.Dhuhr.substring(0, 5),
+                Sunset: timings.Sunset.substring(0, 5),
+                Maghrib: timings.Maghrib.substring(0, 5)
+            };
         }
         return null;
     } catch (error) {
@@ -182,7 +145,7 @@ async function getPrayerTimes(lat, lng) {
 }
 
 async function initializeSystem() {
-    console.log('شروع initializeSystem...');
+    console.log('شروع initializeSystem');
     
     const loc = await getUserLocation();
     
@@ -194,77 +157,86 @@ async function initializeSystem() {
     locationBox.style.display = 'flex';
     cityNameText.innerText = loc.city;
     locationSourceText.innerText = loc.source;
-    statusText.innerText = "در حال محاسبه زاویه قبله...";
+    statusText.innerText = "در حال دریافت داده‌های نجومی...";
 
-    // محاسبه Declination (آفلاین)
-    magneticDeclination = calculateMagneticDeclination(loc.lat, loc.lng);
+    // دریافت انحراف مغناطیسی (بدون API)
+    magneticDeclination = getMagneticDeclination(loc.lat, loc.lng);
     
-    // محاسبه زاویه قبله حقیقی
-    const trueQibla = calculateQibla(loc.lat, loc.lng);
-    console.log('True Qibla:', trueQibla);
+    // محاسبه زاویه قبله
+    qiblaDegree = calculateQibla(loc.lat, loc.lng);
+    console.log('Qibla Degree:', qiblaDegree);
     
-    // تبدیل به زاویه مغناطیسی
-    qiblaDegree = normalizeAngle(trueQibla - magneticDeclination);
-    console.log('Magnetic Qibla:', qiblaDegree);
-    
-    statusText.innerHTML = `زاویه قبله: ${qiblaDegree.toFixed(1)}°<br><small>لطفاً گوشی را افقی نگه دارید</small>`;
+    // تنظیم اولیه عقربه
+    qiblaPointer.style.transform = `rotate(${qiblaDegree}deg)`;
+    currentRotation = qiblaDegree;
+    statusText.innerHTML = `لطفاً گوشی خود را کاملاً افقی و موازی با زمین نگه دارید. (زاویه قبله: ${qiblaDegree.toFixed(1)}°)`;
 
     // دریافت اوقات شرعی
     const timings = await getPrayerTimes(loc.lat, loc.lng);
     
-    if (timings) {
-        prayerGrid.innerHTML = '';
-        Object.keys(prayerTranslations).forEach((key, index) => {
-            if(timings[key]) {
-                const time = timings[key].substring(0, 5);
-                const html = `
-                    <div class="glass-card time-card fade-in" style="animation-delay: ${index * 0.1}s">
-                        <div class="prayer-name">${prayerTranslations[key]}</div>
-                        <div class="prayer-time">${time}</div>
-                    </div>`;
-                prayerGrid.insertAdjacentHTML('beforeend', html);
-            }
-        });
+    if (!timings) {
+        statusText.innerText = "خطا در دریافت اوقات شرعی";
+        return;
     }
+
+    // رندر اوقات شرعی
+    prayerGrid.innerHTML = '';
+    Object.keys(prayerTranslations).forEach((key, index) => {
+        const time = timings[key];
+        const html = `
+            <div class="glass-card time-card fade-in" style="animation-delay: ${index * 0.1}s">
+                <div class="prayer-name">${prayerTranslations[key]}</div>
+                <div class="prayer-time">${time}</div>
+            </div>`;
+        prayerGrid.insertAdjacentHTML('beforeend', html);
+    });
     
-    isTracking = true;
     console.log('سیستم آماده شد');
 }
 
-// هسته اصلی جهت‌یابی
+// تابع جهت‌یابی با حرکت نرم
 function handleOrientation(event) {
-    if (!isTracking) return;
-
     let heading = null;
-
-    // iOS
-    if (event.webkitCompassHeading !== undefined) {
+    
+    // iOS: webkitCompassHeading شمال واقعی را می‌دهد
+    if (event.webkitCompassHeading != null) {
         heading = event.webkitCompassHeading;
-        console.log('iOS heading:', heading);
     } 
-    // Android
-    else if (event.alpha !== null) {
-        if (event.absolute === true) {
+    // Android: alpha نسبت به شمال مغناطیسی است
+    else if (event.alpha != null) {
+        // اگر absolute باشد، یعنی نسبت به شمال واقعی است
+        if (event.absolute) {
             heading = 360 - event.alpha;
         } else {
-            heading = 360 - event.alpha;
+            // در غیر این صورت، باید declination را اضافه کنیم
+            heading = 360 - event.alpha + magneticDeclination;
         }
-        console.log('Android heading:', heading, 'alpha:', event.alpha, 'absolute:', event.absolute);
     }
 
     if (heading !== null) {
-        heading = normalizeAngle(heading);
+        // نرمال‌سازی heading بین 0 تا 360
+        heading = ((heading % 360) + 360) % 360;
         
-        const currentRotation = parseFloat(qiblaPointer.dataset.currentRotation || 0);
-        let targetRotation = qiblaDegree - heading;
+        // محاسبه زاویه عقربه قبله نسبت به heading فعلی
+        let targetAngle = qiblaDegree - heading;
         
-        let diff = targetRotation - currentRotation;
+        // نرمال‌سازی زاویه بین 0 تا 360
+        targetAngle = ((targetAngle % 360) + 360) % 360;
+        
+        // حرکت نرم (Smooth rotation)
+        let diff = targetAngle - currentRotation;
+        
+        // پیدا کردن کوتاه‌ترین مسیر چرخش
         while (diff > 180) diff -= 360;
         while (diff < -180) diff += 360;
         
-        const newRotation = currentRotation + (diff * 0.15);
+        // حرکت تدریجی (0.15 = سرعت نرم شدن)
+        currentRotation += diff * 0.15;
         
-        qiblaPointer.style.transform = `rotate(${newRotation}deg)`;
-        qiblaPointer.dataset.currentRotation = newRotation;
+        // نرمال‌سازی نهایی
+        currentRotation = ((currentRotation % 360) + 360) % 360;
+        
+        // آپدیت عقربه قبله
+        qiblaPointer.style.transform = `rotate(${currentRotation}deg)`;
     }
 }
