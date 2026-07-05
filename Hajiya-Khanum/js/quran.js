@@ -8,6 +8,8 @@ const toastIcons = {
 
 function showToast(type, title, message, duration = 4000) {
     const container = document.getElementById('toastContainer');
+    if (!container) return;
+    
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = `
@@ -44,8 +46,19 @@ const surahNames = [
     "المسد", "الإخلاص", "الفلق", "الناس"
 ];
 
+// ===== سرورهای چندگانه برای اطمینان از اتصال =====
 const quranServers = [
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.abdulbasitmurattal/${i}.mp3`
+    // سرور اصلی: Internet Archive (معتبر و پایدار)
+    (i) => `https://archive.org/download/abdulbasit-murratal/${String(i).padStart(3, '0')}.mp3`,
+    
+    // سرور جایگزین 1: Server 8 mp3quran.net
+    (i) => `https://server8.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
+    
+    // سرور جایگزین 2: cdn.islamic.network (اگر دوباره فعال شود)
+    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.abdulbasitmurattal/${i}.mp3`,
+    
+    // سرور جایگزین 3: everyayah.com (فایل‌های کامل سوره)
+    (i) => `https://everyayah.com/data/Abdul_Basit_Murattal_192kbps/${String(i).padStart(3, '0')}.mp3`
 ];
 
 const quranList = surahNames.map((name, i) => ({
@@ -78,7 +91,8 @@ function loadQuran(index, retry = false) {
     if (!retry) currentServerIndex = 0;
     setDiscLoading(true);
     
-    const url = quranServers[currentServerIndex](quranList[index].num);
+    const surahNum = quranList[index].num;
+    const url = quranServers[currentServerIndex](surahNum);
     qAudio.src = url;
     document.getElementById('quran-title').innerText = quranList[index].title;
     renderQuranList();
@@ -86,6 +100,8 @@ function loadQuran(index, retry = false) {
 
 function renderQuranList() {
     const listEl = document.getElementById('quran-list');
+    if (!listEl) return;
+    
     listEl.innerHTML = '';
     quranList.forEach((s, idx) => {
         const activeClass = idx === qIndex ? 'active' : '';
@@ -104,10 +120,12 @@ function renderQuranList() {
 function tryNextServer(index) {
     if (currentServerIndex < quranServers.length - 1) {
         currentServerIndex++;
-        const newUrl = quranServers[currentServerIndex](quranList[index].num);
+        const surahNum = quranList[index].num;
+        const newUrl = quranServers[currentServerIndex](surahNum);
         qAudio.src = newUrl;
+        
         return qAudio.play().then(() => {
-            showToast('success', 'اتصال برقرار شد', 'سرور جایگزین با موفقیت متصل شد');
+            showToast('success', 'اتصال برقرار شد', `سرور جایگزین ${currentServerIndex + 1} با موفقیت متصل شد`);
             return true;
         }).catch(() => {
             return tryNextServer(index);
@@ -126,10 +144,12 @@ function playQuran(index) {
         playPromise.then(() => {
             isQPlaying = true;
             updateQBtn();
+            setDiscLoading(false);
         }).catch(err => {
+            console.log('خطا در پخش، تلاش برای سرور جایگزین...', err);
             tryNextServer(index).then(success => {
                 if (!success) {
-                    showToast('error', 'خطا در اتصال', 'متأسفانه هیچ سروری در دسترس نیست.');
+                    showToast('error', 'خطا در اتصال', 'متأسفانه هیچ سروری در دسترس نیست. لطفاً اتصال اینترنت خود را بررسی کنید.');
                     setDiscLoading(false);
                 }
             });
@@ -150,10 +170,11 @@ function toggleQuran() {
                 isQPlaying = true;
                 updateQBtn();
                 renderQuranList();
+                setDiscLoading(false);
             }).catch(() => {
                 tryNextServer(qIndex).then(success => {
                     if (!success) {
-                        showToast('error', 'خطا در پخش', 'سرور در دسترس نیست.');
+                        showToast('error', 'خطا در پخش', 'سرور در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.');
                     }
                 });
             });
@@ -167,8 +188,10 @@ function toggleQuran() {
 }
 
 function updateQBtn() {
-    qPlayIcon.style.display = isQPlaying ? 'none' : 'block';
-    qPauseIcon.style.display = isQPlaying ? 'block' : 'none';
+    if (qPlayIcon && qPauseIcon) {
+        qPlayIcon.style.display = isQPlaying ? 'none' : 'block';
+        qPauseIcon.style.display = isQPlaying ? 'block' : 'none';
+    }
 }
 
 function nextQuran() { 
@@ -205,9 +228,10 @@ qAudio.addEventListener('playing', () => {
 qAudio.addEventListener('error', (e) => {
     setDiscLoading(false);
     if (hasUserInteracted && e.target.error && e.target.error.code !== 0) {
+        console.log('خطای سرور، تلاش برای سرور جایگزین...');
         tryNextServer(qIndex).then(success => {
             if (!success) {
-                showToast('error', 'خطای سرور', 'متأسفانه سرور در دسترس نیست.');
+                showToast('error', 'خطای سرور', 'متأسفانه سرور در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.');
             }
         });
     }
@@ -233,3 +257,8 @@ function formatTime(sec) {
 // ===== INITIALIZATION =====
 document.getElementById('quran-title').innerText = quranList[0].title;
 renderQuranList();
+
+// نمایش پیام خوش‌آمدگویی
+setTimeout(() => {
+    showToast('info', 'به پخش‌کننده قرآن خوش آمدید', 'برای شروع، روی یکی از سوره‌ها کلیک کنید یا دکمه پخش را بزنید', 5000);
+}, 1000);
