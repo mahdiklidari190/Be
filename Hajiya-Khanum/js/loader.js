@@ -1,8 +1,6 @@
 /**
- * Header & Footer Auto Loader
- * بارگذاری خودکار هدر و فوتر از فایل‌های جداگانه
+ * Header & Footer Auto Loader - نسخه بهینه شده
  */
-
 const ComponentLoader = {
     config: {
         header: {
@@ -17,8 +15,15 @@ const ComponentLoader = {
         }
     },
 
-    // بارگذاری CSS
+    // کش برای جلوگیری از fetch تکراری
+    _cache: new Map(),
+
+    // بارگذاری CSS با تشخیص تکراری بودن
     loadCSS(path) {
+        // اگر قبلاً لود شده، دیگه لود نکن
+        if (document.querySelector(`link[href="${path}"]`)) {
+            return Promise.resolve();
+        }
         return new Promise((resolve, reject) => {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
@@ -31,39 +36,51 @@ const ComponentLoader = {
 
     // بارگذاری JavaScript
     loadJS(path) {
+        if (document.querySelector(`script[src="${path}"]`)) {
+            return Promise.resolve();
+        }
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
             script.src = path;
+            script.defer = true; // ✅ اجرا بعد از parse HTML
             script.onload = () => resolve();
             script.onerror = () => reject(new Error(`خطا در بارگذاری JS: ${path}`));
             document.body.appendChild(script);
         });
     },
 
-    // بارگذاری HTML
+    // بارگذاری HTML با کش
     async loadHTML(path) {
+        // استفاده از کش
+        if (this._cache.has(path)) {
+            return this._cache.get(path);
+        }
         try {
-            const response = await fetch(path);
+            const response = await fetch(path, { 
+                cache: 'force-cache' // ✅ استفاده از کش مرورگر
+            });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return await response.text();
+            const html = await response.text();
+            this._cache.set(path, html);
+            return html;
         } catch (error) {
             throw new Error(`خطا در بارگذاری HTML: ${path} - ${error.message}`);
         }
     },
 
-    // تزریق کامپوننت (هدر یا فوتر)
+    // ✅ بارگذاری همه منابع یک کامپوننت به صورت همزمان
     async injectComponent(type, targetSelector) {
         const config = this.config[type];
         if (!config) return;
 
         try {
-            // بارگذاری CSS
-            await this.loadCSS(config.css);
+            // 🚀 شروع همزمان بارگذاری CSS و HTML
+            const [html] = await Promise.all([
+                this.loadHTML(config.html),
+                this.loadCSS(config.css)
+            ]);
             
-            // بارگذاری HTML
-            const html = await this.loadHTML(config.html);
-            
-            // تزریق HTML در محل مورد نظر
+            // تزریق HTML
             const target = document.querySelector(targetSelector);
             if (target) {
                 if (type === 'header') {
@@ -72,7 +89,6 @@ const ComponentLoader = {
                     target.insertAdjacentHTML('beforeend', html);
                 }
             } else {
-                // اگر target وجود نداشت، به body اضافه کن
                 if (type === 'header') {
                     document.body.insertAdjacentHTML('afterbegin', html);
                 } else if (type === 'footer') {
@@ -80,8 +96,8 @@ const ComponentLoader = {
                 }
             }
             
-            // بارگذاری JS
-            await this.loadJS(config.js);
+            // بارگذاری JS (غیر بحرانی - بعد از نمایش)
+            this.loadJS(config.js); // بدون await → non-blocking
             
             console.log(`✅ ${type} با موفقیت بارگذاری شد`);
         } catch (error) {
@@ -89,14 +105,20 @@ const ComponentLoader = {
         }
     },
 
-    // راه‌اندازی اولیه
+    // 🚀 راه‌اندازی بهینه - بارگذاری همزمان هدر و فوتر
     async init() {
-        await this.injectComponent('header', 'body');
-        await this.injectComponent('footer', 'body');
+        // بارگذاری همزمان با Promise.all
+        await Promise.all([
+            this.injectComponent('header', 'body'),
+            this.injectComponent('footer', 'body')
+        ]);
     }
 };
 
-// اجرای خودکار هنگام لود صفحه
-document.addEventListener('DOMContentLoaded', () => {
+// اجرای زودتر - قبل از DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => ComponentLoader.init());
+} else {
+    // اگر DOM آماده است، مستقیم اجرا کن
     ComponentLoader.init();
-});
+}
