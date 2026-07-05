@@ -1,5 +1,5 @@
 /**
- * Header & Footer Auto Loader - نسخه نهایی با MutationObserver
+ * Header & Footer Auto Loader - نسخه نهایی با تشخیص دقیق صفحه
  */
 const ComponentLoader = {
     config: {
@@ -62,19 +62,38 @@ const ComponentLoader = {
         }
     },
 
-    // ✅ تشخیص صفحه فعال
+    // ✅ تشخیص صفحه فعال - نسخه بهبود یافته
     activateCurrentPage() {
         const currentPath = window.location.pathname;
         console.log('🔍 مسیر فعلی:', currentPath);
         
-        // استخراج نام صفحه
-        let currentPage = currentPath.split('/').pop();
-        currentPage = currentPage.replace(/\.(html|php)$/, '');
+        // ✅ استخراج نام صفحه با پوشش همه حالت‌ها
+        // حالت‌های مختلف:
+        // /Hajiya-Khanum/quran → quran
+        // /Hajiya-Khanum/quran/ → quran (trailing slash)
+        // /Hajiya-Khanum/quran.html → quran
+        // /Hajiya-Khanum/quran.php → quran
+        // /Hajiya-Khanum/ → home
+        // / → home
+        
+        let currentPage = currentPath;
+        
+        // حذف trailing slash اگر وجود دارد
+        currentPage = currentPage.replace(/\/$/, '');
+        
+        // گرفتن آخرین بخش مسیر
+        currentPage = currentPage.split('/').pop();
+        
+        // حذف پسوند فایل (.html, .php, .asp, etc)
+        currentPage = currentPage.replace(/\.[^/.]+$/, '');
         
         // اگر صفحه اصلی است
         if (!currentPage || currentPage === '' || currentPage === 'index') {
             currentPage = 'home';
         }
+        
+        // تبدیل به حروف کوچک برای مقایسه دقیق‌تر
+        currentPage = currentPage.toLowerCase().trim();
         
         console.log('📄 نام صفحه استخراج شده:', currentPage);
         
@@ -96,9 +115,11 @@ const ComponentLoader = {
         let found = false;
         allButtons.forEach(btn => {
             const dataPage = btn.getAttribute('data-page');
-            console.log(`  - بررسی دکمه: ${dataPage}`);
+            const dataPageLower = dataPage.toLowerCase().trim();
             
-            if (dataPage === currentPage) {
+            console.log(`  - بررسی دکمه: "${dataPage}" با صفحه: "${currentPage}"`);
+            
+            if (dataPageLower === currentPage) {
                 btn.classList.add('active');
                 found = true;
                 console.log(`✅ دکمه فعال شد: ${dataPage}`);
@@ -107,6 +128,9 @@ const ComponentLoader = {
         
         if (!found) {
             console.warn(`⚠️ دکمه‌ای برای صفحه "${currentPage}" پیدا نشد!`);
+            console.log('💡 مقادیر data-page موجود:', 
+                Array.from(allButtons).map(b => b.getAttribute('data-page'))
+            );
         }
     },
 
@@ -141,27 +165,24 @@ const ComponentLoader = {
             // ✅ استفاده از MutationObserver برای تشخیص دقیق
             if (type === 'header') {
                 const observer = new MutationObserver((mutations, obs) => {
-                    // بررسی اینکه آیا منو اضافه شده است
                     const navList = document.querySelector('.nav-list');
                     if (navList) {
                         console.log('👁️ MutationObserver: منو پیدا شد!');
-                        obs.disconnect(); // توقف observer
+                        obs.disconnect();
                         
-                        // کمی صبر کن تا header.js هم لود شود
+                        // صبر کوتاه برای اطمینان از کامل شدن DOM
                         setTimeout(() => {
                             this.activateCurrentPage();
-                        }, 50);
+                        }, 100);
                     }
                 });
                 
-                // شروع مشاهده تغییرات DOM
                 observer.observe(document.body, {
                     childList: true,
                     subtree: true
                 });
             }
             
-            // بارگذاری JS
             await this.loadJS(config.js);
             
             console.log(`✅ ${type} با موفقیت بارگذاری شد`);
