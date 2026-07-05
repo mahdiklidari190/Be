@@ -1,5 +1,5 @@
 /**
- * Header & Footer Auto Loader - نسخه بهینه شده
+ * Header & Footer Auto Loader - نسخه بهینه شده با تشخیص صفحه فعال
  */
 const ComponentLoader = {
     config: {
@@ -20,7 +20,6 @@ const ComponentLoader = {
 
     // بارگذاری CSS با تشخیص تکراری بودن
     loadCSS(path) {
-        // اگر قبلاً لود شده، دیگه لود نکن
         if (document.querySelector(`link[href="${path}"]`)) {
             return Promise.resolve();
         }
@@ -42,7 +41,7 @@ const ComponentLoader = {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
             script.src = path;
-            script.defer = true; // ✅ اجرا بعد از parse HTML
+            script.defer = true;
             script.onload = () => resolve();
             script.onerror = () => reject(new Error(`خطا در بارگذاری JS: ${path}`));
             document.body.appendChild(script);
@@ -51,13 +50,12 @@ const ComponentLoader = {
 
     // بارگذاری HTML با کش
     async loadHTML(path) {
-        // استفاده از کش
         if (this._cache.has(path)) {
             return this._cache.get(path);
         }
         try {
             const response = await fetch(path, { 
-                cache: 'force-cache' // ✅ استفاده از کش مرورگر
+                cache: 'force-cache'
             });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const html = await response.text();
@@ -68,19 +66,45 @@ const ComponentLoader = {
         }
     },
 
+    // ✅ تشخیص صفحه فعال و فعال کردن دکمه مربوطه
+    activateCurrentPage() {
+        const currentPath = window.location.pathname;
+        const currentPage = currentPath.split('/').pop() || 'index.html';
+        
+        // حذف کلاس active از همه دکمه‌ها
+        const allNavLinks = document.querySelectorAll('.nav-link, .header-link, [data-page]');
+        allNavLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // پیدا کردن لینک فعال
+        const activeLinks = document.querySelectorAll('.nav-link, .header-link, [data-page]');
+        activeLinks.forEach(link => {
+            const href = link.getAttribute('href') || '';
+            const dataPage = link.getAttribute('data-page') || '';
+            
+            // بررسی تطابق با صفحه فعلی
+            if (href.includes(currentPage) || 
+                dataPage === currentPage || 
+                (currentPage === 'index.html' && (href === '/' || href === '/index.html' || dataPage === 'index.html'))) {
+                link.classList.add('active');
+            }
+        });
+        
+        console.log(`✅ صفحه فعال: ${currentPage}`);
+    },
+
     // ✅ بارگذاری همه منابع یک کامپوننت به صورت همزمان
     async injectComponent(type, targetSelector) {
         const config = this.config[type];
         if (!config) return;
 
         try {
-            // 🚀 شروع همزمان بارگذاری CSS و HTML
             const [html] = await Promise.all([
                 this.loadHTML(config.html),
                 this.loadCSS(config.css)
             ]);
             
-            // تزریق HTML
             const target = document.querySelector(targetSelector);
             if (target) {
                 if (type === 'header') {
@@ -96,8 +120,15 @@ const ComponentLoader = {
                 }
             }
             
-            // بارگذاری JS (غیر بحرانی - بعد از نمایش)
-            this.loadJS(config.js); // بدون await → non-blocking
+            this.loadJS(config.js);
+            
+            // ✅ اگر هدر لود شد، صفحه فعال را تشخیص بده
+            if (type === 'header') {
+                // کمی صبر کن تا DOM کامل شود
+                setTimeout(() => {
+                    this.activateCurrentPage();
+                }, 100);
+            }
             
             console.log(`✅ ${type} با موفقیت بارگذاری شد`);
         } catch (error) {
@@ -105,9 +136,8 @@ const ComponentLoader = {
         }
     },
 
-    // 🚀 راه‌اندازی بهینه - بارگذاری همزمان هدر و فوتر
+    // 🚀 راه‌اندازی بهینه
     async init() {
-        // بارگذاری همزمان با Promise.all
         await Promise.all([
             this.injectComponent('header', 'body'),
             this.injectComponent('footer', 'body')
@@ -115,10 +145,9 @@ const ComponentLoader = {
     }
 };
 
-// اجرای زودتر - قبل از DOMContentLoaded
+// اجرای زودتر
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => ComponentLoader.init());
 } else {
-    // اگر DOM آماده است، مستقیم اجرا کن
     ComponentLoader.init();
 }
