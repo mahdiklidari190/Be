@@ -30,7 +30,95 @@ function showToast(type, title, message, duration = 4000) {
     }, duration);
 }
 
-// ===== QURAN - 114 Surahs with Multiple Servers =====
+// ===== LIST OF QURAN RECITERS =====
+const quranReciters = [
+    {
+        id: 'abdulbasit-murattal',
+        name: 'عبدالباسط عبدالصمد',
+        desc: 'مرتّل - کیفیت 192kbps',
+        folder: 'Abdul_Basit_Murattal_192kbps',
+        icon: 'ع'
+    },
+    {
+        id: 'abdulbasit-mujawwad',
+        name: 'عبدالباسط عبدالصمد',
+        desc: 'مجوّد - کیفیت 128kbps',
+        folder: 'Abdul_Basit_Mujawwad_128kbps',
+        icon: 'ع'
+    },
+    {
+        id: 'alafasy',
+        name: 'مشاری عفاسی',
+        desc: 'کیفیت 128kbps',
+        folder: 'Alafasy_128kbps',
+        icon: 'م'
+    },
+    {
+        id: 'husary',
+        name: 'خلیل الحصری',
+        desc: 'کیفیت 128kbps',
+        folder: 'Husary_128kbps',
+        icon: 'خ'
+    },
+    {
+        id: 'sudais',
+        name: 'عبدالرحمن السدیس',
+        desc: 'کیفیت 192kbps',
+        folder: 'Abdurrahmaan_As-Sudais_192kbps',
+        icon: 'س'
+    },
+    {
+        id: 'muaiqly',
+        name: 'ماهر المعیقلی',
+        desc: 'کیفیت 128kbps',
+        folder: 'MaherAlMuaiqly128kbps',
+        icon: 'م'
+    },
+    {
+        id: 'ghamadi',
+        name: 'سعد الغامدی',
+        desc: 'کیفیت 40kbps',
+        folder: 'Ghamadi_40kbps',
+        icon: 'غ'
+    },
+    {
+        id: 'ayyoub',
+        name: 'محمد ایوب',
+        desc: 'کیفیت 128kbps',
+        folder: 'Muhammad_Ayyoub_128kbps',
+        icon: 'م'
+    },
+    {
+        id: 'jibreel',
+        name: 'محمد جبریل',
+        desc: 'کیفیت 128kbps',
+        folder: 'Muhammad_Jibreel_128kbps',
+        icon: 'م'
+    },
+    {
+        id: 'minshawy',
+        name: 'منشاوی',
+        desc: 'مرتّل - کیفیت 128kbps',
+        folder: 'Minshawy_Murattal_128kbps',
+        icon: 'م'
+    },
+    {
+        id: 'shaatree',
+        name: 'ابوبکر شاطری',
+        desc: 'کیفیت 128kbps',
+        folder: 'Abu_Bakr_Ash-Shaatree_128kbps',
+        icon: 'ش'
+    },
+    {
+        id: 'ajamy',
+        name: 'احمد عجمی',
+        desc: 'کیفیت 128kbps',
+        folder: 'Ahmed_ibn_Ali_al-Ajamy_128kbps',
+        icon: 'ا'
+    }
+];
+
+// ===== SURAH NAMES =====
 const surahNames = [
     "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
     "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
@@ -46,38 +134,130 @@ const surahNames = [
     "المسد", "الإخلاص", "الفلق", "الناس"
 ];
 
-// ===== سرورهای چندگانه برای اطمینان از اتصال =====
-const quranServers = [
-    // سرور اصلی: mp3quran.net (سریع و پایدار)
-    (i) => `https://server11.mp3quran.net/s_gmd/${String(i).padStart(3, '0')}.mp3`,
-    
-    // سرور جایگزین 1: Internet Archive
-    (i) => `https://archive.org/download/saud-al-ghamdi-quran/${String(i).padStart(3, '0')}.mp3`,
-    
-    // سرور جایگزین 2: everyayah.com
-    (i) => `https://everyayah.com/data/Saood_ash-Shuraym_128kbps/${String(i).padStart(3, '0')}.mp3`,
-    
-    // سرور جایگزین 3: Quran Central
-    (i) => `https://cdn.qurancentral.com/saud-ghamdi/${String(i).padStart(3, '0')}.mp3`
-];
-
+// ===== QURAN LIST =====
 const quranList = surahNames.map((name, i) => ({
     id: i,
     title: `سوره ${name}`,
     num: i + 1
 }));
 
+// ===== VARIABLES =====
 let qIndex = 0;
+let currentReciterIndex = 0;
 const qAudio = document.getElementById('quran-audio');
 const qPlayIcon = document.getElementById('q-play-icon');
 const qPauseIcon = document.getElementById('q-pause-icon');
 const qProgress = document.getElementById('q-progress');
 const quranDisc = document.getElementById('quranDisc');
 let isQPlaying = false;
-let currentServerIndex = 0;
 let isLoading = false;
 let hasUserInteracted = false;
 
+// ===== QARI SELECTOR FUNCTIONS =====
+function initQariSelector() {
+    const qariSelectorBtn = document.getElementById('qariSelectorBtn');
+    const qariDropdown = document.getElementById('qariDropdown');
+    const qariDropdownList = document.getElementById('qariDropdownList');
+    
+    // Render qari list
+    renderQariList();
+    
+    // Toggle dropdown
+    qariSelectorBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        qariDropdown.classList.toggle('show');
+        qariSelectorBtn.classList.toggle('active');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!qariSelectorBtn.contains(e.target) && !qariDropdown.contains(e.target)) {
+            qariDropdown.classList.remove('show');
+            qariSelectorBtn.classList.remove('active');
+        }
+    });
+    
+    // Load saved reciter from localStorage
+    const savedReciterId = localStorage.getItem('selectedReciter');
+    if (savedReciterId) {
+        const savedIndex = quranReciters.findIndex(r => r.id === savedReciterId);
+        if (savedIndex !== -1) {
+            currentReciterIndex = savedIndex;
+            updateQariDisplay();
+        }
+    }
+}
+
+function renderQariList() {
+    const qariDropdownList = document.getElementById('qariDropdownList');
+    qariDropdownList.innerHTML = '';
+    
+    quranReciters.forEach((reciter, index) => {
+        const isActive = index === currentReciterIndex;
+        const qariItem = document.createElement('div');
+        qariItem.className = `qari-item ${isActive ? 'active' : ''}`;
+        qariItem.innerHTML = `
+            <div class="qari-item-icon">${reciter.icon}</div>
+            <div class="qari-item-info">
+                <div class="qari-item-name">${reciter.name}</div>
+                <div class="qari-item-desc">${reciter.desc}</div>
+            </div>
+            <svg class="qari-item-check" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            </svg>
+        `;
+        
+        qariItem.addEventListener('click', () => {
+            selectReciter(index);
+        });
+        
+        qariDropdownList.appendChild(qariItem);
+    });
+}
+
+function selectReciter(index) {
+    currentReciterIndex = index;
+    const reciter = quranReciters[index];
+    
+    // Save to localStorage
+    localStorage.setItem('selectedReciter', reciter.id);
+    
+    // Update UI
+    updateQariDisplay();
+    renderQariList();
+    
+    // Close dropdown
+    document.getElementById('qariDropdown').classList.remove('show');
+    document.getElementById('qariSelectorBtn').classList.remove('active');
+    
+    // Reload current surah with new reciter
+    if (hasUserInteracted) {
+        loadQuran(qIndex);
+        const playPromise = qAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                showToast('success', 'قاری تغییر کرد', `تلاوت ${reciter.name} در حال پخش است`, 3000);
+            }).catch(err => {
+                showToast('warning', 'قاری تغییر کرد', 'برای پخش مجدد کلیک کنید', 3000);
+            });
+        }
+    } else {
+        showToast('success', 'قاری تغییر کرد', `${reciter.name} انتخاب شد`, 3000);
+    }
+}
+
+function updateQariDisplay() {
+    const reciter = quranReciters[currentReciterIndex];
+    document.getElementById('qariSelectorText').textContent = reciter.name;
+    document.getElementById('quran-artist').textContent = `تلاوت: ${reciter.name}`;
+}
+
+function getAudioUrl(surahNum) {
+    const reciter = quranReciters[currentReciterIndex];
+    return `https://everyayah.com/data/${reciter.folder}/${String(surahNum).padStart(3, '0')}.mp3`;
+}
+
+// ===== QURAN PLAYER FUNCTIONS =====
 function setDiscLoading(loading) {
     isLoading = loading;
     if (loading) {
@@ -87,12 +267,11 @@ function setDiscLoading(loading) {
     }
 }
 
-function loadQuran(index, retry = false) {
-    if (!retry) currentServerIndex = 0;
+function loadQuran(index) {
     setDiscLoading(true);
     
     const surahNum = quranList[index].num;
-    const url = quranServers[currentServerIndex](surahNum);
+    const url = getAudioUrl(surahNum);
     qAudio.src = url;
     document.getElementById('quran-title').innerText = quranList[index].title;
     renderQuranList();
@@ -117,23 +296,6 @@ function renderQuranList() {
     });
 }
 
-function tryNextServer(index) {
-    if (currentServerIndex < quranServers.length - 1) {
-        currentServerIndex++;
-        const surahNum = quranList[index].num;
-        const newUrl = quranServers[currentServerIndex](surahNum);
-        qAudio.src = newUrl;
-        
-        return qAudio.play().then(() => {
-            showToast('success', 'اتصال برقرار شد', `سرور جایگزین ${currentServerIndex + 1} با موفقیت متصل شد`);
-            return true;
-        }).catch(() => {
-            return tryNextServer(index);
-        });
-    }
-    return Promise.resolve(false);
-}
-
 function playQuran(index) {
     qIndex = index;
     hasUserInteracted = true;
@@ -146,13 +308,9 @@ function playQuran(index) {
             updateQBtn();
             setDiscLoading(false);
         }).catch(err => {
-            console.log('خطا در پخش، تلاش برای سرور جایگزین...', err);
-            tryNextServer(index).then(success => {
-                if (!success) {
-                    showToast('error', 'خطا در اتصال', 'متأسفانه هیچ سروری در دسترس نیست. لطفاً اتصال اینترنت خود را بررسی کنید.');
-                    setDiscLoading(false);
-                }
-            });
+            console.log('خطا در پخش:', err);
+            showToast('error', 'خطا در پخش', 'لطفاً اتصال اینترنت خود را بررسی کنید', 4000);
+            setDiscLoading(false);
         });
     }
 }
@@ -172,11 +330,7 @@ function toggleQuran() {
                 renderQuranList();
                 setDiscLoading(false);
             }).catch(() => {
-                tryNextServer(qIndex).then(success => {
-                    if (!success) {
-                        showToast('error', 'خطا در پخش', 'سرور در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.');
-                    }
-                });
+                showToast('error', 'خطا در پخش', 'سرور در دسترس نیست', 4000);
             });
         }
     } else {
@@ -228,12 +382,7 @@ qAudio.addEventListener('playing', () => {
 qAudio.addEventListener('error', (e) => {
     setDiscLoading(false);
     if (hasUserInteracted && e.target.error && e.target.error.code !== 0) {
-        console.log('خطای سرور، تلاش برای سرور جایگزین...');
-        tryNextServer(qIndex).then(success => {
-            if (!success) {
-                showToast('error', 'خطای سرور', 'متأسفانه سرور در دسترس نیست. لطفاً بعداً دوباره تلاش کنید.');
-            }
-        });
+        showToast('error', 'خطای سرور', 'فایل صوتی در دسترس نیست', 4000);
     }
 });
 
@@ -255,10 +404,16 @@ function formatTime(sec) {
 }
 
 // ===== INITIALIZATION =====
-document.getElementById('quran-title').innerText = quranList[0].title;
-renderQuranList();
-
-// نمایش پیام خوش‌آمدگویی
-setTimeout(() => {
-    showToast('info', 'به پخش‌کننده قرآن خوش آمدید', 'برای شروع، روی یکی از سوره‌ها کلیک کنید یا دکمه پخش را بزنید', 5000);
-}, 1000);
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize qari selector
+    initQariSelector();
+    
+    // Initialize quran player
+    document.getElementById('quran-title').innerText = quranList[0].title;
+    renderQuranList();
+    
+    // Welcome toast
+    setTimeout(() => {
+        showToast('info', 'به پخش‌کننده قرآن خوش آمدید', 'قاری مورد نظر خود را انتخاب کنید و روی سوره کلیک کنید', 5000);
+    }, 1000);
+});
