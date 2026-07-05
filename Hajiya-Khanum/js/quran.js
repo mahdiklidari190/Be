@@ -48,17 +48,17 @@ const surahNames = [
 
 // ===== سرورهای چندگانه برای اطمینان از اتصال =====
 const quranServers = [
-    // سرور اصلی: Internet Archive (معتبر و پایدار)
-    (i) => `https://archive.org/download/abdulbasit-murratal/${String(i).padStart(3, '0')}.mp3`,
+    // سرور اصلی: mp3quran.net (سریع و پایدار)
+    (i) => `https://server11.mp3quran.net/s_gmd/${String(i).padStart(3, '0')}.mp3`,
     
-    // سرور جایگزین 1: Server 8 mp3quran.net
-    (i) => `https://server8.mp3quran.net/basit/${String(i).padStart(3, '0')}.mp3`,
+    // سرور جایگزین 1: Internet Archive
+    (i) => `https://archive.org/download/saud-al-ghamdi-quran/${String(i).padStart(3, '0')}.mp3`,
     
-    // سرور جایگزین 2: cdn.islamic.network (اگر دوباره فعال شود)
-    (i) => `https://cdn.islamic.network/quran/audio-surah/128/ar.abdulbasitmurattal/${i}.mp3`,
+    // سرور جایگزین 2: everyayah.com
+    (i) => `https://everyayah.com/data/Saood_ash-Shuraym_128kbps/${String(i).padStart(3, '0')}.mp3`,
     
-    // سرور جایگزین 3: everyayah.com (فایل‌های کامل سوره)
-    (i) => `https://everyayah.com/data/Abdul_Basit_Murattal_192kbps/${String(i).padStart(3, '0')}.mp3`
+    // سرور جایگزین 3: Quran Central
+    (i) => `https://cdn.qurancentral.com/saud-ghamdi/${String(i).padStart(3, '0')}.mp3`
 ];
 
 const quranList = surahNames.map((name, i) => ({
