@@ -30,90 +30,90 @@ function showToast(type, title, message, duration = 4000) {
     }, duration);
 }
 
-// ===== LIST OF QURAN RECITERS =====
+// ===== LIST OF QURAN RECITERS (با استفاده از Islamic Network CDN) =====
 const quranReciters = [
     {
         id: 'abdulbasit-murattal',
         name: 'عبدالباسط عبدالصمد',
-        desc: 'مرتّل - کیفیت 192kbps',
-        folder: 'Abdul_Basit_Murattal_192kbps',
+        desc: 'مرتّل - کیفیت 128kbps',
+        edition: 'ar.abdulbasitmurattal',
         icon: 'ع'
     },
     {
         id: 'abdulbasit-mujawwad',
         name: 'عبدالباسط عبدالصمد',
         desc: 'مجوّد - کیفیت 128kbps',
-        folder: 'Abdul_Basit_Mujawwad_128kbps',
+        edition: 'ar.abdulbasitmujawwad',
         icon: 'ع'
     },
     {
         id: 'alafasy',
         name: 'مشاری عفاسی',
         desc: 'کیفیت 128kbps',
-        folder: 'Alafasy_128kbps',
+        edition: 'ar.alafasy',
         icon: 'م'
     },
     {
         id: 'husary',
         name: 'خلیل الحصری',
         desc: 'کیفیت 128kbps',
-        folder: 'Husary_128kbps',
+        edition: 'ar.husary',
         icon: 'خ'
     },
     {
         id: 'sudais',
         name: 'عبدالرحمن السدیس',
-        desc: 'کیفیت 192kbps',
-        folder: 'Abdurrahmaan_As-Sudais_192kbps',
+        desc: 'کیفیت 128kbps',
+        edition: 'ar.abdurrahmaansudais',
         icon: 'س'
     },
     {
         id: 'muaiqly',
         name: 'ماهر المعیقلی',
         desc: 'کیفیت 128kbps',
-        folder: 'MaherAlMuaiqly128kbps',
+        edition: 'ar.mahermuaiqly',
         icon: 'م'
     },
     {
         id: 'ghamadi',
         name: 'سعد الغامدی',
-        desc: 'کیفیت 40kbps',
-        folder: 'Ghamadi_40kbps',
+        desc: 'کیفیت 128kbps',
+        edition: 'ar.saadghamdi',
         icon: 'غ'
     },
     {
         id: 'ayyoub',
         name: 'محمد ایوب',
         desc: 'کیفیت 128kbps',
-        folder: 'Muhammad_Ayyoub_128kbps',
+        edition: 'ar.muhammadayyoub',
         icon: 'م'
     },
     {
         id: 'jibreel',
         name: 'محمد جبریل',
         desc: 'کیفیت 128kbps',
-        folder: 'Muhammad_Jibreel_128kbps',
+        edition: 'ar.muhammadjibreel',
         icon: 'م'
     },
     {
         id: 'minshawy',
         name: 'منشاوی',
         desc: 'مرتّل - کیفیت 128kbps',
-        folder: 'Minshawy_Murattal_128kbps',
+        edition: 'ar.minshawy',
         icon: 'م'
     },
     {
         id: 'shaatree',
         name: 'ابوبکر شاطری',
         desc: 'کیفیت 128kbps',
-        folder: 'Abu_Bakr_Ash-Shaatree_128kbps',
+        edition: 'ar.abubakrishri',
         icon: 'ش'
     },
     {
         id: 'ajamy',
         name: 'احمد عجمی',
         desc: 'کیفیت 128kbps',
-        folder: 'Ahmed_ibn_Ali_al-Ajamy_128kbps',
+        edition: 'ar.ahmedajamy',
         icon: 'ا'
     }
 ];
@@ -203,7 +203,7 @@ function renderQariList() {
                 <div class="qari-item-desc">${reciter.desc}</div>
             </div>
             <svg class="qari-item-check" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M16.707 5.293a1 0 010 1.414l-8 8a1 0 01-1.414 0l-4-4a1 0 011.414-1.414L8 12.586l7.293-7.293a1 0 011.414 0z" clip-rule="evenodd"/>
             </svg>
         `;
         
@@ -252,9 +252,12 @@ function updateQariDisplay() {
     document.getElementById('quran-artist').textContent = `تلاوت: ${reciter.name}`;
 }
 
+// ===== تابع به‌روزرسانی شده برای ساخت URL صحیح =====
 function getAudioUrl(surahNum) {
     const reciter = quranReciters[currentReciterIndex];
-    return `https://everyayah.com/data/${reciter.folder}/${String(surahNum).padStart(3, '0')}.mp3`;
+    // استفاده از Islamic Network CDN
+    // فرمت: https://cdn.islamic.network/quran/audio-surah/{bitrate}/{edition}/{number}.mp3
+    return `https://cdn.islamic.network/quran/audio-surah/128/${reciter.edition}/${surahNum}.mp3`;
 }
 
 // ===== QURAN PLAYER FUNCTIONS =====
