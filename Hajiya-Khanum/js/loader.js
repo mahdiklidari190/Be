@@ -1,5 +1,5 @@
 /**
- * Header & Footer Auto Loader - نسخه با کش و بهینه
+ * Header & Footer Auto Loader - نسخه با کش، ورژن و بهینه
  */
 const ComponentLoader = {
     config: {
@@ -18,11 +18,17 @@ const ComponentLoader = {
     // تنظیمات کش
     cacheSettings: {
         ttl: 24 * 60 * 60 * 1000, // 24 ساعت به میلی‌ثانیه
-        prefix: 'component_cache_'
+        prefix: 'component_cache_',
+        version: '1.1' // هر وقت هدر یا فوتر تغییر کرد این را تغییر بده (مثلاً 1.2)
     },
     
     // ردیابی منابع لود شده برای جلوگیری از تکرار
     loadedResources: new Set(),
+
+    // ساخت cacheKey با ورژن
+    getCacheKey(type) {
+        return this.cacheSettings.prefix + type + '_v' + this.cacheSettings.version;
+    },
 
     // بررسی اعتبار کش
     isCacheValid(cacheKey) {
@@ -152,7 +158,8 @@ const ComponentLoader = {
         const config = this.config[type];
         if (!config) return;
 
-        const cacheKey = this.cacheSettings.prefix + type;
+        // استفاده از cacheKey با ورژن
+        const cacheKey = this.getCacheKey(type);
 
         try {
             // لود HTML از کش یا سرور
@@ -212,7 +219,7 @@ const ComponentLoader = {
     async updateCache() {
         for (const type of ['header', 'footer']) {
             const config = this.config[type];
-            const cacheKey = this.cacheSettings.prefix + type;
+            const cacheKey = this.getCacheKey(type);
             
             try {
                 const response = await fetch(config.html, { cache: 'no-store' });
