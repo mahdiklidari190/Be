@@ -1,6 +1,7 @@
 /* ===== SALAVAT SECTION ===== */
 .salavat-section {
     padding: 3rem 1rem;
+    padding-top: 7rem;
     position: relative;
     overflow: hidden;
     background: 
@@ -12,6 +13,7 @@
 @media (min-width: 768px) {
     .salavat-section {
         padding: 5rem 1rem;
+        padding-top: 8rem; 
     }
 }
 
