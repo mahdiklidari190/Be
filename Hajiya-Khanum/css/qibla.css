@@ -8,7 +8,22 @@ body::after { content: ''; position: fixed; bottom: -20%; right: -10%; width: 60
 .header-title p { color: var(--emerald-200); font-size: clamp(0.9rem, 2vw, 1.1rem); font-weight: 300; }
 
 /* ====== REAL COMPASS UI ====== */
-.qibla-wrapper { display: flex; flex-direction: column; align-items: center; padding: 2.5rem 1rem; margin-bottom: 2.5rem; position: relative; }
+/* ====== REAL COMPASS UI ====== */
+.qibla-wrapper { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 2.5rem 1rem;
+    padding-top: 5rem; /* اضافه شده - فاصله از بالا بیشتر شد */
+    margin-bottom: 2.5rem; 
+    position: relative; 
+}
+
+@media (min-width: 768px) {
+    .qibla-wrapper {
+        padding-top: 7rem; /* در دسکتاپ فاصله بیشتر */
+    }
+}
 
 .phone-indicator { position: absolute; top: 1.5rem; font-size: 1.5rem; color: var(--emerald-300); z-index: 10; display: flex; flex-direction: column; align-items: center; }
 .phone-indicator::after { content: 'بالای گوشی'; font-size: 0.7rem; opacity: 0.7; margin-top: 5px; }
