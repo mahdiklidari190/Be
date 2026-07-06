@@ -43,8 +43,20 @@ a { text-decoration: none; color: inherit; }
 .glass-card:hover {
     background: rgba(255, 255, 255, 0.08); border-color: rgba(251, 191, 36, 0.4); transform: translateY(-5px);
 }
-.section { padding: 4rem 1rem; position: relative; z-index: 10; border-top: 1px solid rgba(217,119,6,0.2); }
-@media (min-width: 768px) { .section { padding: 6rem 1rem; } }
+.section { 
+    padding: 4rem 1rem;
+    padding-top: 7rem;
+    position: relative; 
+    z-index: 10; 
+    border-top: 1px solid rgba(217,119,6,0.2); 
+}
+
+@media (min-width: 768px) { 
+    .section { 
+        padding: 6rem 1rem;
+        padding-top: 8rem;
+    } 
+}
 .section-dark { background: rgba(2,44,34,0.5); }
 .section-inner { max-width: 80rem; margin: 0 auto; }
 .section-title-wrap { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; }
