@@ -293,7 +293,7 @@ class CompassService {
                         this.sensor = null;
                         resolve(false);
                     }
-                }, 2000);
+                }, 5000); // افزایش زمان به ۵ ثانیه برای اطمینان از راه‌اندازی سنسور
             });
         } catch {
             return false;
@@ -302,7 +302,8 @@ class CompassService {
 
     quaternionToHeading(q) {
         const [x, y, z, w] = q;
-        const vyX = 2 * (x * y + w * z);
+        // فرمول صحیح برای استخراج محور Y از ماتریس چرخش (ستون دوم ماتریس R)
+        const vyX = 2 * (x * y - w * z); // علامت منفی برای w * z اصلاح شد
         const vyY = 1 - 2 * (x * x + z * z);
         return normalizeAngle(radToDeg(Math.atan2(vyX, vyY)));
     }
