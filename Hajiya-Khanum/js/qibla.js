@@ -34,6 +34,22 @@ const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
 const degToRad = (deg) => deg * (Math.PI / 180);
 const radToDeg = (rad) => rad * (180 / Math.PI);
 
+async function retryWithBackoff(fn, retries = 3, baseDelay = 1000) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fn();
+        } catch (error) {
+            const msg = error.message || '';
+            if (msg.includes('OFFLINE') || msg.includes('PERMISSION_DENIED') || 
+                msg.includes('GPS_DISABLED') || msg.includes('COMPASS_PERMISSION')) {
+                throw error;
+            }
+            if (i === retries - 1) throw error;
+            await new Promise(res => setTimeout(res, baseDelay * Math.pow(2, i)));
+        }
+    }
+}
+
 class StorageManager {
     static get(key) {
         try {
@@ -61,6 +77,10 @@ class NetworkManager {
     static pendingRequests = new Map();
 
     static async fetchWithTimeout(url, options = {}, timeoutMs = CONFIG.TIMEOUTS.FETCH) {
+        if (!navigator.onLine) {
+            throw new Error('OFFLINE');
+        }
+
         if (this.pendingRequests.has(url)) {
             return this.pendingRequests.get(url);
         }
@@ -90,23 +110,33 @@ class NetworkManager {
 class LocationService {
     static async getLocation() {
         const cached = StorageManager.get(CONFIG.CACHE_KEYS.LOCATION);
-        if (cached) return { ...cached, source: 'حافظه پنهان' };
 
         try {
-            const coords = await this.getGPSCoordinates();
-            const city = await this.reverseGeocode(coords.lat, coords.lng);
+            const coords = await retryWithBackoff(() => this.getGPSCoordinates());
+            
+            if (cached) {
+                const distance = this.calculateDistance(cached.lat, cached.lng, coords.lat, coords.lng);
+                if (distance < 1) {
+                    return { ...coords, city: cached.city, source: 'GPS' };
+                }
+            }
+            
+            const city = await retryWithBackoff(() => this.reverseGeocode(coords.lat, coords.lng));
             const result = { ...coords, city, source: 'GPS' };
             StorageManager.set(CONFIG.CACHE_KEYS.LOCATION, result);
             return result;
         } catch (error) {
-            console.warn('GPS failed, falling back to IP:', error.message);
+            if (cached && (error.message === 'GPS_TIMEOUT' || error.message === 'OFFLINE')) {
+                return { ...cached, source: 'حافظه پنهان (GPS در دسترس نبود)' };
+            }
+            
             try {
-                const ipData = await this.getIPLocation();
+                const ipData = await retryWithBackoff(() => this.getIPLocation());
                 const result = { ...ipData, source: 'IP' };
                 StorageManager.set(CONFIG.CACHE_KEYS.LOCATION, result);
                 return result;
             } catch (ipError) {
-                throw new Error('مکان‌یابی ناموفق بود.');
+                throw error; 
             }
         }
     }
@@ -118,22 +148,28 @@ class LocationService {
             }
             navigator.geolocation.getCurrentPosition(
                 (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-                (err) => reject(err),
+                (err) => {
+                    if (err.code === err.PERMISSION_DENIED) {
+                        reject(new Error('LOCATION_PERMISSION_DENIED'));
+                    } else if (err.code === err.POSITION_UNAVAILABLE) {
+                        reject(new Error('GPS_DISABLED'));
+                    } else if (err.code === err.TIMEOUT) {
+                        reject(new Error('GPS_TIMEOUT'));
+                    } else {
+                        reject(err);
+                    }
+                },
                 { enableHighAccuracy: true, timeout: CONFIG.TIMEOUTS.GEOLOCATION, maximumAge: 0 }
             );
         });
     }
 
     static async reverseGeocode(lat, lng) {
-        try {
-            const data = await NetworkManager.fetchWithTimeout(
-                `${CONFIG.API_ENDPOINTS.NOMINATIM}?format=json&lat=${lat}&lon=${lng}`
-            );
-            const addr = data.address || {};
-            return addr.city || addr.town || addr.village || addr.county || addr.state || 'مکان نامشخص';
-        } catch {
-            return 'مکان‌یابی شد';
-        }
+        const data = await NetworkManager.fetchWithTimeout(
+            `${CONFIG.API_ENDPOINTS.NOMINATIM}?format=json&lat=${lat}&lon=${lng}`
+        );
+        const addr = data.address || {};
+        return addr.city || addr.town || addr.village || addr.county || addr.state || 'مکان نامشخص';
     }
 
     static async getIPLocation() {
@@ -143,6 +179,17 @@ class LocationService {
             lng: data.longitude,
             city: data.city || data.region || 'مکان نامشخص'
         };
+    }
+
+    static calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = degToRad(lat2 - lat1);
+        const dLon = degToRad(lon2 - lon1);
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(degToRad(lat1)) * Math.cos(degToRad(lat2)) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
     }
 }
 
@@ -161,25 +208,20 @@ class PrayerTimesService {
 
         const url = `${CONFIG.API_ENDPOINTS.ALADHAN}/${dd}-${mm}-${yyyy}?latitude=${lat}&longitude=${lng}&method=${CONFIG.ALADHAN_METHOD}`;
 
-        try {
-            const data = await NetworkManager.fetchWithTimeout(url);
-            if (data?.code === 200 && data?.data?.timings) {
-                const t = data.data.timings;
-                const result = {
-                    Fajr: t.Fajr?.substring(0, 5) || '--:--',
-                    Sunrise: t.Sunrise?.substring(0, 5) || '--:--',
-                    Dhuhr: t.Dhuhr?.substring(0, 5) || '--:--',
-                    Sunset: t.Sunset?.substring(0, 5) || '--:--',
-                    Maghrib: t.Maghrib?.substring(0, 5) || '--:--'
-                };
-                StorageManager.set(cacheKey, result);
-                return result;
-            }
-            throw new Error('Invalid API structure');
-        } catch (error) {
-            console.error('Prayer times fetch failed:', error);
-            throw new Error('خطا در دریافت اوقات شرعی');
+        const data = await NetworkManager.fetchWithTimeout(url);
+        if (data?.code === 200 && data?.data?.timings) {
+            const t = data.data.timings;
+            const result = {
+                Fajr: t.Fajr?.substring(0, 5) || '--:--',
+                Sunrise: t.Sunrise?.substring(0, 5) || '--:--',
+                Dhuhr: t.Dhuhr?.substring(0, 5) || '--:--',
+                Sunset: t.Sunset?.substring(0, 5) || '--:--',
+                Maghrib: t.Maghrib?.substring(0, 5) || '--:--'
+            };
+            StorageManager.set(cacheKey, result);
+            return result;
         }
+        throw new Error('Invalid API structure');
     }
 }
 
@@ -212,6 +254,8 @@ class CompassService {
         this.lastUpdateTime = Date.now();
         this.isFrozen = false;
         this.onCalibrationRequired = null;
+        this.onRecovered = null;
+        this.orientationHandler = null;
         
         this.handleSensorReading = this.handleSensorReading.bind(this);
         this.handleOrientationEvent = this.handleOrientationEvent.bind(this);
@@ -245,6 +289,7 @@ class CompassService {
                     if (!resolved) {
                         resolved = true;
                         this.sensor.stop();
+                        this.sensor.removeEventListener('reading', this.handleSensorReading);
                         this.sensor = null;
                         resolve(false);
                     }
@@ -271,7 +316,7 @@ class CompassService {
     async tryDeviceOrientation() {
         return new Promise((resolve) => {
             let resolved = false;
-            const handler = (e) => {
+            this.orientationHandler = (e) => {
                 if (!resolved) {
                     resolved = true;
                     this.isAvailable = true;
@@ -280,14 +325,15 @@ class CompassService {
                 this.handleOrientationEvent(e);
             };
 
-            window.addEventListener('deviceorientationabsolute', handler, true);
-            window.addEventListener('deviceorientation', handler, true);
+            window.addEventListener('deviceorientationabsolute', this.orientationHandler, true);
+            window.addEventListener('deviceorientation', this.orientationHandler, true);
 
             setTimeout(() => {
                 if (!resolved) {
                     resolved = true;
-                    window.removeEventListener('deviceorientationabsolute', handler, true);
-                    window.removeEventListener('deviceorientation', handler, true);
+                    window.removeEventListener('deviceorientationabsolute', this.orientationHandler, true);
+                    window.removeEventListener('deviceorientation', this.orientationHandler, true);
+                    this.orientationHandler = null;
                     resolve(false);
                 }
             }, 2000);
@@ -299,7 +345,13 @@ class CompassService {
         if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
             heading = event.webkitCompassHeading;
         } else if (event.alpha !== null && event.alpha !== undefined) {
-            heading = normalizeAngle(360 - event.alpha);
+            let offset = 0;
+            if (screen.orientation && screen.orientation.angle !== undefined) {
+                offset = screen.orientation.angle;
+            } else if (window.orientation !== undefined) {
+                offset = window.orientation;
+            }
+            heading = normalizeAngle(360 - event.alpha + offset);
         }
 
         if (heading !== null) {
@@ -309,7 +361,11 @@ class CompassService {
 
     updateHeading(newHeading) {
         this.lastUpdateTime = Date.now();
-        this.isFrozen = false;
+        
+        if (this.isFrozen) {
+            this.isFrozen = false;
+            if (this.onRecovered) this.onRecovered();
+        }
 
         if (this.lastRawHeading !== null) {
             let diff = Math.abs(newHeading - this.lastRawHeading);
@@ -386,6 +442,19 @@ class CompassService {
         }
         if (this.sensor) {
             this.sensor.stop();
+        }
+    }
+
+    destroy() {
+        this.stop();
+        if (this.sensor) {
+            this.sensor.removeEventListener('reading', this.handleSensorReading);
+            this.sensor = null;
+        }
+        if (this.orientationHandler) {
+            window.removeEventListener('deviceorientationabsolute', this.orientationHandler, true);
+            window.removeEventListener('deviceorientation', this.orientationHandler, true);
+            this.orientationHandler = null;
         }
     }
 
@@ -479,8 +548,13 @@ class App {
         this.compass = new CompassService();
         this.qiblaDegree = 0;
         this.isRunning = false;
+        this.location = null;
+        this.prayerTimesLoaded = false;
+        
         this.visibilityHandler = this.handleVisibilityChange.bind(this);
         this.unloadHandler = this.handleUnload.bind(this);
+        this.onlineHandler = this.handleOnline.bind(this);
+        this.offlineHandler = this.handleOffline.bind(this);
     }
 
     async init() {
@@ -489,6 +563,8 @@ class App {
         }
         document.addEventListener('visibilitychange', this.visibilityHandler);
         window.addEventListener('pagehide', this.unloadHandler);
+        window.addEventListener('online', this.onlineHandler);
+        window.addEventListener('offline', this.offlineHandler);
         
         window.addEventListener('unhandledrejection', event => {
             console.error('Unhandled rejection:', event.reason);
@@ -499,34 +575,63 @@ class App {
     async start() {
         try {
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                const permission = await DeviceOrientationEvent.requestPermission();
-                if (permission !== 'granted') {
-                    throw new Error('مجوز چرخش دستگاه داده نشد.');
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission !== 'granted') {
+                        throw new Error('COMPASS_PERMISSION_DENIED');
+                    }
+                } catch (e) {
+                    if (e.message === 'COMPASS_PERMISSION_DENIED') throw e;
+                    throw new Error('خطا در درخواست مجوز قطب‌نما.');
                 }
             }
 
             this.ui.hideStartButton();
             this.ui.setStatus('در حال تحلیل موقعیت مکانی شما...');
 
-            const location = await LocationService.getLocation();
-            this.ui.showLocation(location.city, location.source);
+            this.location = await LocationService.getLocation();
+            this.ui.showLocation(this.location.city, this.location.source);
             
             this.ui.setStatus('در حال دریافت داده‌های نجومی...');
             
-            const prayerTimes = await PrayerTimesService.getTimes(location.lat, location.lng);
+            await this.fetchAndRenderPrayerTimes();
 
-            this.qiblaDegree = QiblaCalculator.calculate(location.lat, location.lng);
+            this.qiblaDegree = QiblaCalculator.calculate(this.location.lat, this.location.lng);
             
             this.ui.setStatusHTML(`لطفاً گوشی خود را کاملاً افقی و موازی با زمین نگه دارید. (زاویه قبله: ${this.qiblaDegree.toFixed(1)}°)`);
             
-            this.ui.renderPrayerTimes(prayerTimes);
-
             await this.initCompass();
             
         } catch (error) {
             console.error('Start error:', error);
-            this.ui.setStatus(`خطا: ${error.message}`);
+            const msg = error.message || '';
+            if (msg === 'COMPASS_PERMISSION_DENIED') {
+                this.ui.setStatus('مجوز چرخش دستگاه داده نشد. لطفاً اجازه دسترسی بدهید و مجدداً تلاش کنید.');
+            } else if (msg === 'LOCATION_PERMISSION_DENIED') {
+                this.ui.setStatus('دسترسی به موقعیت مکانی رد شد. لطفاً از تنظیمات مرورگر اجازه دسترسی بدهید و مجدداً تلاش کنید.');
+            } else if (msg === 'GPS_DISABLED') {
+                this.ui.setStatus('سرویس‌های موقعیت‌یاب (GPS) خاموش هستند. لطفاً GPS دستگاه خود را روشن کنید و مجدداً تلاش کنید.');
+            } else if (msg === 'OFFLINE') {
+                this.ui.setStatus('اتصال اینترنت قطع است. لطفاً اتصال خود را برقرار کنید و مجدداً تلاش کنید.');
+            } else {
+                this.ui.setStatus(`خطا: ${msg}`);
+            }
             this.ui.showStartButton();
+        }
+    }
+
+    async fetchAndRenderPrayerTimes() {
+        try {
+            const prayerTimes = await retryWithBackoff(() => PrayerTimesService.getTimes(this.location.lat, this.location.lng));
+            this.ui.renderPrayerTimes(prayerTimes);
+            this.prayerTimesLoaded = true;
+        } catch (error) {
+            if (error.message === 'OFFLINE') {
+                this.ui.setStatus('اتصال اینترنت قطع شد. اوقات شرعی پس از اتصال به‌روزرسانی می‌شود.');
+                this.prayerTimesLoaded = false;
+            } else {
+                throw error;
+            }
         }
     }
 
@@ -534,6 +639,10 @@ class App {
         try {
             this.compass.onCalibrationRequired = () => {
                 this.ui.setStatus('لطفاً گوشی خود را به شکل عدد 8 انگلیسی در هوا بچرخانید تا قطب‌نما کالیبره شود.');
+            };
+            
+            this.compass.onRecovered = () => {
+                this.ui.setStatusHTML(`لطفاً گوشی خود را کاملاً افقی و موازی با زمین نگه دارید. (زاویه قبله: ${this.qiblaDegree.toFixed(1)}°)`);
             };
             
             await this.compass.initialize();
@@ -561,6 +670,17 @@ class App {
         }
     }
 
+    handleOnline() {
+        this.ui.setStatus('اتصال برقرار شد. در حال به‌روزرسانی...');
+        if (this.location && !this.prayerTimesLoaded) {
+            this.fetchAndRenderPrayerTimes();
+        }
+    }
+
+    handleOffline() {
+        this.ui.setStatus('اتصال اینترنت قطع شد. در انتظار اتصال مجدد...');
+    }
+
     pause() {
         this.isRunning = false;
         if (this.compass) {
@@ -577,8 +697,13 @@ class App {
 
     handleUnload() {
         this.pause();
+        if (this.compass) {
+            this.compass.destroy();
+        }
         document.removeEventListener('visibilitychange', this.visibilityHandler);
         window.removeEventListener('pagehide', this.unloadHandler);
+        window.removeEventListener('online', this.onlineHandler);
+        window.removeEventListener('offline', this.offlineHandler);
     }
 }
 
