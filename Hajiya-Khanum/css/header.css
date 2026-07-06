@@ -70,6 +70,32 @@
 .hamburger.active span:nth-child(2) { opacity: 0; }
 .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
 
+/* ===== NAV LOGO ===== */
+.nav-logo {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(251, 191, 36, 0.3);
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+}
+.nav-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.nav-logo:hover {
+    transform: translateY(-50%) scale(1.1);
+    border-color: rgba(251, 191, 36, 0.6);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+}
+
 @media (max-width: 768px) {
     .nav-content {
         padding: 1.6rem 0;
@@ -112,6 +138,11 @@
         background: rgba(251, 191, 36, 0.2);
         border-color: rgba(251, 191, 36, 0.5);
         box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+    .nav-logo {
+        width: 35px;
+        height: 35px;
+        left: 0.8rem;
     }
 }
 
