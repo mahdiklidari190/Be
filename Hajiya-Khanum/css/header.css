@@ -33,7 +33,7 @@
     transition: all 0.3s ease;
     flex-shrink: 0;
     text-decoration: none;
-    order: 1; /* آیکون اول (سمت چپ) */
+    order: 3; /* در RTL: order بالاتر = سمت چپ */
 }
 .nav-logo img {
     width: 100%;
@@ -84,7 +84,7 @@
     padding: 0.5rem;
     z-index: 60;
     flex-shrink: 0;
-    order: 3; /* همبرگر آخر (سمت راست) */
+    order: 1; /* در RTL: order پایین‌تر = سمت راست */
 }
 .hamburger span {
     width: 28px;
