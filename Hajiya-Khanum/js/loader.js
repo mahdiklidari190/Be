@@ -1,5 +1,5 @@
 /**
- * Header & Footer Auto Loader - نسخه هوشمند با تشخیص خودکار تغییرات
+ * Header & Footer Auto Loader - نسخه بهینه و سریع
  */
 const ComponentLoader = {
     config: {
@@ -15,57 +15,37 @@ const ComponentLoader = {
         }
     },
     
-    // تنظیمات کش
     cacheSettings: {
-        ttl: 24 * 60 * 60 * 1000, // 24 ساعت
         prefix: 'component_cache_'
     },
     
-    // ردیابی منابع لود شده
     loadedResources: new Set(),
 
-    // محاسبه hash ساده از محتوا (برای تشخیص تغییرات)
-    async calculateHash(content) {
-        // استفاده از SubtleCrypto API برای hash واقعی
-        if (window.crypto && window.crypto.subtle) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(content);
-            const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-        
-        // fallback: hash ساده اگر SubtleCrypto در دسترس نبود
+    // محاسبه hash سریع
+    calculateHash(content) {
         let hash = 0;
         for (let i = 0; i < content.length; i++) {
             const char = content.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32bit integer
+            hash = hash & hash;
         }
         return Math.abs(hash).toString(36);
     },
 
-    // ساخت cacheKey
     getCacheKey(type) {
         return this.cacheSettings.prefix + type;
     },
 
-    // بررسی و به‌روزرسانی خودکار کش
-    async checkAndUpdateCache(type, freshContent) {
+    // بررسی و به‌روزرسانی کش
+    checkAndUpdateCache(type, freshContent) {
         const cacheKey = this.getCacheKey(type);
         const cached = this.getFromCache(cacheKey);
+        const newHash = this.calculateHash(freshContent);
         
-        // محاسبه hash محتوای جدید
-        const newHash = await this.calculateHash(freshContent);
-        
-        // اگر کش وجود دارد و hash یکسان است، از کش استفاده کن
         if (cached && cached.hash === newHash) {
-            console.log(`✓ ${type} unchanged, using cache`);
-            return cached.content;
+            return { content: cached.content, changed: false };
         }
         
-        // اگر hash متفاوت است یا کش وجود ندارد، کش را به‌روز کن
-        console.log(`↻ ${type} changed, updating cache`);
         const data = {
             content: freshContent,
             hash: newHash,
@@ -75,13 +55,12 @@ const ComponentLoader = {
         try {
             localStorage.setItem(cacheKey, JSON.stringify(data));
         } catch (e) {
-            console.warn('Failed to save to cache:', e);
+            console.warn('Cache save failed:', e);
         }
         
-        return freshContent;
+        return { content: freshContent, changed: true };
     },
 
-    // دریافت از کش
     getFromCache(cacheKey) {
         const cached = localStorage.getItem(cacheKey);
         if (!cached) return null;
@@ -93,21 +72,17 @@ const ComponentLoader = {
         }
     },
 
-    // لود CSS با جلوگیری از تکرار
+    // لود CSS سریع
     loadCSS(path) {
+        if (this.loadedResources.has(path)) return Promise.resolve();
+        
+        const existingLink = document.querySelector(`link[href="${path}"]`);
+        if (existingLink) {
+            this.loadedResources.add(path);
+            return Promise.resolve();
+        }
+        
         return new Promise((resolve, reject) => {
-            if (this.loadedResources.has(path)) {
-                resolve();
-                return;
-            }
-            
-            const existingLink = document.querySelector(`link[href="${path}"]`);
-            if (existingLink) {
-                this.loadedResources.add(path);
-                resolve();
-                return;
-            }
-            
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = path;
@@ -115,26 +90,22 @@ const ComponentLoader = {
                 this.loadedResources.add(path);
                 resolve();
             };
-            link.onerror = () => reject(new Error(`CSS load error: ${path}`));
+            link.onerror = () => reject(new Error(`CSS error: ${path}`));
             document.head.appendChild(link);
         });
     },
 
-    // لود JS با جلوگیری از تکرار
+    // لود JS سریع
     loadJS(path) {
+        if (this.loadedResources.has(path)) return Promise.resolve();
+        
+        const existingScript = document.querySelector(`script[src="${path}"]`);
+        if (existingScript) {
+            this.loadedResources.add(path);
+            return Promise.resolve();
+        }
+        
         return new Promise((resolve, reject) => {
-            if (this.loadedResources.has(path)) {
-                resolve();
-                return;
-            }
-            
-            const existingScript = document.querySelector(`script[src="${path}"]`);
-            if (existingScript) {
-                this.loadedResources.add(path);
-                resolve();
-                return;
-            }
-            
             const script = document.createElement('script');
             script.src = path;
             script.defer = true;
@@ -142,38 +113,31 @@ const ComponentLoader = {
                 this.loadedResources.add(path);
                 resolve();
             };
-            script.onerror = () => reject(new Error(`JS load error: ${path}`));
+            script.onerror = () => reject(new Error(`JS error: ${path}`));
             document.body.appendChild(script);
         });
     },
 
-    // لود HTML با تشخیص خودکار تغییرات
+    // لود HTML با کش
     async loadHTML(type) {
         const config = this.config[type];
         const cacheKey = this.getCacheKey(type);
         
         try {
-            // همیشه از سرور بگیر (با کش مرورگر)
-            const response = await fetch(config.html, { 
-                cache: 'default'
-            });
+            const response = await fetch(config.html, { cache: 'default' });
             
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const freshContent = await response.text();
+            const result = this.checkAndUpdateCache(type, freshContent);
             
-            // بررسی و به‌روزرسانی خودکار کش بر اساس hash
-            const content = await this.checkAndUpdateCache(type, freshContent);
-            
-            return content;
+            return result.content;
             
         } catch (error) {
-            console.error(`Error fetching ${type}:`, error);
+            console.warn(`Fetch ${type} failed, using cache:`, error.message);
             
-            // اگر خطا داد، از کش استفاده کن (اگر وجود دارد)
             const cached = this.getFromCache(cacheKey);
             if (cached) {
-                console.log(`⚠ Loaded ${type} from cache (offline/error)`);
                 return cached.content;
             }
             
@@ -181,26 +145,29 @@ const ComponentLoader = {
         }
     },
 
-    // تزریق کامپوننت
+    // تزریق سریع کامپوننت
     async injectComponent(type, targetSelector) {
         const config = this.config[type];
         if (!config) return;
 
         try {
-            // لود HTML با تشخیص خودکار تغییرات
+            // لود CSS اول (برای جلوگیری از FOUC)
+            const cssPromise = this.loadCSS(config.css);
+            
+            // لود HTML
             const html = await this.loadHTML(type);
             
-            // لود CSS
-            await this.loadCSS(config.css);
+            // صبر برای CSS
+            await cssPromise;
             
             // تزریق HTML
             const target = document.querySelector(targetSelector) || document.body;
             const position = type === 'header' ? 'afterbegin' : 'beforeend';
             target.insertAdjacentHTML(position, html);
             
-            // لود JS
+            // لود JS در پس‌زمینه
             this.loadJS(config.js).catch(err => 
-                console.warn(`JS load warning for ${type}:`, err)
+                console.warn(`JS warning for ${type}:`, err.message)
             );
             
         } catch (error) {
@@ -208,10 +175,11 @@ const ComponentLoader = {
         }
     },
 
-    // مقداردهی اولیه
+    // مقداردهی اولیه سریع
     async init() {
         const startTime = performance.now();
         
+        // لود همزمان هدر و فوتر
         await Promise.all([
             this.injectComponent('header', 'body'),
             this.injectComponent('footer', 'body')
@@ -228,11 +196,11 @@ const ComponentLoader = {
                 localStorage.removeItem(key);
             }
         });
-        console.log('✓ Component cache cleared');
+        console.log('✓ Cache cleared');
     }
 };
 
-// مقداردهی اولیه
+// شروع فوری
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => ComponentLoader.init());
 } else {
