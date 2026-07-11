@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<title>BK_AI — Premium Chat</title>
+<meta name="description" content="A premium AI chat experience powered by BK_AI." />
+
+<!-- External libraries -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+ <!-- CSS ONLY - No inline styles -->
+    <link rel="stylesheet" href="/BK_AI/AI.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <aside class="sidebar" id="sidebar" aria-label="Chat sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">B</div>
+        <div class="brand-name">BK<span>_AI</span></div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarCloseBtn" aria-label="Close sidebar" title="Close sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+    </div>
+
+    <button class="new-chat-btn" id="newChatBtn" aria-label="Start new chat">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      گفتگوی جدید
+    </button>
+
+    <div class="chat-history" id="chatHistory" aria-label="Chat history"></div>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-btn" id="exportMdBtn" aria-label="Export as Markdown">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        خروجی Markdown
+      </button>
+      <button class="sidebar-btn" id="exportTxtBtn" aria-label="Export as Text">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        خروجی TXT
+      </button>
+      <button class="sidebar-btn" id="settingsBtn" aria-label="Settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        تنظیمات
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="header-title">
+          <h1>BK_AI</h1>
+          <div class="status-dot" aria-hidden="true"></div>
+          <span class="status-text">آنلاین</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="clearChatBtn" aria-label="Clear chat" title="پاک کردن گفتگو">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+        <button class="icon-btn" id="headerSettingsBtn" aria-label="Settings" title="تنظیمات">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="chat-container" id="chatContainer">
+      <div class="chat-scroll" id="chatScroll"></div>
+      <button class="scroll-bottom" id="scrollBottomBtn" aria-label="Scroll to bottom">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrap">
+        <div class="input-box" id="inputBox">
+          <textarea
+            class="input-textarea"
+            id="inputTextarea"
+            placeholder="پیام خود را بنویسید..."
+            rows="1"
+            aria-label="Message input"
+          ></textarea>
+          <button class="send-btn" id="sendBtn" aria-label="Send message" disabled>
+            <svg id="sendIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </button>
+        </div>
+        <div class="input-footer">
+          <div class="input-footer-left">
+            <span class="counter" id="charCounter">0 کاراکتر</span>
+            <span class="counter" id="tokenCounter">~0 توکن</span>
+          </div>
+          <div class="input-footer-right">
+            <span><kbd style="padding:1px 5px;background:rgba(255,255,255,0.08);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;">Enter</kbd> ارسال · <kbd style="padding:1px 5px;background:rgba(255,255,255,0.08);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;">Shift+Enter</kbd> خط جدید</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="settingsTitle">تنظیمات</h2>
+      <button class="modal-close" id="settingsCloseBtn" aria-label="Close settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="systemPromptInput">شخصی‌سازی دستیار</label>
+      <textarea class="form-input" id="systemPromptInput" rows="4" placeholder="مثلاً: همیشه پاسخ‌های کوتاه بده، یا در زمینه برنامه‌نویسی پایتون تخصص داشته باش..."></textarea>
+      <div class="form-hint">می‌توانید رفتار هوش مصنوعی را شخصی‌سازی کنید. توجه: قوانین اصلی و هویت BK_AI قابل تغییر نیستند.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">کلیدهای میانبر</label>
+      <div class="shortcuts-list">
+        <div class="shortcut-item"><span>گفتگوی جدید</span><div class="shortcut-key"><span class="key">Ctrl</span><span class="key">N</span></div></div>
+        <div class="shortcut-item"><span>فوکوس روی ورودی</span><div class="shortcut-key"><span class="key">/</span></div></div>
+        <div class="shortcut-item"><span>پاک کردن گفتگو</span><div class="shortcut-key"><span class="key">Ctrl</span><span class="key">L</span></div></div>
+        <div class="shortcut-item"><span>تغییر وضعیت سایدبار</span><div class="shortcut-key"><span class="key">Ctrl</span><span class="key">B</span></div></div>
+        <div class="shortcut-item"><span>تنظیمات</span><div class="shortcut-key"><span class="key">Ctrl</span><span class="key">,</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+<script src="/BK_AI/AI.js"></script>
+</body>
+</html>
