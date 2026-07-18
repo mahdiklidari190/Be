@@ -166,7 +166,8 @@ const state = {
   },
   typingTargetText: "",
   typingCurrentText: "",
-  typingTimer: null
+  typingTimer: null,
+  deepThinking: false
 };
 
 // ============================================================
@@ -860,6 +861,230 @@ async function handleSend() {
   await generateAIResponse();
 }
 
+// ============================================================
+// DEEP THINKING PIPELINE (Mixture of Agents - MoA)
+// ============================================================
+async function runDeepThinkingPipeline(messages, userQuery, aiMsg, apiKey) {
+  const conv = getActiveConversation();
+  if (!conv) return;
+
+  state.isGenerating = true;
+  updateInputState();
+
+  try {
+    // ==========================================
+    // STEP 1: Expert Analysis & Drafting (Model A)
+    // ==========================================
+    const modelA = selectModelForQuery(userQuery);
+    aiMsg.modelName = `${modelA.name} (گام ۱: پیش‌نویس)`;
+    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۱: تحلیل تخصصی و تولید پیش‌نویس اولیه توسط ${modelA.name}...</span></div>`;
+    renderChat();
+
+    const draftResponse = await fetchNonStreaming(modelA.id, messages, apiKey);
+    if (!draftResponse) throw new Error("STEP_1_FAILED");
+
+    // ==========================================
+    // STEP 2: Critical Review & Refinement (Model B)
+    // ==========================================
+    const modelB = MODELS.ULTRA_405B; // Hermes 3 405B is the ultimate critic
+    aiMsg.modelName = `${modelB.name} (گام ۲: نقد و بهینه‌سازی)`;
+    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۲: نقد، بررسی و بهینه‌سازی پیش‌نویس توسط ${modelB.name}...</span></div>`;
+    renderChat();
+
+    const reviewMessages = [
+      {
+        role: "system",
+        content: "You are an elite AI critic and expert reviewer. Your task is to critically analyze the initial draft, identify any errors, missing details, or areas of improvement, and rewrite it to be absolutely perfect, highly professional, complete, and of the highest possible quality. Maintain the original language (Persian) and formatting."
+      },
+      {
+        role: "user",
+        content: `The user asked: "${userQuery}"\n\nAnother expert AI generated this initial draft:\n---\n${draftResponse}\n---`
+      }
+    ];
+
+    const refinedResponse = await fetchNonStreaming(modelB.id, reviewMessages, apiKey);
+    if (!refinedResponse) throw new Error("STEP_2_FAILED");
+
+    // ==========================================
+    // STEP 3: Final Synthesis & Polish (Model C)
+    // ==========================================
+    const modelC = MODELS.LLAMA_33; // Llama 3.3 70B is the ultimate editor
+    aiMsg.modelName = "تفکر عمیق چندمدلی (MoA)";
+    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۳: تلفیق نهایی و نگارش نسخه نهایی توسط ${modelC.name}...</span></div>`;
+    renderChat();
+
+    const polishMessages = [
+      {
+        role: "system",
+        content: "You are an elite editor. Your task is to do a final polish of the response. Ensure perfect Persian grammar, natural flow, professional tone, and beautiful markdown formatting. Output ONLY the final polished response. Do not include any introductory or concluding remarks about your editing process."
+      },
+      {
+        role: "user",
+        content: `The user asked: "${userQuery}"\n\nThe expert team has prepared this refined response:\n---\n${refinedResponse}\n---`
+      }
+    ];
+
+    // For the final step, we stream the response to the user so they get a beautiful typing effect!
+    await fetchStreaming(modelC.id, polishMessages, apiKey, aiMsg);
+
+  } catch (err) {
+    console.error("Deep Thinking Pipeline failed:", err);
+    // Fallback to normal generation if pipeline fails
+    aiMsg.content = "متأسفانه در فرآیند تفکر عمیق خطایی رخ داد. در حال بازگشت به حالت پاسخگویی معمولی...";
+    renderChat();
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Run normal streaming response
+    const defaultModel = selectModelForQuery(userQuery);
+    aiMsg.modelName = defaultModel.name;
+    await fetchStreaming(defaultModel.id, messages, apiKey, aiMsg);
+  } finally {
+    state.isGenerating = false;
+    state.abortController = null;
+    updateInputState();
+  }
+}
+
+async function fetchNonStreaming(modelId, messages, apiKey) {
+  state.abortController = new AbortController();
+  const response = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': window.location.origin || 'http://localhost',
+      'X-Title': 'BK_AI Chat'
+    },
+    body: JSON.stringify({
+      model: modelId,
+      messages: messages,
+      temperature: 0.7,
+      max_tokens: 4096,
+      stream: false
+    }),
+    signal: state.abortController.signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP_ERROR_${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content || "";
+}
+
+async function fetchStreaming(modelId, messages, apiKey, aiMsg) {
+  state.abortController = new AbortController();
+  const response = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': window.location.origin || 'http://localhost',
+      'X-Title': 'BK_AI Chat'
+    },
+    body: JSON.stringify({
+      model: modelId,
+      messages: messages,
+      temperature: 0.8,
+      top_p: 0.95,
+      max_tokens: 8192,
+      stream: true
+    }),
+    signal: state.abortController.signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP_ERROR_${response.status}`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+
+  // Initialize typing animation state
+  state.typingTargetText = "";
+  state.typingCurrentText = "";
+  if (state.typingTimer) {
+    cancelAnimationFrame(state.typingTimer);
+    state.typingTimer = null;
+  }
+
+  function tickTyping() {
+    if (!state.isGenerating && state.typingCurrentText === state.typingTargetText) {
+      state.typingTimer = null;
+      return;
+    }
+
+    const remaining = state.typingTargetText.length - state.typingCurrentText.length;
+    if (remaining > 0) {
+      let charsToType = 1;
+      if (remaining > 150) charsToType = 12;
+      else if (remaining > 80) charsToType = 8;
+      else if (remaining > 40) charsToType = 5;
+      else if (remaining > 15) charsToType = 3;
+      else if (remaining > 5) charsToType = 2;
+
+      state.typingCurrentText += state.typingTargetText.slice(
+        state.typingCurrentText.length,
+        state.typingCurrentText.length + charsToType
+      );
+
+      aiMsg.content = state.typingCurrentText;
+
+      const lastMsgEl = chatScroll.querySelector('.message.ai:last-child');
+      if (lastMsgEl) {
+        const bubble = lastMsgEl.querySelector('.bubble');
+        if (bubble) {
+          bubble.innerHTML = renderMarkdown(state.typingCurrentText);
+          const hasMath = state.typingCurrentText.includes('$') || state.typingCurrentText.includes('\\');
+          if (hasMath && !state.isGenerating && state.typingCurrentText === state.typingTargetText) {
+            renderMath(bubble);
+          }
+        }
+      }
+      scrollToBottom(false);
+    }
+
+    state.typingTimer = requestAnimationFrame(tickTyping);
+  }
+
+  state.typingTimer = requestAnimationFrame(tickTyping);
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      const cleanedLine = line.trim();
+      if (!cleanedLine) continue;
+      if (cleanedLine === "data: [DONE]") continue;
+
+      if (cleanedLine.startsWith("data: ")) {
+        try {
+          const parsed = JSON.parse(cleanedLine.slice(6));
+          const chunk = parsed.choices?.[0]?.delta?.content || "";
+          if (chunk) {
+            state.typingTargetText += chunk;
+          }
+        } catch (e) {}
+      }
+    }
+  }
+
+  while (state.typingCurrentText !== state.typingTargetText) {
+    await new Promise(resolve => setTimeout(resolve, 30));
+  }
+
+  aiMsg.streaming = false;
+  saveState();
+  renderChat();
+}
+
 async function generateAIResponse() {
   const conv = getActiveConversation();
   if (!conv) return;
@@ -904,6 +1129,26 @@ async function generateAIResponse() {
 
   // Get last user message to select the best model
   const lastUserMsg = conv.messages.filter(m => m.role === 'user').slice(-1)[0]?.content || "";
+
+  // Check if Deep Thinking is active
+  const isDeepThinking = state.deepThinking || lastUserMsg.includes("تفکر عمیق") || lastUserMsg.includes("ترکیب مدل");
+
+  const aiMsg = { 
+    role: 'ai', 
+    content: '', 
+    timestamp: Date.now(), 
+    streaming: true,
+    modelName: "" 
+  };
+  conv.messages.push(aiMsg);
+  renderChat();
+  renderTypingIndicator();
+
+  if (isDeepThinking) {
+    await runDeepThinkingPipeline(messages, lastUserMsg, aiMsg, apiKey);
+    return;
+  }
+
   const selectedModel = selectModelForQuery(lastUserMsg);
 
   // Create a list of models to try: [selectedModel, ...fallbacks]
@@ -916,17 +1161,6 @@ async function generateAIResponse() {
       }
     });
   }
-
-  const aiMsg = { 
-    role: 'ai', 
-    content: '', 
-    timestamp: Date.now(), 
-    streaming: true,
-    modelName: selectedModel.name 
-  };
-  conv.messages.push(aiMsg);
-  renderChat();
-  renderTypingIndicator();
 
   let response = null;
   let activeModel = null;
@@ -1030,7 +1264,7 @@ async function generateAIResponse() {
           const bubble = lastMsgEl.querySelector('.bubble');
           if (bubble) {
             bubble.innerHTML = renderMarkdown(state.typingCurrentText);
-            
+
             // OPTIMIZATION: Only render math if it contains math delimiters AND typing is complete.
             // This prevents KaTeX from parsing the DOM 60 times per second, which causes massive lag.
             const hasMath = state.typingCurrentText.includes('$') || state.typingCurrentText.includes('\\');
