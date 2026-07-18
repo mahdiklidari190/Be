@@ -1,7 +1,7 @@
 // ============================================================
 // CONFIG - API Key (Hidden from users)
 // ============================================================
-const API_KEY = "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";
+const API_KEY = "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";
 const API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
 
 // ============================================================
