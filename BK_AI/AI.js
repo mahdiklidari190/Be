@@ -256,7 +256,7 @@ function checkIdentityFilter(userMessage) {
 
     for (const pattern of identityPatterns) {
       if (pattern.test(lowerMsg)) {
-        return "من **BK_AI** هستم، یک دستیار هوش مصنوعی حرفه‌ای که توسط **مهدی کلیداری** طراحی و پیاده‌سازی شده است.\n\nچطور می‌توانم امروز به شما کمک کنم؟";
+        return "من **BK_AI** هستم، یک دستیار هوش مصنوعی حرفه‌ای که توسط **مهدی کلیدری** طراحی و پیاده‌سازی شده است.\n\nچطور می‌توانم امروز به شما کمک کنم؟";
       }
     }
 
@@ -276,7 +276,7 @@ function checkIdentityFilter(userMessage) {
 
     for (const pattern of creatorPatterns) {
       if (pattern.test(lowerMsg)) {
-        return "من توسط **مهدی کلیداری** طراحی، برنامه‌نویسی و پیاده‌سازی شده‌ام.\n\nI was designed, programmed, and implemented by **Mahdi Klidari**.";
+        return "من توسط **مهدی کلیدری** طراحی، برنامه‌نویسی و پیاده‌سازی شده‌ام.\n\nI was designed, programmed, and implemented by **Mahdi Klidari**.";
       }
     }
 
