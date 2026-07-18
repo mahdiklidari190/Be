@@ -932,60 +932,61 @@ async function generateAIResponse() {
   let activeModel = null;
   let success = false;
 
-  for (let i = 0; i < modelsToTry.length; i++) {
-    activeModel = modelsToTry[i];
-    
-    // Update the AI message's model name in the UI
-    aiMsg.modelName = activeModel.name;
-    
-    // Update the thinking loader text to show which model is being tried
-    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">در حال تفکر با مدل ${activeModel.name}...</span></div>`;
-    renderChat();
+  try {
+    for (let i = 0; i < modelsToTry.length; i++) {
+      activeModel = modelsToTry[i];
 
-    const body = {
-      model: activeModel.id,
-      messages: messages,
-      temperature: 0.8,
-      top_p: 0.95,
-      max_tokens: 8192,
-      stream: true
-    };
+      // Update the AI message's model name in the UI
+      aiMsg.modelName = activeModel.name;
 
-    state.abortController = new AbortController();
+      // Update the thinking loader text to show which model is being tried
+      aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">در حال تفکر با مدل ${activeModel.name}...</span></div>`;
+      renderChat();
 
-    try {
-      response = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'HTTP-Referer': window.location.origin || 'http://localhost',
-          'X-Title': 'BK_AI Chat'
-        },
-        body: JSON.stringify(body),
-        signal: state.abortController.signal
-      });
+      const body = {
+        model: activeModel.id,
+        messages: messages,
+        temperature: 0.8,
+        top_p: 0.95,
+        max_tokens: 8192,
+        stream: true
+      };
 
-      if (!response.ok) {
-        throw new Error(`HTTP_ERROR_${response.status}`);
+      state.abortController = new AbortController();
+
+      try {
+        response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            'HTTP-Referer': window.location.origin || 'http://localhost',
+            'X-Title': 'BK_AI Chat'
+          },
+          body: JSON.stringify(body),
+          signal: state.abortController.signal
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP_ERROR_${response.status}`);
+        }
+
+        success = true;
+        break; // Exit the loop on success!
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          throw err; // User clicked stop, don't try other models
+        }
+        console.warn(`Model ${activeModel.name} (${activeModel.id}) failed:`, err);
+        if (i === modelsToTry.length - 1) {
+          throw err; // No more fallbacks, propagate error
+        }
+        // Wait a brief moment before trying the next model
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
-      
-      success = true;
-      break; // Exit the loop on success!
-    } catch (err) {
-      if (err.name === 'AbortError') {
-        throw err; // User clicked stop, don't try other models
-      }
-      console.warn(`Model ${activeModel.name} (${activeModel.id}) failed:`, err);
-      if (i === modelsToTry.length - 1) {
-        throw err; // No more fallbacks, propagate error
-      }
-      // Wait a brief moment before trying the next model
-      await new Promise(resolve => setTimeout(resolve, 500));
     }
-  }
 
-  const reader = response.body.getReader();
+    const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
 
