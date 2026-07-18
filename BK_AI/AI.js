@@ -1030,10 +1030,18 @@ async function generateAIResponse() {
           const bubble = lastMsgEl.querySelector('.bubble');
           if (bubble) {
             bubble.innerHTML = renderMarkdown(state.typingCurrentText);
-            renderMath(bubble);
+            
+            // OPTIMIZATION: Only render math if it contains math delimiters AND typing is complete.
+            // This prevents KaTeX from parsing the DOM 60 times per second, which causes massive lag.
+            const hasMath = state.typingCurrentText.includes('$') || state.typingCurrentText.includes('\\');
+            if (hasMath && !state.isGenerating && state.typingCurrentText === state.typingTargetText) {
+              renderMath(bubble);
+            }
           }
         }
-        scrollToBottom(true);
+        // OPTIMIZATION: Use instant scroll (false) instead of smooth scroll (true) during typing.
+        // Smooth scrolling on every frame causes layout thrashing and massive browser lag.
+        scrollToBottom(false);
       }
 
       state.typingTimer = requestAnimationFrame(tickTyping);
