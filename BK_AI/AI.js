@@ -11,47 +11,56 @@ const MODELS = {
   REASONING: {
     id: "tencent/hy3:free",
     name: "Tencent HY3 (استدلال)",
-    description: "مناسب برای مسائل منطقی، ریاضی و استدلال پیچیده"
+    description: "مناسب برای مسائل منطقی، ریاضی و استدلال پیچیده",
+    fallbacks: ["nousresearch/hermes-3-llama-3.1-405b:free", "meta-llama/llama-3.3-70b-instruct:free"]
   },
   CODE_QWEN: {
     id: "qwen/qwen3-coder:free",
     name: "Qwen 3 Coder (برنامه‌نویسی پیشرفته)",
-    description: "قدرتمندترین مدل متن‌باز برای کدنویسی، حل الگوریتم و توسعه نرم‌افزار"
+    description: "قدرتمندترین مدل متن‌باز برای کدنویسی، حل الگوریتم و توسعه نرم‌افزار",
+    fallbacks: ["cohere/north-mini-code:free", "poolside/laguna-m.1:free", "meta-llama/llama-3.3-70b-instruct:free"]
   },
   CODE_COHERE: {
     id: "cohere/north-mini-code:free",
     name: "Cohere North Mini Code (برنامه‌نویسی)",
-    description: "تخصصی برای نوشتن، تحلیل و رفع خطای کدهای برنامه‌نویسی"
+    description: "تخصصی برای نوشتن، تحلیل و رفع خطای کدهای برنامه‌نویسی",
+    fallbacks: ["qwen/qwen3-coder:free", "poolside/laguna-m.1:free", "meta-llama/llama-3.3-70b-instruct:free"]
   },
   CODE_POOLSIDE: {
     id: "poolside/laguna-m.1:free",
     name: "Poolside Laguna M (توسعه نرم‌افزار)",
-    description: "بهینه‌سازی شده برای مهندسی نرم‌افزار و کدنویسی"
+    description: "بهینه‌سازی شده برای مهندسی نرم‌افزار و کدنویسی",
+    fallbacks: ["qwen/qwen3-coder:free", "cohere/north-mini-code:free", "meta-llama/llama-3.3-70b-instruct:free"]
   },
   LLAMA_33: {
     id: "meta-llama/llama-3.3-70b-instruct:free",
     name: "Llama 3.3 70B Instruct (دستیار هوشمند)",
-    description: "فوق‌العاده دقیق، سریع و عالی برای زبان فارسی و پاسخ به دستورات پیچیده"
+    description: "فوق‌العاده دقیق، سریع و عالی برای زبان فارسی و پاسخ به دستورات پیچیده",
+    fallbacks: ["google/gemma-4-31b-it:free", "nousresearch/hermes-3-llama-3.1-405b:free", "google/gemma-4-26b-a4b-it:free"]
   },
   ULTRA_405B: {
     id: "nousresearch/hermes-3-llama-3.1-405b:free",
     name: "Hermes 3 Llama 3.1 405B (ابر هوش مصنوعی)",
-    description: "فوق‌العاده قدرتمند برای دستورات پیچیده، تحلیل عمیق و نگارش خلاقانه"
+    description: "فوق‌العاده قدرتمند برای دستورات پیچیده، تحلیل عمیق و نگارش خلاقانه",
+    fallbacks: ["nvidia/nemotron-3-ultra-550b-a55b:free", "meta-llama/llama-3.3-70b-instruct:free", "google/gemma-4-31b-it:free"]
   },
   ULTRA_550B: {
     id: "nvidia/nemotron-3-ultra-550b-a55b:free",
     name: "Nemotron 3 Ultra 550B (تحلیل پیشرفته)",
-    description: "مدل غول‌پیکر انویدیا برای تحلیل‌های علمی و نگارش دقیق"
+    description: "مدل غول‌پیکر انویدیا برای تحلیل‌های علمی و نگارش دقیق",
+    fallbacks: ["nousresearch/hermes-3-llama-3.1-405b:free", "meta-llama/llama-3.3-70b-instruct:free"]
   },
   GEMMA_31B: {
     id: "google/gemma-4-31b-it:free",
     name: "Gemma 4 31B (پاسخگویی سریع و روان)",
-    description: "بسیار روان و عالی برای زبان فارسی و گفتگوهای عمومی"
+    description: "بسیار روان و عالی برای زبان فارسی و گفتگوهای عمومی",
+    fallbacks: ["meta-llama/llama-3.3-70b-instruct:free", "google/gemma-4-26b-a4b-it:free", "nousresearch/hermes-3-llama-3.1-405b:free"]
   },
   GEMMA_26B: {
     id: "google/gemma-4-26b-a4b-it:free",
     name: "Gemma 4 26B (گفتگوی عمومی)",
-    description: "سریع و بهینه برای مکالمات روزمره و خلاقیت"
+    description: "سریع و بهینه برای مکالمات روزمره و خلاقیت",
+    fallbacks: ["google/gemma-4-31b-it:free", "meta-llama/llama-3.3-70b-instruct:free"]
   }
 };
 
@@ -897,6 +906,17 @@ async function generateAIResponse() {
   const lastUserMsg = conv.messages.filter(m => m.role === 'user').slice(-1)[0]?.content || "";
   const selectedModel = selectModelForQuery(lastUserMsg);
 
+  // Create a list of models to try: [selectedModel, ...fallbacks]
+  const modelsToTry = [selectedModel];
+  if (selectedModel.fallbacks) {
+    selectedModel.fallbacks.forEach(fallbackId => {
+      const fallbackModel = Object.values(MODELS).find(m => m.id === fallbackId);
+      if (fallbackModel) {
+        modelsToTry.push(fallbackModel);
+      }
+    });
+  }
+
   const aiMsg = { 
     role: 'ai', 
     content: '', 
@@ -908,36 +928,64 @@ async function generateAIResponse() {
   renderChat();
   renderTypingIndicator();
 
-  const body = {
-    model: selectedModel.id,
-    messages: messages,
-    temperature: 0.8,
-    top_p: 0.95,
-    max_tokens: 8192,
-    stream: true
-  };
+  let response = null;
+  let activeModel = null;
+  let success = false;
 
-  state.abortController = new AbortController();
+  for (let i = 0; i < modelsToTry.length; i++) {
+    activeModel = modelsToTry[i];
+    
+    // Update the AI message's model name in the UI
+    aiMsg.modelName = activeModel.name;
+    
+    // Update the thinking loader text to show which model is being tried
+    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">در حال تفکر با مدل ${activeModel.name}...</span></div>`;
+    renderChat();
 
-  try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': window.location.origin || 'http://localhost',
-        'X-Title': 'BK_AI Chat'
-      },
-      body: JSON.stringify(body),
-      signal: state.abortController.signal
-    });
+    const body = {
+      model: activeModel.id,
+      messages: messages,
+      temperature: 0.8,
+      top_p: 0.95,
+      max_tokens: 8192,
+      stream: true
+    };
 
-    if (!response.ok) {
-      await response.text();
-      throw new Error('SERVICE_ERROR');
+    state.abortController = new AbortController();
+
+    try {
+      response = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': window.location.origin || 'http://localhost',
+          'X-Title': 'BK_AI Chat'
+        },
+        body: JSON.stringify(body),
+        signal: state.abortController.signal
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP_ERROR_${response.status}`);
+      }
+      
+      success = true;
+      break; // Exit the loop on success!
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        throw err; // User clicked stop, don't try other models
+      }
+      console.warn(`Model ${activeModel.name} (${activeModel.id}) failed:`, err);
+      if (i === modelsToTry.length - 1) {
+        throw err; // No more fallbacks, propagate error
+      }
+      // Wait a brief moment before trying the next model
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
+  }
 
-    const reader = response.body.getReader();
+  const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
 
