@@ -51,6 +51,7 @@ body::before {
     radial-gradient(circle at 50% 50%, rgba(255, 92, 157, 0.06), transparent 50%);
   z-index: -1;
   animation: bgShift 20s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
 @keyframes bgShift {
@@ -272,7 +273,6 @@ input, textarea { font-family: inherit; outline: none; border: none; background:
 }
 .suggestion {
   padding: 16px 18px; background: var(--glass);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border); border-radius: var(--radius-md);
   text-align: right; color: var(--text-primary); font-size: 13.5px;
   transition: all var(--transition);
@@ -332,8 +332,7 @@ input, textarea { font-family: inherit; outline: none; border: none; background:
 }
 
 .message.ai .bubble {
-  background: var(--glass);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--glass-border);
   border-bottom-left-radius: 6px;
   color: var(--text-primary);
