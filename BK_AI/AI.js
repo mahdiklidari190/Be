@@ -66,7 +66,10 @@ const state = {
   abortController: null,
   settings: {
     systemPrompt: ""
-  }
+  },
+  typingTargetText: "",
+  typingCurrentText: "",
+  typingTimer: null
 };
 
 // ============================================================
@@ -833,13 +836,60 @@ async function generateAIResponse() {
     let buffer = "";
 
     // نمایش وضعیت در حال تحلیل در داخل باکس پیام هوش مصنوعی
-    aiMsg.content = '<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">در حال تحلیل و پردازش...</span></div>';
+    aiMsg.content = '<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">در حال تفکر...</span></div>';
     renderChat();
+
+    // Initialize typing animation state
+    state.typingTargetText = "";
+    state.typingCurrentText = "";
+    if (state.typingTimer) {
+      cancelAnimationFrame(state.typingTimer);
+      state.typingTimer = null;
+    }
+
+    function tickTyping() {
+      if (!state.isGenerating && state.typingCurrentText === state.typingTargetText) {
+        state.typingTimer = null;
+        return;
+      }
+
+      const remaining = state.typingTargetText.length - state.typingCurrentText.length;
+      if (remaining > 0) {
+        // Adaptive speed: if we are far behind, type faster
+        let charsToType = 1;
+        if (remaining > 150) charsToType = 12;
+        else if (remaining > 80) charsToType = 8;
+        else if (remaining > 40) charsToType = 5;
+        else if (remaining > 15) charsToType = 3;
+        else if (remaining > 5) charsToType = 2;
+
+        state.typingCurrentText += state.typingTargetText.slice(
+          state.typingCurrentText.length,
+          state.typingCurrentText.length + charsToType
+        );
+
+        aiMsg.content = state.typingCurrentText;
+
+        const lastMsgEl = chatScroll.querySelector('.message.ai:last-child');
+        if (lastMsgEl) {
+          const bubble = lastMsgEl.querySelector('.bubble');
+          if (bubble) {
+            bubble.innerHTML = renderMarkdown(state.typingCurrentText);
+            renderMath(bubble);
+          }
+        }
+        scrollToBottom(true);
+      }
+
+      state.typingTimer = requestAnimationFrame(tickTyping);
+    }
+
+    state.typingTimer = requestAnimationFrame(tickTyping);
 
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
-      
+
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
       buffer = lines.pop(); // نگه داشتن خط ناقص در بافر
@@ -848,35 +898,24 @@ async function generateAIResponse() {
         const cleanedLine = line.trim();
         if (!cleanedLine) continue;
         if (cleanedLine === "data: [DONE]") continue;
-        
+
         if (cleanedLine.startsWith("data: ")) {
           try {
             const parsed = JSON.parse(cleanedLine.slice(6));
             const chunk = parsed.choices?.[0]?.delta?.content || "";
             if (chunk) {
-              // اگر هنوز در حالت لودینگ اولیه هستیم، آن را پاک کنیم و متن اصلی را شروع کنیم
-              if (aiMsg.content.includes("analyzing-loader")) {
-                aiMsg.content = "";
-              }
-              aiMsg.content += chunk;
-              
-              // بروزرسانی باکس پیام بدون رندر مجدد کل صفحه برای کارایی بهتر
-              const lastMsgEl = chatScroll.querySelector('.message.ai:last-child');
-              if (lastMsgEl) {
-                const bubble = lastMsgEl.querySelector('.bubble');
-                if (bubble) {
-                  bubble.innerHTML = renderMarkdown(aiMsg.content);
-                  // اعمال مجدد فرمول‌های ریاضی در صورت وجود
-                  renderMath(bubble);
-                }
-              }
-              scrollToBottom(true);
+              state.typingTargetText += chunk;
             }
           } catch (e) {
             // خطای پارس جی‌سان در چانک‌های ناقص نادیده گرفته می‌شود
           }
         }
       }
+    }
+
+    // Wait for typing animation to catch up completely
+    while (state.typingCurrentText !== state.typingTargetText) {
+      await new Promise(resolve => setTimeout(resolve, 30));
     }
 
     aiMsg.streaming = false;
@@ -912,6 +951,11 @@ async function generateAIResponse() {
 function stopGenerating() {
   if (state.abortController) {
     state.abortController.abort();
+  }
+  state.typingTargetText = state.typingCurrentText;
+  if (state.typingTimer) {
+    cancelAnimationFrame(state.typingTimer);
+    state.typingTimer = null;
   }
 }
 
