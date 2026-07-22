@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Color Push - Pattern & Sound Edition</title>
+<style>
+    :root {
+        --grid-size: 40px; 
+        --red: #ff3366; --blue: #33ccff; --yellow: #ffcc00;
+        --purple: #cc33ff; --green: #33ff66; --orange: #ff9900;
+        --white: #ffffff; --bg: #1a1a2e;
+    }
+    body {
+        margin: 0; padding: 0; background: var(--bg); color: white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden;
+        display: flex; flex-direction: column; align-items: center;
+        height: 100vh; height: 100dvh; width: 100vw;
+        user-select: none; -webkit-user-select: none; touch-action: none;
+    }
+
+    /* Top UI Bar */
+    #ui-bar {
+        width: 100%; padding: 10px 15px; background: rgba(0,0,0,0.5);
+        display: flex; justify-content: space-between; align-items: center;
+        box-sizing: border-box; z-index: 10; font-weight: bold; flex-shrink: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    #target-wrapper {
+        background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 5px 8px; border-radius: 10px; display: flex; flex-direction: column; align-items: center;
+    }
+    #target-title { font-size: 10px; margin-bottom: 3px; color: #fff; letter-spacing: 1px; }
+    #target-grid {
+        display: grid; grid-template-columns: repeat(3, 12px); grid-template-rows: repeat(3, 12px); gap: 2px;
+    }
+    .t-cell { width: 12px; height: 12px; background: rgba(0,0,0,0.5); border-radius: 2px; }
+
+    .stats { display: flex; flex-direction: column; gap: 5px; font-size: 14px; text-align: right; }
+
+    /* Game World & Grid */
+    #game-container {
+        flex-grow: 1; width: 100%; position: relative; perspective: 1000px;
+        display: flex; justify-content: center; align-items: center; overflow: hidden;
+    }
+    #world {
+        position: relative; transform-style: preserve-3d;
+        transform: rotateX(45deg) rotateZ(0deg); 
+        transition: transform 0.1s;
+    }
+    .grid-bg {
+        position: absolute; top: 0; left: 0;
+        background-image: 
+            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: var(--grid-size) var(--grid-size);
+        box-shadow: 0 0 5vw rgba(0,0,0,0.8) inset;
+        border: 2px solid rgba(255,255,255,0.2); box-sizing: border-box;
+    }
+    .goal-zone {
+        position: absolute; border: 3px dashed rgba(255,255,255,0.5); box-sizing: border-box;
+        background: rgba(255,255,255,0.1); border-radius: 5px; transition: transform 0.1s;
+    }
+
+    /* Blocks & Player (3D Cubes) */
+    .entity {
+        position: absolute; width: var(--grid-size); height: var(--grid-size);
+        transform-style: preserve-3d; transition: transform 0.15s ease-out;
+    }
+    .cube {
+        width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+        transform: translateZ(calc(var(--grid-size)/2));
+    }
+    .face { position: absolute; width: 100%; height: 100%; border: 1px solid rgba(0,0,0,0.2); box-sizing: border-box;}
+    .face.front  { transform: rotateY(0deg) translateZ(calc(var(--grid-size)/2)); }
+    .face.back   { transform: rotateY(180deg) translateZ(calc(var(--grid-size)/2)); }
+    .face.right  { transform: rotateY(90deg) translateZ(calc(var(--grid-size)/2)); }
+    .face.left   { transform: rotateY(-90deg) translateZ(calc(var(--grid-size)/2)); }
+    .face.top    { transform: rotateX(90deg) translateZ(calc(var(--grid-size)/2)); }
+    .face.bottom { transform: rotateX(-90deg) translateZ(calc(var(--grid-size)/2)); }
+
+    /* Colors */
+    .color-red .face { background: var(--red); }
+    .color-blue .face { background: var(--blue); }
+    .color-yellow .face { background: var(--yellow); }
+    .color-purple .face { background: var(--purple); }
+    .color-green .face { background: var(--green); }
+    .color-orange .face { background: var(--orange); }
+    .color-white .face { background: var(--white); }
+    .player .face { border: 2px solid white; border-radius: 4px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+
+    .trail { 
+        position: absolute; background: white; border-radius: 50%; pointer-events: none; 
+        opacity: 0.6; transition: opacity 1s, transform 1s; 
+    }
+
+    /* Bottom Controls */
+    #controls {
+        width: 100%; padding: 15px; display: flex; justify-content: center; gap: 15px;
+        flex-shrink: 0; box-sizing: border-box; background: rgba(0,0,0,0.2); z-index: 10;
+    }
+    button {
+        padding: 12px 20px; font-size: 14px; font-weight: bold; border: none; border-radius: 12px;
+        background: rgba(255,255,255,0.2); color: white; backdrop-filter: blur(5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; border: 1px solid rgba(255,255,255,0.3);
+        flex: 1; max-width: 180px; transition: 0.2s;
+    }
+    button:active { background: rgba(255,255,255,0.4); transform: scale(0.95); }
+    #btn-pull.active { background: var(--red); border-color: #ff6688; box-shadow: 0 0 15px rgba(255,51,102,0.6); }
+
+    /* Overlays */
+    #overlay, #win-overlay {
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(26,26,46,0.9); display: flex; justify-content: center; align-items: center;
+        z-index: 100; flex-direction: column; color: white; backdrop-filter: blur(10px); text-align: center;
+        padding: 20px; box-sizing: border-box;
+    }
+    #win-overlay { display: none; z-index: 101; }
+    #overlay h1, #win-overlay h1 { font-size: 2.5rem; margin-bottom: 15px; color: var(--blue); text-shadow: 0 0 20px var(--blue); }
+    #overlay p, #win-overlay p { color: #ddd; max-width: 400px; line-height: 1.6; margin-bottom: 25px; }
+    
+    /* استایل استاندارد دکمه‌های شروع و مرحله بعدی */
+    .btn-start { 
+        font-size: 16px; 
+        padding: 10px 30px; 
+        background: var(--blue); 
+        color: #1a1a2e;
+        border: none; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 15px rgba(51, 204, 255, 0.4); 
+        flex: none;
+        width: auto;
+        min-width: 150px;
+    }
+</style>
+</head>
+<body>
+
+<div id="ui-bar">
+    <div id="target-wrapper">
+        <div id="target-title">TARGET</div>
+        <div id="target-grid"></div>
+    </div>
+    <div class="stats">
+        <span id="ui-moves">Moves: 0</span>
+        <span id="ui-time">Time: 0s</span>
+    </div>
+</div>
+
+<div id="game-container">
+    <div id="world">
+        <div class="grid-bg" id="grid"></div>
+        <div class="goal-zone" id="goal"></div>
+    </div>
+</div>
+
+<div id="controls">
+    <button id="btn-pull">Pull Mode: OFF</button>
+    <button id="btn-restart">Restart Level</button>
+</div>
+
+<div id="overlay">
+    <h1>COLOR PUSH</h1>
+    <button id="btn-start" class="btn-start">شروع بازی</button>
+</div>
+
+<div id="win-overlay">
+    <h1>عالی بود!</h1>
+    <p id="win-msg"></p>
+    <button id="btn-next" class="btn-start">مرحله بعدی</button>
+</div>
+
+<script>
+    let G = 40; 
+    const W = 9, H = 9; // Grid 9x9
+    let player = { x: 0, y: 0, color: 'white', el: null };
+    let blocks = [];
+    let goal = { x: 3, y: 3, w: 3, h: 3 }; // هدف در مرکز
+    let targetPattern = [];
+    
+    let moves = 0, time = 0, timerInt;
+    let isGameOver = false, pullMode = false;
+    let audioCtx = null;
+
+    const colors = ['red', 'blue', 'yellow', 'purple', 'green', 'orange'];
+
+    // --- Audio Engine ---
+    function playSound(type) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        
+        if (type === 'move') { osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1); gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1); }
+        else if (type === 'mix') { osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); osc.frequency.linearRampToValueAtTime(800, now + 0.2); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2); osc.start(now); osc.stop(now + 0.2); }
+        else if (type === 'error') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.1); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1); }
+        else if (type === 'win') { osc.type = 'square'; osc.frequency.setValueAtTime(400, now); osc.frequency.linearRampToValueAtTime(600, now + 0.3); gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3); }
+    }
+
+    // --- Responsive Layout ---
+    function resizeGame() {
+        const container = document.getElementById('game-container');
+        if (!container) return;
+        
+        const availableW = container.clientWidth * 0.95;
+        const availableH = container.clientHeight * 0.95;
+        
+        const maxG_width = availableW / W;
+        const maxG_height = availableH / (H * 0.75); // 0.75 for 45deg 3D tilt
+        
+        G = Math.floor(Math.min(maxG_width, maxG_height));
+        document.documentElement.style.setProperty('--grid-size', G + 'px');
+        
+        const world = document.getElementById('world');
+        world.style.width = `${W * G}px`;
+        world.style.height = `${H * G}px`;
+
+        const gridEl = document.getElementById('grid');
+        gridEl.style.width = `${W * G}px`; 
+        gridEl.style.height = `${H * G}px`;
+        
+        const goalEl = document.getElementById('goal');
+        if(goalEl) {
+            goalEl.style.width = `${goal.w * G}px`; 
+            goalEl.style.height = `${goal.h * G}px`;
+            goalEl.style.transform = `translate3d(${goal.x * G}px, ${goal.y * G}px, 0)`;
+        }
+
+        if(player.el) updatePos(player);
+        blocks.forEach(updatePos);
+    }
+    window.addEventListener('resize', resizeGame);
+
+    // --- Rendering Elements ---
+    function createCube(className, colorClass) {
+        const div = document.createElement('div');
+        div.className = `entity ${className} color-${colorClass}`;
+        const cube = document.createElement('div');
+        cube.className = 'cube';
+        ['front', 'back', 'right', 'left', 'top', 'bottom'].forEach(face => {
+            const f = document.createElement('div');
+            f.className = `face ${face}`;
+            cube.appendChild(f);
+        });
+        div.appendChild(cube);
+        return div;
+    }
+
+    function createTrail(x, y, color) {
+        const t = document.createElement('div');
+        t.className = 'trail';
+        t.style.width = (G/3) + 'px'; t.style.height = (G/3) + 'px';
+        t.style.left = (x * G + G/3) + 'px'; t.style.top = (y * G + G/3) + 'px';
+        t.style.background = color === 'white' ? 'white' : `var(--${color})`;
+        document.getElementById('world').appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'scale(2)'; }, 50);
+        setTimeout(() => t.remove(), 1050);
+    }
+
+    function updatePos(obj) {
+        if(!obj || !obj.el) return;
+        obj.el.style.transform = `translate3d(${obj.x * G}px, ${obj.y * G}px, 0)`;
+    }
+
+    function generatePattern() {
+        targetPattern = [];
+        let reqBlocks = []; 
+        const tg = document.getElementById('target-grid');
+        tg.innerHTML = '';
+
+        for(let r=0; r<3; r++) {
+            let row = [];
+            for(let c=0; c<3; c++) {
+                let color = 'empty';
+                if(Math.random() > 0.4) { 
+                    color = colors[Math.floor(Math.random() * colors.length)];
+                    reqBlocks.push(color);
+                }
+                row.push(color);
+                const cell = document.createElement('div');
+                cell.className = 't-cell';
+                if(color !== 'empty') cell.style.background = `var(--${color})`;
+                tg.appendChild(cell);
+            }
+            targetPattern.push(row);
+        }
+        
+        if(reqBlocks.length < 4 || reqBlocks.length > 7) return generatePattern();
+        return reqBlocks;
+    }
+
+    function initLevel() {
+        document.getElementById('win-overlay').style.display = 'none';
+        const world = document.getElementById('world');
+        const gridEl = document.getElementById('grid');
+        world.innerHTML = ''; world.appendChild(gridEl);
+        
+        const goalEl = document.createElement('div');
+        goalEl.className = 'goal-zone'; goalEl.id = 'goal';
+        world.appendChild(goalEl);
+
+        blocks = [];
+        player = { x: 0, y: 0, color: 'white' };
+        
+        let reqColors = generatePattern();
+
+        reqColors.forEach(c => {
+            let rx, ry;
+            do {
+                rx = Math.floor(Math.random() * W);
+                ry = Math.floor(Math.random() * H); 
+            } while ((rx===0 && ry===0) || getEntityAt(rx, ry) || (rx>=goal.x && rx<goal.x+goal.w && ry>=goal.y && ry<goal.y+goal.h));
+            
+            let b = { x: rx, y: ry, color: c, el: createCube('block', c) };
+            blocks.push(b);
+            world.appendChild(b.el);
+        });
+
+        player.el = createCube('player', 'white');
+        world.appendChild(player.el);
+
+        resizeGame();
+        
+        moves = 0; time = 0; isGameOver = false;
+        clearInterval(timerInt);
+        document.getElementById('ui-time').innerText = `Time: 0s`;
+        document.getElementById('ui-moves').innerText = `Moves: 0`;
+        timerInt = setInterval(() => { time++; document.getElementById('ui-time').innerText = `Time: ${time}s`; }, 1000);
+        
+        pullMode = false; updatePullUI();
+    }
+
+    function getEntityAt(x, y) {
+        if(x < 0 || x >= W || y < 0 || y >= H) return { type: 'wall' };
+        let b = blocks.find(b => b.x === x && b.y === y); 
+        return b ? { type: 'block', obj: b } : null;
+    }
+
+    function togglePull() {
+        pullMode = !pullMode;
+        updatePullUI();
+    }
+    
+    function updatePullUI() {
+        const b = document.getElementById('btn-pull');
+        b.innerText = `Pull Mode: ${pullMode ? 'ON' : 'OFF'}`;
+        b.className = pullMode ? 'active' : '';
+    }
+
+    function tryMove(dx, dy) {
+        if (isGameOver) return;
+        let nx = player.x + dx, ny = player.y + dy;
+        let target = getEntityAt(nx, ny);
+        let success = false;
+
+        if (target) {
+            if (target.type === 'wall') {
+                playSound('error'); return;
+            }
+            if (target.type === 'block') {
+                let pushT = getEntityAt(nx + dx, ny + dy);
+                if (!pushT) { 
+                    target.obj.x += dx; target.obj.y += dy;
+                    updatePos(target.obj);
+                    success = true;
+                } else {
+                    playSound('error'); return;
+                }
+            }
+        } else {
+            success = true; 
+        }
+
+        if (success) {
+            let px = player.x, py = player.y; 
+            
+            player.x = nx; player.y = ny;
+            updatePos(player);
+
+            // ترفند غلتاندن بی‌نقص مکعب کاراکتر 
+            const cubeEl = player.el.querySelector('.cube');
+            if(cubeEl) {
+                // ریست کردن چرخش بدون انیمیشن (چون وجوه یکسان هستند حس نمی‌شود)
+                cubeEl.style.transition = 'none';
+                cubeEl.style.transform = `translateZ(calc(var(--grid-size)/2)) rotateX(0deg) rotateY(0deg)`;
+                
+                // اجبار مرورگر به اعمال تغییرات
+                void cubeEl.offsetWidth;
+                
+                // روشن کردن انیمیشن و غلتاندن دقیقا به سمت هدف
+                cubeEl.style.transition = 'transform 0.15s ease-out';
+                let rollX = dy * -90; // حرکت در محور Y باعث چرخش دور محور X می‌شود
+                let rollY = dx * 90;  // حرکت در محور X باعث چرخش دور محور Y می‌شود
+                cubeEl.style.transform = `translateZ(calc(var(--grid-size)/2)) rotateX(${rollX}deg) rotateY(${rollY}deg)`;
+            }
+            
+            if (pullMode) {
+                let backEnt = getEntityAt(px - dx, py - dy); 
+                if (backEnt && backEnt.type === 'block') {
+                    backEnt.obj.x = px; backEnt.obj.y = py; 
+                    updatePos(backEnt.obj);
+                    playSound('mix');
+                }
+            }
+            
+            createTrail(px, py, 'white');
+            playSound('move');
+            
+            moves++; document.getElementById('ui-moves').innerText = `Moves: ${moves}`;
+            checkWin();
+        }
+    }
+
+    function checkWin() {
+        let win = true;
+        for(let r=0; r<3; r++) {
+            for(let c=0; c<3; c++) {
+                let tc = targetPattern[r][c]; 
+                let ent = getEntityAt(goal.x + c, goal.y + r); 
+                let bc = (ent && ent.type === 'block') ? ent.obj.color : 'empty';
+                if (bc !== tc) win = false;
+            }
+        }
+        if (win) {
+            isGameOver = true; clearInterval(timerInt);
+            playSound('win');
+            document.getElementById('win-msg').innerHTML = `زمان شما: <b>${time} ثانیه</b><br>تعداد حرکات: <b>${moves}</b>`;
+            setTimeout(() => { document.getElementById('win-overlay').style.display = 'flex'; }, 400);
+        }
+    }
+
+    // Input Controllers
+    window.addEventListener('keydown', e => {
+        if (e.key === 'ArrowUp' || e.key === 'w') tryMove(0, -1);
+        if (e.key === 'ArrowDown' || e.key === 's') tryMove(0, 1);
+        if (e.key === 'ArrowLeft' || e.key === 'a') tryMove(-1, 0);
+        if (e.key === 'ArrowRight' || e.key === 'd') tryMove(1, 0);
+        if (e.key === ' ') togglePull();
+    });
+
+    let touchX, touchY;
+    window.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; });
+    window.addEventListener('touchend', e => {
+        let dx = e.changedTouches[0].clientX - touchX;
+        let dy = e.changedTouches[0].clientY - touchY;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (Math.abs(dx) > 30) tryMove(dx > 0 ? 1 : -1, 0);
+        } else {
+            if (Math.abs(dy) > 30) tryMove(0, dy > 0 ? 1 : -1);
+        }
+    });
+
+    document.getElementById('btn-pull').addEventListener('click', togglePull);
+    document.getElementById('btn-restart').addEventListener('click', initLevel);
+    document.getElementById('btn-next').addEventListener('click', initLevel);
+    document.getElementById('btn-start').addEventListener('click', () => {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        document.getElementById('overlay').style.display = 'none';
+        initLevel();
+    });
+
+    resizeGame();
+</script>
+</body>
+</html>

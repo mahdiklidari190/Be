@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Clash Royale - Advanced AI</title>
+    <style>
+        @import url('https://v1.fontapi.ir/css/Vazir');
+        
+        :root {
+            --p1-color: #3498db;
+            --p2-color: #e74c3c;
+            --glass-bg: rgba(20, 25, 30, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            margin: 0; padding: 0;
+            background: #0f171e; color: white;
+            font-family: 'Vazir', sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100dvh; 
+            overflow: hidden; user-select: none;
+            touch-action: none;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake { animation: shake 0.3s; }
+
+        #menu {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a2a3a 0%, #000000 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
+        }
+
+        .title { color: #f1c40f; font-size: clamp(30px, 8vw, 50px); text-shadow: 0 5px 20px rgba(241,196,15,0.6); margin-bottom: 30px; }
+
+        .btn {
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            border: none; padding: 12px 30px; margin: 10px; border-radius: 12px;
+            font-size: clamp(14px, 4vw, 18px); font-weight: bold; cursor: pointer; color: #111;
+            font-family: 'Vazir', sans-serif; box-shadow: 0 5px 15px rgba(230, 126, 34, 0.4); transition: 0.3s;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(230, 126, 34, 0.6); }
+
+        #game-wrapper {
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; max-width: 500px; height: 100%;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .ui-panel {
+            width: 100%; display: flex; flex-direction: column; padding: 6px 10px; box-sizing: border-box;
+            background: var(--glass-bg); backdrop-filter: blur(10px); z-index: 10;
+            transition: transform 0.3s;
+        }
+        
+        #p2-ui { 
+            border-top: 2px solid var(--p2-color); 
+            border-radius: 15px 15px 0 0; 
+            padding-bottom: max(12px, env(safe-area-inset-top)); 
+        }
+        
+        .flipped-ui { transform: rotate(180deg); }
+
+        #p1-ui { 
+            border-top: 2px solid var(--p1-color); border-radius: 15px 15px 0 0; 
+            padding-bottom: max(12px, env(safe-area-inset-bottom, 12px)); 
+        }
+
+        .elixir-wrapper { width: 100%; display: flex; align-items: center; gap: 8px; margin: 2px 0; }
+        .elixir-icon { background: #9b59b6; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 11px; box-shadow: 0 0 8px #9b59b6; }
+        .elixir-bar-bg { flex-grow: 1; height: 12px; background: rgba(0,0,0,0.5); border-radius: 10px; position: relative; overflow: hidden; border: 1px solid var(--glass-border); }
+        .elixir-bar-fill { height: 100%; background: linear-gradient(90deg, #8e44ad, #d252ff); transition: width 0.2s linear; box-shadow: 0 0 10px #d252ff; }
+
+        .cards { display: flex; justify-content: center; width: 100%; gap: 6px; padding-bottom: 2px; }
+
+        .card {
+            flex: 1; max-width: 55px; 
+            aspect-ratio: 3/4.2; background: linear-gradient(180deg, #2c3e50, #1a252f);
+            border: 2px solid #555; border-radius: 6px; cursor: pointer; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; position: relative; transition: 0.2s; box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .card.selected-p1 { border-color: var(--p1-color); transform: translateY(-6px); box-shadow: 0 6px 15px rgba(52, 152, 219, 0.6); }
+        .card.selected-p2 { border-color: var(--p2-color); transform: translateY(6px); box-shadow: 0 -6px 15px rgba(231, 76, 60, 0.6); }
+        .flipped-ui .card.selected-p2 { transform: translateY(-6px); box-shadow: 0 6px 15px rgba(231, 76, 60, 0.6); }
+
+        .card.disabled { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; }
+        .card-cost { position: absolute; top: -3px; left: -3px; background: #d252ff; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px solid #222; box-shadow: 0 0 4px #d252ff; z-index: 2; }
+        .card-img-container { width: 100%; height: 50%; display: flex; align-items: center; justify-content: center; }
+        .card-img-container img { width: 100%; height: 100%; object-fit: contain; }
+        .card-icon-fallback { font-size: clamp(14px, 4vw, 20px); filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); }
+        .card-name { font-size: clamp(7px, 2vw, 9px); margin-top: auto; margin-bottom: 4px; color: #ddd; z-index: 2; text-align: center; line-height: 1; }
+
+        #canvas-container { flex-grow: 1; width: 100%; position: relative; background: #3a7536; overflow: hidden; }
+        canvas { width: 100%; height: 100%; display: block; }
+        
+        #message {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85); padding: 20px; border-radius: 12px; border: 1px solid var(--glass-border);
+            font-size: clamp(16px, 5vw, 22px); font-weight: bold; display: none; text-align: center; z-index: 50; backdrop-filter: blur(5px); line-height: 1.5;
+        }
+
+        .trophy-board {
+            position: absolute; width: 22px; height: 65px;
+            background: rgba(0,0,0,0.6); border: 2px solid;
+            border-radius: 6px; display: flex; flex-direction: column;
+            align-items: center; justify-content: space-evenly; z-index: 20;
+            backdrop-filter: blur(3px);
+        }
+        #trophies-p1 { bottom: 130px; right: 8px; border-color: var(--p1-color); }
+        #trophies-p2 {
+            top: 130px;
+            left: 8px;
+            border-color: var(--p2-color);
+            transform: rotate(180deg);
+        }
+        
+        .t-slot { 
+            width: 14px; height: 14px; background: rgba(255,255,255,0.15); 
+            border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; font-size: 10px; transition: 0.3s;
+        }
+        .t-slot.filled { background: transparent; }
+        .t-slot.filled::before { content: '🏆'; text-shadow: 0 0 5px gold; animation: pop 0.3s ease; }
+        
+        @keyframes pop {
+            0% { transform: scale(0.5); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="menu">
+        <h1 class="title">Clash Royale</h1>
+        <button class="btn" onclick="startGame('1P')">یک نفره (هوش مصنوعی)</button>
+        <button class="btn" onclick="startGame('2P')">دو نفره (روی یک دستگاه)</button>
+    </div>
+
+    <div id="game-wrapper">
+        <div class="ui-panel" id="p2-ui">
+            <div class="elixir-wrapper">
+                <div class="elixir-icon" id="elixir-text-p2">5</div>
+                <div class="elixir-bar-bg"><div class="elixir-bar-fill" id="elixir-bar-p2"></div></div>
+            </div>
+            <div class="cards" id="cards-p2"></div>
+        </div>
+
+        <div id="trophies-p2" class="trophy-board">
+            <div class="t-slot" id="p2-t1"></div><div class="t-slot" id="p2-t2"></div><div class="t-slot" id="p2-t3"></div>
+        </div>
+
+        <div id="canvas-container">
+            <canvas id="gameCanvas"></canvas>
+            <div id="message"></div>
+        </div>
+
+        <div id="trophies-p1" class="trophy-board">
+            <div class="t-slot" id="p1-t1"></div><div class="t-slot" id="p1-t2"></div><div class="t-slot" id="p1-t3"></div>
+        </div>
+
+        <div class="ui-panel" id="p1-ui">
+            <div class="elixir-wrapper">
+                <div class="elixir-icon" id="elixir-text-p1">5</div>
+                <div class="elixir-bar-bg"><div class="elixir-bar-fill" id="elixir-bar-p1"></div></div>
+            </div>
+            <div class="cards" id="cards-p1"></div>
+        </div>
+    </div>
+<script>
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+    function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); }
+
+    function playSound(type) {
+        if (!audioCtx) return;
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        
+        if (type === 'shoot') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(600, t);
+            osc.frequency.exponentialRampToValueAtTime(100, t + 0.1);
+            gain.gain.setValueAtTime(0.05, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+            osc.start(t); osc.stop(t + 0.1);
+        } else if (type === 'spawn') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(300, t);
+            osc.frequency.linearRampToValueAtTime(800, t + 0.15);
+            gain.gain.setValueAtTime(0.1, t); gain.gain.linearRampToValueAtTime(0, t + 0.15);
+            osc.start(t); osc.stop(t + 0.15);
+        } else if (type === 'explode') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, t);
+            osc.frequency.exponentialRampToValueAtTime(10, t + 0.5);
+            gain.gain.setValueAtTime(0.2, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+            osc.start(t); osc.stop(t + 0.5);
+        }
+    }
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let cw, ch;
+    let gameMode = '1P';
+    let gameOver = false;
+    let lastTime = 0;
+    let gameTime = 180;
+    let isTiebreaker = false; 
+
+    const ALL_CARDS = [
+        { id: 'skeleton', name: 'اسکلت', icon: '💀', imgSrc: 'assets/skeleton.png', cost: 1, hp: 50, damage: 15, speed: 70, range: 10, attackSpeed: 0.6, isRanged: false, radius: 7 },
+        { id: 'skeletonArmy', name: 'گروه اسکلتی', icon: '💀', imgSrc: 'assets/skeletonarmy.png', cost: 3, hp: 50, damage: 15, speed: 70, range: 10, attackSpeed: 0.6, isRanged: false, radius: 7 },
+        { id: 'goblin', name: 'گابلین', icon: '🗡️', imgSrc: 'assets/goblin.png', cost: 2, hp: 120, damage: 30, speed: 75, range: 12, attackSpeed: 0.8, isRanged: false, radius: 9 },
+        { id: 'archer', name: 'کماندار', icon: '🏹', imgSrc: 'assets/archer.png', cost: 3, hp: 150, damage: 25, speed: 45, range: 120, attackSpeed: 1.0, isRanged: true, radius: 10 },
+        { id: 'archerTower', name: 'برج کماندار', icon: '🏹', imgSrc: 'assets/archertower.png', cost: 3, hp: 600, damage: 45, speed: 0, range: 130, attackSpeed: 1.0, isRanged: true, radius: 16, isBuilding: true },
+        { id: 'knight', name: 'شوالیه', icon: '🛡️', imgSrc: 'assets/knight.png', cost: 3, hp: 450, damage: 40, speed: 40, range: 20, attackSpeed: 1.2, isRanged: false, radius: 12 },
+        { id: 'bomber', name: 'بمب‌انداز', icon: '💣', imgSrc: 'assets/bomber.png', cost: 3, hp: 130, damage: 60, speed: 45, range: 90, attackSpeed: 1.5, isRanged: true, radius: 10, aoe: true },
+        { id: 'arrows', name: 'تیرباران', icon: '🏹🏹', imgSrc: 'assets/arrows.png', cost: 3, isSpell: true, spellType: 'direct_damage', spellRadius: 80, damage: 90 },
+        { id: 'dragon', name: 'اژدها', icon: '🐲', imgSrc: 'assets/dragon.png', cost: 4, hp: 500, damage: 45, speed: 50, range: 80, attackSpeed: 1.3, isRanged: true, radius: 15, isAir: true, aoe: true },
+        { id: 'musketeer', name: 'تفنگدار', icon: '🔫', imgSrc: 'assets/musketeer.png', cost: 4, hp: 350, damage: 80, speed: 40, range: 140, attackSpeed: 1.1, isRanged: true, radius: 11 },
+        { id: 'valkyrie', name: 'والکری', icon: '🪓', imgSrc: 'assets/valkyrie.png', cost: 4, hp: 600, damage: 70, speed: 45, range: 25, attackSpeed: 1.5, isRanged: false, radius: 13 },
+        { id: 'minipekka', name: 'مینی پکا', icon: '🤖', imgSrc: 'assets/minipekka.png', cost: 4, hp: 400, damage: 150, speed: 60, range: 15, attackSpeed: 1.6, isRanged: false, radius: 11 },
+        { id: 'hogrider', name: 'خوک سوار', icon: '🐷', imgSrc: 'assets/hogrider.png', cost: 4, hp: 550, damage: 90, speed: 85, range: 15, attackSpeed: 1.4, isRanged: false, radius: 12, target: 'building' },
+        { id: 'fireball', name: 'توپ آتش', icon: '☄️', imgSrc: 'assets/fireball.png', cost: 4, isSpell: true, spellType: 'direct_damage', spellRadius: 60, damage: 200 },
+        { id: 'wizard', name: 'جادوگر', icon: '🔥', imgSrc: 'assets/wizard.png', cost: 5, hp: 340, damage: 90, speed: 35, range: 100, attackSpeed: 1.5, isRanged: true, radius: 11, aoe: true },
+        { id: 'wizardTower', name: 'قلعه جادوگر', icon: '🏰', imgSrc: 'assets/wizardtower.png', cost: 5, hp: 800, damage: 90, speed: 0, range: 110, attackSpeed: 1.5, isRanged: true, radius: 18, isBuilding: true, aoe: true },
+        { id: 'prince', name: 'پرنس', icon: '🏇', imgSrc: 'assets/prince.png', cost: 5, hp: 650, damage: 120, speed: 80, range: 20, attackSpeed: 1.4, isRanged: false, radius: 14 },
+        { id: 'balloon', name: 'بالن', icon: '🎈', imgSrc: 'assets/balloon.png', cost: 5, hp: 600, damage: 250, speed: 35, range: 15, attackSpeed: 3.0, isRanged: false, radius: 16, isAir: true, target: 'building' },
+        { id: 'giant', name: 'غول', icon: '🗿', imgSrc: 'assets/giant.png', cost: 5, hp: 1200, damage: 60, speed: 20, range: 35, attackSpeed: 1.8, isRanged: false, radius: 18, target: 'building' },
+        { id: 'golem', name: 'گولم', icon: '🪨', imgSrc: 'assets/golem.png', cost: 8, hp: 2500, damage: 100, speed: 15, range: 35, attackSpeed: 2.5, isRanged: false, radius: 22, target: 'building' },
+        { id: 'golemite', name: 'گولمایت', icon: '🪨', imgSrc: 'assets/golem.png', cost: 0, hp: 1000, damage: 50, speed: 20, range: 35, attackSpeed: 2.5, isRanged: false, radius: 16, target: 'building', unplayable: true },
+        { id: 'golemMini', name: 'گولم‌مینی', icon: '🪨', imgSrc: 'assets/golem.png', cost: 0, hp: 400, damage: 25, speed: 25, range: 35, attackSpeed: 2.5, isRanged: false, radius: 10, target: 'building', unplayable: true },
+        { id: 'tigerGroup', name: '۴ بربر', icon: '💂🏻‍♂️', imgSrc: 'assets/tiger.png', cost: 5, hp: 150, damage: 20, speed: 40, range: 15, attackSpeed: 1.2, isRanged: false, radius: 12, spawnCount: 5 },
+        { id: 'witch', name: 'ساحره', icon: '🧙‍♀️', imgSrc: 'assets/witch.png', cost: 5, hp: 400, damage: 70, speed: 25, range: 80, attackSpeed: 1.5, isRanged: true, aoe: true, radius: 12, spawnsUnit: 'skeleton', spawnInterval: 2500, spawnCount: 1 },
+        { id: 'goblinBarrel', name: 'بشکه گابلین', icon: '🛢️', imgSrc: 'assets/goblinbarrel.png', cost: 3, isSpell: true, spellType: 'spawn', spawnId: 'goblin', spawnCount: 4, spellRadius: 25 },
+        { id: 'goblinHut', name: 'خانه گابلین', icon: '🏕️', imgSrc: 'assets/goblinhut.png', cost: 3, hp: 800, damage: 0, speed: 0, range: 0, isBuilding: true, lifespan: 30000, spawnsUnit: 'goblin', spawnInterval: 5000, spawnCount: 1, radius: 20 },
+        { id: 'pekka', name: 'پکا', icon: '👾', imgSrc: 'assets/pekka.png', cost: 6, hp: 1200, damage: 200, speed: 18, range: 20, attackSpeed: 1.8, isRanged: false, radius: 18 },
+        { id: 'princess', name: 'پرنسس', icon: '👸', imgSrc: 'assets/princess.png', cost: 5, hp: 250, damage: 120, speed: 25, range: 140, attackSpeed: 2.5, isRanged: true, aoe: true, radius: 10 },
+        { id: 'miner', name: 'معدن‌چی', icon: '⛏️', imgSrc: 'assets/miner.png', cost: 3, hp: 400, damage: 100, speed: 45, range: 15, attackSpeed: 1.2, isRanged: false, isAnywhere: true, radius: 12 },
+        { id: 'tesla', name: 'تسلا', icon: '⚡', imgSrc: 'assets/tesla.png', cost: 3, hp: 950, damage: 140, speed: 0, range: 90, attackSpeed: 1.1, isBuilding: true, lifespan: 35000, isRanged: true, radius: 20 },
+        { id: 'dragonDog', name: 'سگ اژدهایی', icon: '🐶', imgSrc: 'assets/dragondog.png', cost: 3, hp: 350, damage: 60, speed: 35, range: 45, attackSpeed: 1.2, isRanged: true, isAir: true, radius: 12 },
+        { id: 'powerPotion', name: 'معجون قدرت', icon: '🧪', imgSrc: 'assets/powerpotion.png', cost: 2, isSpell: true, spellType: 'buff', duration: 6000, spellRadius: 50 },
+        { id: 'deathPotion', name: 'سم/مرگ', icon: '☠️', imgSrc: 'assets/deathpotion.png', cost: 4, isSpell: true, spellType: 'damage_over_time', damagePerTick: 40, duration: 8000, spellRadius: 55 },
+        { id: 'healPotion', name: 'شفا', icon: '💖', imgSrc: 'assets/healpotion.png', cost: 3, isSpell: true, spellType: 'heal_over_time', healPerTick: 50, duration: 5000, spellRadius: 50 },
+        { id: 'minions', name: 'مینیون ها', icon: '🐵', imgSrc: 'assets/minions.png', cost: 3, hp: 100, damage: 50, speed: 70, range: 15, attackSpeed: 0.9, isRanged: false, radius: 8, isAir: true, spawnCount: 3 },
+        { id: 'lightning', name: 'رعد و برق', icon: '🌩️', imgSrc: 'assets/lightning.png', cost: 6, isSpell: true, spellType: 'lightning', damage: 250, targetsCount: 3, spellRadius: 60 },
+        { id: 'skeletonPotion', name: 'قبرستان', icon: '🪦', imgSrc: 'assets/skeletonpotion.png', cost: 2, isSpell: true, spellType: 'spawn_over_time', spawnId: 'skeleton', spawnCount: 1, duration: 8000, spawnInterval: 1000, spellRadius: 45 }
+    ];
+
+    let players = {
+        1: { elixir: 5, maxElixir: 10, selectedCard: null, color: '#3498db', deck: [], hand: [] },
+        2: { elixir: 5, maxElixir: 10, selectedCard: null, color: '#e74c3c', deck: [], hand: [], lastMoveTime: 0 }
+    };
+
+    const loadedImages = {};
+    function preloadImages() {
+        ALL_CARDS.forEach(u => {
+            if(!u.unplayable) {
+                const img = new Image(); img.src = u.imgSrc;
+                img.onerror = () => { img.failed = true; };
+                loadedImages[u.id] = img;
+            }
+        });
+    }
+    preloadImages();
+
+    let units = [], projectiles = [], particles = [], towers = [], spellsActive = [], deathBombs = [];
+    let riverY, riverHeight = 50, bridges = [], bridgeWidth = 45;
+
+    function initTowers() {
+        const edgeOffset = cw * 0.22; 
+        const kingDistY = ch * 0.08;     
+        const princessDistY = ch * 0.25; 
+        
+        towers = [
+            { id: 'p1_king', p: 1, type: 'king', x: cw/2, y: ch - kingDistY, radius: 28, hp: 2500, maxHp: 2500, damage: 30, range: 160, attackSpeed: 1 },
+            { id: 'p1_pl', p: 1, type: 'princess', x: edgeOffset, y: ch - princessDistY, radius: 20, hp: 1500, maxHp: 1500, damage: 20, range: 140, attackSpeed: 0.8 },
+            { id: 'p1_pr', p: 1, type: 'princess', x: cw - edgeOffset, y: ch - princessDistY, radius: 20, hp: 1500, maxHp: 1500, damage: 20, range: 140, attackSpeed: 0.8 },
+            { id: 'p2_king', p: 2, type: 'king', x: cw/2, y: kingDistY, radius: 28, hp: 2500, maxHp: 2500, damage: 30, range: 160, attackSpeed: 1 },
+            { id: 'p2_pl', p: 2, type: 'princess', x: edgeOffset, y: princessDistY, radius: 20, hp: 1500, maxHp: 1500, damage: 20, range: 140, attackSpeed: 0.8 },
+            { id: 'p2_pr', p: 2, type: 'princess', x: cw - edgeOffset, y: princessDistY, radius: 20, hp: 1500, maxHp: 1500, damage: 20, range: 140, attackSpeed: 0.8 }
+        ].map(t => ({...t, cooldown: 0}));
+    }
+
+    function triggerScreenShake() {
+        document.getElementById('canvas-container').classList.remove('shake');
+        void document.getElementById('canvas-container').offsetWidth;
+        document.getElementById('canvas-container').classList.add('shake');
+    }
+
+    function resize() {
+        const container = document.getElementById('canvas-container');
+        cw = canvas.width = container.clientWidth; ch = canvas.height = container.clientHeight;
+        riverY = ch / 2; bridges = [ { x: cw * 0.25 }, { x: cw * 0.75 } ];
+        initTowers(); 
+    }
+    window.addEventListener('resize', () => { if(!gameOver) resize(); });
+
+    function shuffleDeck(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function initPlayerDecks() {
+        [1, 2].forEach(p => {
+            let playableCards = ALL_CARDS.filter(c => !c.unplayable);
+            players[p].deck = shuffleDeck([...playableCards]); 
+            players[p].hand = players[p].deck.splice(0, 4);
+        });
+        players[2].lastMoveTime = 0; // Reset AI timer
+    }
+
+    function createCardsUI(pId, containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        players[pId].hand.forEach(u => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.id = `card-p${pId}-${u.id}`;
+            div.innerHTML = `
+                <div class="card-cost">${u.cost}</div>
+                <div class="card-img-container">
+                    <img src="${u.imgSrc}" alt="${u.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="card-icon-fallback" style="display:none;">${u.icon}</span>
+                </div>
+                <div class="card-name">${u.name}</div>
+            `;
+            div.onclick = () => selectCard(pId, u.id);
+            container.appendChild(div);
+        });
+    }
+
+    function cycleCard(pId, playedCardId) {
+        const index = players[pId].hand.findIndex(c => c.id === playedCardId);
+        if (index > -1) {
+            const playedCard = players[pId].hand.splice(index, 1)[0];
+            const newCard = players[pId].deck.shift();
+            players[pId].hand.push(newCard);
+            players[pId].deck.push(playedCard);
+            createCardsUI(pId, `cards-p${pId}`);
+        }
+    }
+
+    function selectCard(p, cardId) {
+        if (isTiebreaker || gameOver) return;
+        const cardData = players[p].hand.find(u => u.id === cardId);
+        if (cardData && players[p].elixir >= cardData.cost) {
+            players[p].selectedCard = cardId;
+            document.querySelectorAll(`#cards-p${p} .card`).forEach(c => c.classList.remove(`selected-p${p}`));
+            document.getElementById(`card-p${p}-${cardId}`).classList.add(`selected-p${p}`);
+        }
+    }
+
+    function updateUI() {
+        [1, 2].forEach(p => {
+            document.getElementById(`elixir-bar-p${p}`).style.width = (players[p].elixir / players[p].maxElixir) * 100 + '%';
+            document.getElementById(`elixir-text-p${p}`).innerText = Math.floor(players[p].elixir);
+            
+            players[p].hand.forEach(u => {
+                const card = document.getElementById(`card-p${p}-${u.id}`);
+                if(card) {
+                    if (players[p].elixir < u.cost || isTiebreaker) card.classList.add('disabled');
+                    else card.classList.remove('disabled');
+                }
+            });
+
+            if (players[p].selectedCard) {
+                const cardData = players[p].hand.find(u => u.id === players[p].selectedCard);
+                if (!cardData || players[p].elixir < cardData.cost || isTiebreaker) {
+                    players[p].selectedCard = null;
+                    document.querySelectorAll(`#cards-p${p} .card`).forEach(c => c.classList.remove(`selected-p${p}`));
+                }
+            }
+        });
+    }
+
+    function canDeploy(pId, x, y) {
+        let p2LeftDead = towers.find(t => t.id === 'p2_pl').hp <= 0;
+        let p2RightDead = towers.find(t => t.id === 'p2_pr').hp <= 0;
+        let p1LeftDead = towers.find(t => t.id === 'p1_pl').hp <= 0;
+        let p1RightDead = towers.find(t => t.id === 'p1_pr').hp <= 0;
+
+        let leftZoneX = cw / 2;
+        let p2TowerY = ch * 0.25;
+        let p1TowerY = ch - (ch * 0.25);
+
+        if (pId === 1) {
+            if (y >= riverY) return true; 
+            if (p2LeftDead && x <= leftZoneX && y >= p2TowerY) return true; 
+            if (p2RightDead && x > leftZoneX && y >= p2TowerY) return true; 
+            return false;
+        } else {
+            if (y <= riverY) return true; 
+            if (p1LeftDead && x <= leftZoneX && y <= p1TowerY) return true; 
+            if (p1RightDead && x > leftZoneX && y <= p1TowerY) return true; 
+            return false;
+        }
+    }
+
+    canvas.addEventListener('mousedown', handleDeploy);
+    canvas.addEventListener('touchstart', (e) => { 
+        e.preventDefault(); 
+        handleDeploy({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY }); 
+    }, {passive: false});
+
+    function handleDeploy(e) {
+        if (gameOver || isTiebreaker) return;
+        initAudio();
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+
+        [1, 2].forEach(pId => {
+            if (players[pId].selectedCard) {
+                const stats = players[pId].hand.find(u => u.id === players[pId].selectedCard);
+                if (stats.isSpell || stats.isAnywhere) {
+                    deployUnit(pId, stats.id, x, y);
+                } else {
+                    if (canDeploy(pId, x, y)) {
+                        deployUnit(pId, stats.id, x, y);
+                    }
+                }
+            }
+        });
+    }
+
+    function deployUnit(pId, unitId, x, y) {
+        const stats = players[pId].hand.find(u => u.id === unitId);
+        if (stats && players[pId].elixir >= stats.cost) {
+            players[pId].elixir -= stats.cost;
+            
+            if (stats.isSpell) {
+                playSound('explode');
+                triggerScreenShake();
+                
+                if (stats.spellType === 'spawn') {
+                    const spawnUnit = ALL_CARDS.find(c => c.id === stats.spawnId);
+                    for(let i=0; i<stats.spawnCount; i++) {
+                        units.push({ ...spawnUnit, p: pId, x: x + (Math.random()-0.5)*30, y: y + (Math.random()-0.5)*30, hp: spawnUnit.hp, maxHp: spawnUnit.hp, cooldown: 0 });
+                    }
+                } else if (stats.spellType === 'lightning') {
+                    let targets = units.concat(towers).filter(en => en.p !== pId && getDist({x,y}, en) <= stats.spellRadius);
+                    targets.sort((a,b) => b.hp - a.hp);
+                    targets.slice(0, stats.targetsCount).forEach(en => {
+                        en.hp -= stats.damage;
+                        for(let k=0; k<10; k++) particles.push({ x: en.x, y: en.y, vx: (Math.random()-0.5)*200, vy: (Math.random()-0.5)*200, life: 0.5, color: '#f1c40f' });
+                    });
+                } else if (stats.spellType === 'direct_damage') {
+                    units.concat(towers).forEach(en => {
+                        if (en.p !== pId && getDist({x,y}, en) <= stats.spellRadius) {
+                            en.hp -= stats.damage;
+                            for(let k=0; k<10; k++) particles.push({ x: en.x, y: en.y, vx: (Math.random()-0.5)*200, vy: (Math.random()-0.5)*200, life: 0.5, color: '#e74c3c' });
+                        }
+                    });
+                    spellsActive.push({ ...stats, p: pId, x: x, y: y, timer: 1.0 });
+                } else {
+                    spellsActive.push({ ...stats, p: pId, x: x, y: y, timer: stats.duration/1000, tickTimer: 0 });
+                }
+            } else {
+                let count = stats.spawnCount || 1;
+                if (stats.id === 'skeletonArmy') count = 10;
+                else if (stats.id === 'skeleton' || stats.id === 'goblin' || stats.id === 'archer') count = 2;
+                if (stats.isBuilding) count = 1;
+
+                for(let i=0; i<count; i++) {
+                    let offsetX = stats.isBuilding ? 0 : (Math.random() - 0.5) * (count > 5 ? 40 : 20);
+                    let offsetY = stats.isBuilding ? 0 : (Math.random() - 0.5) * (count > 5 ? 40 : 20);
+                    units.push({ 
+                        ...stats, 
+                        p: pId, x: x + offsetX, y: y + offsetY, 
+                        hp: stats.hp, maxHp: stats.hp, cooldown: 0,
+                        lifetime: stats.isBuilding ? (stats.lifespan/1000 || 30) : undefined
+                    });
+                }
+                playSound('spawn');
+                if(stats.id === 'golem' || stats.id === 'giant' || stats.id === 'balloon' || stats.id === 'pekka' || stats.isBuilding) triggerScreenShake();
+            }
+            
+            players[pId].selectedCard = null;
+            cycleCard(pId, unitId);
+            updateUI();
+        }
+    }
+
+    function getDist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+
+    // =========================================================================
+    // هوش مصنوعی فوق پیشرفته و تهاجمی (Proactive Advanced AI Engine)
+    // =========================================================================
+    function runAI(dt) {
+        if (isTiebreaker || gameOver) return;
+        const ai = players[2];
+        const now = performance.now();
+
+        // جلوگیری از اسپم کردن کارت (حداقل ۱.۲ ثانیه بین هر تصمیم)
+        if (now - ai.lastMoveTime < 1200) return;
+
+        const enemyUnits = units.filter(u => u.p === 1 && u.hp > 0);
+        const aiTowers = towers.filter(t => t.p === 2 && t.hp > 0);
+        const enemyTowers = towers.filter(t => t.p === 1 && t.hp > 0);
+        const kingTower = aiTowers.find(t => t.type === 'king');
+
+        // 1. دفاع اضطراری (اولویت مطلق): اگر نیروی دشمن خیلی نزدیک است
+        const urgentThreats = enemyUnits.filter(u => getDist(u, kingTower) < 250 || u.target === 'building');
+        if (urgentThreats.length > 0 && ai.elixir >= 3) {
+            urgentThreats.sort((a, b) => getDist(a, kingTower) - getDist(b, kingTower));
+            const threat = urgentThreats[0];
+            
+            const affordable = ai.hand.filter(c => c.cost <= ai.elixir && !c.isSpell);
+            let bestCounter = null;
+            let bestScore = -999;
+
+            for (const card of affordable) {
+                let score = 0;
+                if (threat.isAir && !card.isRanged && !card.isBuilding) score -= 100;
+                if ((threat.id === 'skeletonArmy' || threat.id === 'minions') && card.aoe) score += 50;
+                if (threat.target === 'building' && (card.id === 'tesla' || card.id === 'goblinHut')) score += 40;
+                if ((threat.id === 'giant' || threat.id === 'golem' || threat.id === 'pekka') && (card.id === 'minipekka' || card.id === 'skeletonArmy')) score += 35;
+                score -= (card.cost * 3);
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestCounter = card;
+                }
+            }
+
+            if (bestCounter && bestScore > -30) {
+                let deployX = threat.x + (Math.random() * 30 - 15);
+                let deployY = threat.y - 40; 
+                if (bestCounter.isBuilding) {
+                    deployX = cw / 2 + (Math.random() * 20 - 10);
+                    deployY = riverY - 50;
+                }
+                deployY = Math.min(riverY - 30, Math.max(60, deployY));
+                
+                players[2].selectedCard = bestCounter.id;
+                deployUnit(2, bestCounter.id, deployX, deployY);
+                ai.lastMoveTime = now;
+                return;
+            }
+        }
+
+        // 2. منطق هوشمند اسپل (اگر ارزش بالایی داشته باشد)
+        const spells = ai.hand.filter(c => c.isSpell && c.cost <= ai.elixir && c.id !== 'powerPotion' && c.id !== 'healPotion');
+        for (const spell of spells) {
+            let bestSpellTarget = null;
+            let maxSpellValue = 0;
+
+            for (const u of enemyUnits) {
+                const unitsInRadius = enemyUnits.filter(e => getDist(u, e) <= spell.spellRadius).length;
+                const towersInRadius = enemyTowers.filter(t => getDist(u, t) <= spell.spellRadius).length;
+                const value = (unitsInRadius * 2) + (towersInRadius * 10);
+                
+                if (value >= 2 && value > maxSpellValue) {
+                    maxSpellValue = value;
+                    bestSpellTarget = u;
+                }
+            }
+
+            for (const t of enemyTowers) {
+                if (t.hp <= spell.damage && getDist(t, {x: cw/2, y: ch/2}) < 400) {
+                    bestSpellTarget = t;
+                    maxSpellValue = 999;
+                    break;
+                }
+            }
+
+            if (bestSpellTarget && maxSpellValue >= 2) {
+                players[2].selectedCard = spell.id;
+                deployUnit(2, spell.id, bestSpellTarget.x, bestSpellTarget.y);
+                ai.lastMoveTime = now;
+                return;
+            }
+        }
+
+        // 3. حمله فعال و پیش‌دستانه (Proactive Push) - رفع مشکل منفعل بودن
+        if (ai.elixir >= 5.5) {
+            const affordable = ai.hand.filter(c => c.cost <= ai.elixir && !c.isSpell);
+            if (affordable.length > 0) {
+                // اولویت با کارت‌های برنده (Win Conditions)
+                const winConditions = affordable.filter(c => c.id === 'hogrider' || c.id === 'giant' || c.id === 'balloon' || c.id === 'golem' || c.id === 'pekka' || c.id === 'prince');
+                
+                let cardToPlay = winConditions.length > 0 ? winConditions[0] : affordable[0];
+                let deployX = cw / 2;
+                let deployY = 70; // پشت برج پادشاه
+
+                if (cardToPlay.id === 'hogrider' || cardToPlay.id === 'balloon') {
+                    // حمله مستقیم از پل
+                    const bridge = bridges[Math.floor(Math.random() * bridges.length)];
+                    deployX = bridge.x;
+                    deployY = riverY - 50;
+                } else if (cardToPlay.id === 'goblinBarrel' || cardToPlay.id === 'miner') {
+                    // هدف قرار دادن برج‌ها
+                    const targetTower = enemyTowers.sort((a,b) => a.hp - b.hp)[0];
+                    deployX = targetTower ? targetTower.x : cw/2;
+                    deployY = targetTower ? targetTower.y : ch - 100;
+                } else if (!winConditions.includes(cardToPlay)) {
+                    // اگر کارت برنده نیست، نزدیک پل برای ایجاد فشار (Pressure) اسپاون کن
+                    const bridge = bridges[Math.floor(Math.random() * bridges.length)];
+                    deployX = bridge.x + (Math.random() * 40 - 20);
+                    deployY = riverY - 70;
+                }
+
+                players[2].selectedCard = cardToPlay.id;
+                deployUnit(2, cardToPlay.id, deployX, deployY);
+                ai.lastMoveTime = now;
+                return;
+            }
+        }
+
+        // 4. مدیریت اکسیر پر (Cycle): اگر اکسیر ۱۰ شد و کاری نداشت، ارزان‌ترین کارت را بازی کند تا دک بچرخد
+        if (ai.elixir >= 9.8) {
+            const cheapest = ai.hand.filter(c => !c.isSpell).sort((a, b) => a.cost - b.cost)[0];
+            if (cheapest) {
+                players[2].selectedCard = cheapest.id;
+                deployUnit(2, cheapest.id, cw/2, 70);
+                ai.lastMoveTime = now;
+            }
+        }
+    }
+
+    function showWinMessage(winnerId) {
+        const msg = document.getElementById('message');
+        msg.style.display = 'block';
+        playSound('explode');
+        triggerScreenShake();
+        updateTrophies(); 
+        let messageText = winnerId === 1 ? "آبی برنده شدید! 👑" : winnerId === 2 ? "قرمز برنده شد! 🤖" : "مساوی شدید! 🤝";
+        msg.innerHTML = `${messageText}<br><button class='btn' onclick='location.reload()'>دوباره</button>`;
+        msg.style.color = winnerId === 1 ? 'var(--p1-color)' : winnerId === 2 ? 'var(--p2-color)' : 'white';
+    }
+
+    function updateTrophies() {
+        let p1Crowns = 0; let p2Crowns = 0;
+        let p2King = towers.find(t => t.id === 'p2_king');
+        if(p2King.hp <= 0) p1Crowns = 3; else p1Crowns = towers.filter(t => t.p === 2 && t.type === 'princess' && t.hp <= 0).length;
+        let p1King = towers.find(t => t.id === 'p1_king');
+        if(p1King.hp <= 0) p2Crowns = 3; else p2Crowns = towers.filter(t => t.p === 1 && t.type === 'princess' && t.hp <= 0).length;
+        for(let i=1; i<=3; i++) {
+            document.getElementById(`p1-t${i}`).classList.toggle('filled', i <= p1Crowns);
+            document.getElementById(`p2-t${i}`).classList.toggle('filled', i <= p2Crowns);
+        }
+    }
+
+    function updateGame(dt) {
+        if (gameOver) return;
+
+        let p1King = towers.find(t => t.id === 'p1_king');
+        let p2King = towers.find(t => t.id === 'p2_king');
+        if (p1King.hp <= 0 || p2King.hp <= 0) {
+            gameOver = true;
+            if (p1King.hp <= 0 && p2King.hp <= 0) showWinMessage(0); 
+            else if (p1King.hp <= 0) showWinMessage(2); 
+            else showWinMessage(1); 
+            return;
+        }
+
+        if (!isTiebreaker) {
+            gameTime -= dt;
+            if (gameTime <= 0) {
+                gameTime = 0;
+                let p1Crowns = towers.filter(t => t.p === 2 && t.hp <= 0).length; 
+                let p2Crowns = towers.filter(t => t.p === 1 && t.hp <= 0).length; 
+
+                if (p1Crowns > p2Crowns) { gameOver = true; showWinMessage(1); return; } 
+                else if (p2Crowns > p1Crowns) { gameOver = true; showWinMessage(2); return; } 
+                else {
+                    isTiebreaker = true; playSound('explode'); triggerScreenShake();
+                    units.forEach(u => { for(let k=0; k<15; k++) particles.push({ x: u.x, y: u.y, vx: (Math.random()-0.5)*200, vy: (Math.random()-0.5)*200, life: 0.8, color: players[u.p].color }); });
+                    units = []; projectiles = []; spellsActive = [];  
+                }
+            }
+        }
+
+        if (isTiebreaker) {
+            let towerHitZero = false;
+            towers.forEach(t => {
+                if (t.hp > 0) {
+                    t.hp -= 150 * dt; 
+                    if (Math.random() < 0.2) particles.push({ x: t.x + (Math.random()-0.5)*t.radius*1.5, y: t.y - (Math.random()*t.radius), vx: (Math.random()-0.5)*50, vy: -50 - Math.random()*50, life: 0.5, color: '#e74c3c' });
+                    if (t.hp <= 0) { t.hp = 0; towerHitZero = true; }
+                }
+            });
+            if (towerHitZero) {
+                gameOver = true;
+                let finalP1Crowns = towers.filter(t => t.p === 2 && t.hp <= 0).length;
+                let finalP2Crowns = towers.filter(t => t.p === 1 && t.hp <= 0).length;
+                if (finalP1Crowns > finalP2Crowns) showWinMessage(1);
+                else if (finalP2Crowns > finalP1Crowns) showWinMessage(2);
+                else showWinMessage(0); 
+            }
+        } else {
+            if (players[1].elixir < players[1].maxElixir) players[1].elixir += 0.35 * dt;
+            if (players[2].elixir < players[2].maxElixir) players[2].elixir += 0.35 * dt;
+
+            updateTrophies();
+            updateUI();
+            if (gameMode === '1P') runAI(dt);
+
+            for(let i = spellsActive.length-1; i>=0; i--) {
+                let s = spellsActive[i];
+                s.timer -= dt;
+                
+                if (s.spellType === 'damage_over_time' || s.spellType === 'heal_over_time' || s.spellType === 'spawn_over_time') {
+                    s.tickTimer -= dt;
+                    if (s.tickTimer <= 0) {
+                        s.tickTimer = (s.spawnInterval ? s.spawnInterval/1000 : 1.0);
+                        if (s.spellType === 'damage_over_time') {
+                            units.concat(towers).forEach(en => { if (en.p !== s.p && getDist(s, en) <= s.spellRadius) { en.hp -= s.damagePerTick; particles.push({ x: en.x, y: en.y, vx: 0, vy: -10, life: 0.3, color: '#8e44ad' }); }});
+                        } else if (s.spellType === 'heal_over_time') {
+                            units.concat(towers).forEach(en => { if (en.p === s.p && getDist(s, en) <= s.spellRadius) { en.hp = Math.min(en.maxHp, en.hp + s.healPerTick); particles.push({ x: en.x, y: en.y, vx: 0, vy: -20, life: 0.4, color: '#2ecc71' }); }});
+                        } else if (s.spellType === 'spawn_over_time') {
+                            let spwStats = ALL_CARDS.find(c => c.id === s.spawnId);
+                            for(let k=0; k<s.spawnCount; k++) { units.push({...spwStats, p: s.p, x: s.x + (Math.random()-0.5)*30, y: s.y + (Math.random()-0.5)*30, hp: spwStats.hp, maxHp: spwStats.hp, cooldown: 0}); }
+                        }
+                    }
+                }
+                if(s.timer <= 0) spellsActive.splice(i, 1);
+            }
+
+            towers.forEach(t => {
+                if (t.hp <= 0) return;
+                if (t.cooldown > 0) t.cooldown -= dt;
+                let target = units.find(u => u.p !== t.p && getDist(t, u) <= t.range);
+                if (target && t.cooldown <= 0) {
+                    projectiles.push({ x: t.x, y: t.y, target: target, damage: t.damage, speed: 300, color: '#f1c40f', p: t.p });
+                    t.cooldown = t.attackSpeed; playSound('shoot');
+                }
+            });
+
+            for (let i = units.length - 1; i >= 0; i--) {
+                let u = units[i];
+                if (u.cooldown > 0) u.cooldown -= dt;
+
+                let isRaged = spellsActive.some(s => s.spellType === 'buff' && s.p === u.p && getDist(u, s) <= s.spellRadius);
+                let currentSpeed = isRaged ? u.speed * 1.35 : u.speed;
+                let currentAtkSpeed = isRaged ? u.attackSpeed * 0.65 : u.attackSpeed;
+
+                if (u.spawnsUnit) {
+                    if (u.spawnTimer === undefined) u.spawnTimer = u.spawnInterval / 1000;
+                    u.spawnTimer -= dt;
+                    if (u.spawnTimer <= 0) {
+                        let spwStats = ALL_CARDS.find(c => c.id === u.spawnsUnit);
+                        let sCount = u.spawnCount || 1;
+                        for(let k=0; k<sCount; k++) {
+                            units.push({...spwStats, p: u.p, x: u.x + (Math.random()-0.5)*30, y: u.y + 20, hp: spwStats.hp, maxHp: spwStats.hp, cooldown: 0});
+                        }
+                        u.spawnTimer = u.spawnInterval / 1000;
+                    }
+                }
+
+                if (u.isBuilding) {
+                    u.lifetime -= dt;
+                    u.hp -= (u.maxHp / (u.lifespan ? u.lifespan/1000 : 30)) * dt; 
+                    if (u.lifetime <= 0) u.hp = 0;
+                }
+                
+                let enemies = [];
+                let enemyTowers = towers.filter(tw => tw.p !== u.p && tw.hp > 0);
+                let enemyUnits = units.filter(en => en.p !== u.p && en.hp > 0 && !(en.isAir && !u.isRanged));
+
+                if (u.target === 'building') enemies = enemyTowers.concat(enemyUnits.filter(en => en.isBuilding));
+                else enemies = enemyUnits.concat(enemyTowers);
+
+                let target = null, minDist = Infinity;
+                enemies.forEach(en => { let d = getDist(u, en); if (d < minDist) { minDist = d; target = en; } });
+
+                if (target) {
+                    if (minDist <= u.range + (target.radius || 0)) { 
+                        if (u.cooldown <= 0) {
+                            if (u.id === 'valkyrie') {
+                                let hitAny = false;
+                                enemies.forEach(en => {
+                                    if (!en.isAir && getDist(u, en) <= u.range + (en.radius||0) + 15) { en.hp -= u.damage; hitAny = true; }
+                                });
+                                if (hitAny) particles.push({ x: u.x, y: u.y, vx: 0, vy: 0, life: 0.25, color: 'rgba(231, 76, 60, 0.7)', radius: u.range + 10, isSpin: true });
+                            } else if (u.isRanged) { 
+                                projectiles.push({ x: u.x, y: u.y, target: target, damage: u.damage, speed: 250, color: (u.aoe) ? '#e74c3c' : '#fff', isAoe: u.aoe, p: u.p }); 
+                            } else target.hp -= u.damage;
+                            u.cooldown = currentAtkSpeed; 
+                        }
+                    } else if (!u.isBuilding) { 
+                        let tx = target.x, ty = target.y;
+                        if (!u.isAir) {
+                            let cb = bridges[0];
+                            if (Math.abs(u.x - bridges[1].x) < Math.abs(u.x - bridges[0].x)) cb = bridges[1];
+                            let uSide = (u.y < riverY - riverHeight/2) ? -1 : (u.y > riverY + riverHeight/2) ? 1 : 0; 
+                            let tSide = (target.y < riverY) ? -1 : 1; 
+                            let needBridge = false;
+                            if (uSide !== 0 && uSide !== tSide) needBridge = true;
+                            else if (uSide === 0 && !(Math.abs(target.x - cb.x) < bridgeWidth/2 && target.y > riverY - riverHeight/2 && target.y < riverY + riverHeight/2)) needBridge = true;
+                            
+                            if (needBridge) {
+                                tx = cb.x;
+                                if (Math.abs(u.x - cb.x) > 15 && uSide !== 0) ty = u.y; 
+                                else ty = tSide === -1 ? riverY - 100 : riverY + 100;
+                            }
+                        }
+                        let angle = Math.atan2(ty - u.y, tx - u.x);
+                        let nx = u.x + Math.cos(angle) * currentSpeed * dt; 
+                        let ny = u.y + Math.sin(angle) * currentSpeed * dt;
+                        
+                        let inRiverArea = ny > riverY - riverHeight/2 && ny < riverY + riverHeight/2;
+                        let onBridge = bridges.some(b => nx > b.x - bridgeWidth/2 && nx < b.x + bridgeWidth/2);
+                        if (inRiverArea && !onBridge && !u.isAir) {
+                            let cb = bridges[Math.abs(u.x - bridges[0].x) < Math.abs(u.x - bridges[1].x) ? 0 : 1];
+                            nx = u.x + (cb.x > u.x ? 1 : -1) * currentSpeed * dt; ny = u.y; 
+                        } 
+                        u.x = nx; u.y = ny;
+                    }
+                } 
+
+                if (u.hp <= 0) {
+                    if (u.id === 'balloon') deathBombs.push({ x: u.x, y: u.y, p: u.p, timer: 3.0, damage: 200, radius: 60 });
+                    
+                    if (u.id === 'golem') {
+                        let golemiteStats = ALL_CARDS.find(c => c.id === 'golemite');
+                        units.push({...golemiteStats, p: u.p, x: u.x - 15, y: u.y, hp: golemiteStats.hp, maxHp: golemiteStats.hp, cooldown: 0});
+                        units.push({...golemiteStats, p: u.p, x: u.x + 15, y: u.y, hp: golemiteStats.hp, maxHp: golemiteStats.hp, cooldown: 0});
+                    } else if (u.id === 'golemite') {
+                        let miniStats = ALL_CARDS.find(c => c.id === 'golemMini');
+                        units.push({...miniStats, p: u.p, x: u.x - 10, y: u.y, hp: miniStats.hp, maxHp: miniStats.hp, cooldown: 0});
+                        units.push({...miniStats, p: u.p, x: u.x + 10, y: u.y, hp: miniStats.hp, maxHp: miniStats.hp, cooldown: 0});
+                    }
+
+                    for(let k=0; k<10; k++) particles.push({ x: u.x, y: u.y, vx: (Math.random()-0.5)*150, vy: (Math.random()-0.5)*150, life: 0.5, color: players[u.p].color });
+                    units.splice(i, 1); playSound('explode');
+                }
+            } 
+
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                let p = projectiles[i];
+                if (!p.target || p.target.hp <= 0) { projectiles.splice(i, 1); continue; }
+                let angle = Math.atan2(p.target.y - p.y, p.target.x - p.x);
+                p.x += Math.cos(angle) * p.speed * dt; p.y += Math.sin(angle) * p.speed * dt;
+
+                if (getDist(p, p.target) < 15) {
+                    if (p.isAoe) {
+                        let allEnemies = units.filter(en => en.p !== p.p).concat(towers.filter(tw => tw.p !== p.p && tw.hp>0));
+                        allEnemies.forEach(en => { if (getDist(p.target, en) <= 45) en.hp -= p.damage; });
+                    } else p.target.hp -= p.damage;
+                    for(let k=0; k<5; k++) particles.push({ x: p.target.x, y: p.target.y, vx: (Math.random()-0.5)*80, vy: (Math.random()-0.5)*80, life: 0.3, color: p.isAoe ? '#e74c3c' : '#f39c12' });
+                    projectiles.splice(i, 1);
+                }
+            }
+        } 
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+            let p = particles[i];
+            p.x += (p.vx || 0) * dt; p.y += (p.vy || 0) * dt; p.life -= dt;
+            if (p.life <= 0) particles.splice(i, 1);
+        }
+
+        for (let i = deathBombs.length - 1; i >= 0; i--) {
+            let bomb = deathBombs[i];
+            bomb.timer -= dt; 
+            if (bomb.timer <= 0) {
+                playSound('explode'); triggerScreenShake();
+                units.forEach(unit => { if (unit.p !== bomb.p && getDist(bomb, unit) <= bomb.radius) unit.hp -= bomb.damage; });
+                towers.forEach(tower => { if (tower.p !== bomb.p && getDist(bomb, tower) <= bomb.radius) tower.hp -= bomb.damage; });
+                deathBombs.splice(i, 1);
+            }
+        }
+    } 
+
+    function drawCrown(ctx, cx, cy, width, height, crownColor, jewelColor) {
+        ctx.fillStyle = crownColor; ctx.beginPath(); let hw = width / 2;
+        ctx.moveTo(cx - hw, cy); ctx.lineTo(cx + hw, cy); ctx.lineTo(cx + hw + hw*0.2, cy - height); 
+        ctx.lineTo(cx + hw*0.3, cy - height*0.4); ctx.lineTo(cx, cy - height*1.2); 
+        ctx.lineTo(cx - hw*0.3, cy - height*0.4); ctx.lineTo(cx - hw - hw*0.2, cy - height); 
+        ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = jewelColor; ctx.beginPath(); ctx.arc(cx, cy - height*0.8, width*0.15, 0, Math.PI*2); ctx.fill();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, cw, ch);
+        ctx.fillStyle = '#2980b9'; ctx.fillRect(0, riverY - riverHeight/2, cw, riverHeight);
+        
+        ctx.fillStyle = '#795548';
+        bridges.forEach(b => {
+            ctx.fillRect(b.x - bridgeWidth/2, riverY - riverHeight/2 - 5, bridgeWidth, riverHeight + 10);
+            ctx.fillStyle = '#5d4037';
+            ctx.fillRect(b.x - bridgeWidth/2, riverY - riverHeight/2 - 5, 5, riverHeight + 10);
+            ctx.fillRect(b.x + bridgeWidth/2 - 5, riverY - riverHeight/2 - 5, 5, riverHeight + 10);
+            ctx.fillStyle = '#795548';
+        });
+
+        if (players[1].selectedCard) {
+            let stats = players[1].hand.find(c => c.id === players[1].selectedCard);
+            if(stats && !stats.isSpell && !stats.isAnywhere) {
+                ctx.fillStyle = 'rgba(46, 204, 113, 0.15)';
+                ctx.fillRect(0, riverY, cw, ch - riverY);
+                let p2LeftDead = towers.find(t => t.id === 'p2_pl').hp <= 0;
+                let p2RightDead = towers.find(t => t.id === 'p2_pr').hp <= 0;
+                if (p2LeftDead) ctx.fillRect(0, ch * 0.25, cw/2, riverY - (ch * 0.25));
+                if (p2RightDead) ctx.fillRect(cw/2, ch * 0.25, cw/2, riverY - (ch * 0.25));
+            }
+        }
+        if (gameMode === '2P' && players[2].selectedCard) {
+            let stats = players[2].hand.find(c => c.id === players[2].selectedCard);
+            if(stats && !stats.isSpell && !stats.isAnywhere) {
+                ctx.fillStyle = 'rgba(231, 76, 60, 0.15)';
+                ctx.fillRect(0, 0, cw, riverY);
+                let p1LeftDead = towers.find(t => t.id === 'p1_pl').hp <= 0;
+                let p1RightDead = towers.find(t => t.id === 'p1_pr').hp <= 0;
+                if (p1LeftDead) ctx.fillRect(0, riverY, cw/2, ch - (ch * 0.25) - riverY);
+                if (p1RightDead) ctx.fillRect(cw/2, riverY, cw/2, ch - (ch * 0.25) - riverY);
+            }
+        }
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.setLineDash([8, 8]); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, riverY + riverHeight/2 + 10); ctx.lineTo(cw, riverY + riverHeight/2 + 10); ctx.stroke();
+        if(gameMode === '2P') { ctx.beginPath(); ctx.moveTo(0, riverY - riverHeight/2 - 10); ctx.lineTo(cw, riverY - riverHeight/2 - 10); ctx.stroke(); }
+        ctx.setLineDash([]);
+
+        spellsActive.forEach(s => {
+            ctx.beginPath(); ctx.arc(s.x, s.y, s.spellRadius, 0, Math.PI*2);
+            let alpha = Math.max(0.1, s.timer/2);
+            if (s.spellType === 'buff') ctx.fillStyle = `rgba(155, 89, 182, ${alpha})`;
+            else if (s.spellType === 'damage_over_time') ctx.fillStyle = `rgba(142, 68, 173, ${alpha})`;
+            else if (s.spellType === 'heal_over_time') ctx.fillStyle = `rgba(46, 204, 113, ${alpha})`;
+            else if (s.spellType === 'spawn_over_time') ctx.fillStyle = `rgba(52, 73, 94, ${alpha})`;
+            else ctx.fillStyle = `rgba(231, 76, 60, ${alpha})`;
+            ctx.fill();
+        });
+
+        deathBombs.forEach(bomb => {
+            ctx.beginPath(); ctx.arc(bomb.x, bomb.y, 10, 0, Math.PI*2); ctx.fillStyle = 'black'; ctx.fill();
+            ctx.fillStyle = 'white'; ctx.font = '16px Vazir'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(Math.ceil(bomb.timer), bomb.x, bomb.y);
+        });
+
+        towers.forEach(t => {
+            if (t.hp <= 0) { ctx.fillStyle = '#444'; ctx.beginPath(); ctx.arc(t.x, t.y, t.radius, 0, Math.PI*2); ctx.fill(); return; }
+            ctx.fillStyle = players[t.p].color; ctx.beginPath(); ctx.arc(t.x, t.y, t.radius, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#333'; ctx.beginPath(); ctx.arc(t.x, t.y, t.radius - 4, 0, Math.PI*2); ctx.fill();
+            
+            if (t.type === 'king') drawCrown(ctx, t.x, t.y - t.radius - 8, 22, 16, '#f1c40f', '#e74c3c');
+            else drawCrown(ctx, t.x, t.y - t.radius - 6, 16, 12, '#bdc3c7', '#3498db');
+            
+            let ringRadius = t.radius + 2; ctx.beginPath(); ctx.arc(t.x, t.y, ringRadius, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)'; ctx.lineWidth = 4; ctx.stroke();
+            let hpRatio = Math.max(0, t.hp / t.maxHp); ctx.beginPath(); ctx.arc(t.x, t.y, ringRadius, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * hpRatio));
+            ctx.strokeStyle = hpRatio > 0.3 ? '#2ecc71' : '#e74c3c'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.stroke();
+            
+            ctx.fillStyle = 'white'; ctx.font = 'bold 12px Vazir, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            let yOffset = t.type === 'king' ? 16 : 4; ctx.fillText(Math.floor(t.hp), t.x, t.y + yOffset);
+        });
+
+        units.forEach(u => {
+            if(!u.isAir && !u.isBuilding) { ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(u.x, u.y + u.radius*0.8, u.radius, u.radius*0.5, 0, 0, Math.PI*2); ctx.fill(); } 
+            else if(u.isAir) { ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(u.x, u.y + u.radius*2, u.radius, u.radius*0.5, 0, 0, Math.PI*2); ctx.fill(); }
+
+            const img = loadedImages[u.id];
+            if (img && img.complete && !img.failed) { ctx.drawImage(img, u.x - u.radius*1.5, u.y - u.radius*1.5, u.radius*3, u.radius*3); } 
+            else {
+                ctx.fillStyle = players[u.p].color; ctx.beginPath(); 
+                if(u.isBuilding) ctx.rect(u.x - u.radius, u.y - u.radius, u.radius*2, u.radius*2); else ctx.arc(u.x, u.y, u.radius, 0, Math.PI*2); 
+                ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
+                ctx.fillStyle = 'white'; ctx.font = `${u.radius*1.2}px Arial`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(u.icon, u.x, u.y + 2);
+            }
+            ctx.fillStyle = '#c0392b'; ctx.fillRect(u.x - 10, u.y - u.radius - 10, 20, 3);
+            ctx.fillStyle = '#2ecc71'; ctx.fillRect(u.x - 10, u.y - u.radius - 10, 20 * Math.max(0, u.hp/u.maxHp), 3);
+        });
+
+        projectiles.forEach(p => { ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill(); });
+        
+        particles.forEach(p => { 
+            if (p.isSpin) {
+                ctx.globalAlpha = Math.max(0, p.life * 4); ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+                ctx.lineWidth = 5; ctx.strokeStyle = p.color; ctx.stroke(); ctx.lineWidth = 1; ctx.globalAlpha = 1;
+            } else {
+                ctx.globalAlpha = Math.max(0, p.life * 2); ctx.fillStyle = p.color; 
+                ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1; 
+            }
+        });
+
+        if (isTiebreaker) {
+            ctx.fillStyle = 'rgba(231, 76, 60, 0.15)'; ctx.fillRect(0, 0, cw, ch);
+            ctx.fillStyle = 'rgba(255, 204, 204, 0.7)'; ctx.font = 'bold 24px Vazir, sans-serif';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText("وقت اضافه! کسر جان", cw/2, ch/2);
+        }
+
+        let minutes = Math.floor(gameTime / 60); let seconds = Math.floor(gameTime % 60);
+        let timeString = `${minutes}:${seconds.toString().padStart(2, '0')} ⏳`;
+        ctx.fillStyle = isTiebreaker ? '#e74c3c' : 'white'; ctx.font = 'bold 16px Vazir, sans-serif';
+        ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText(timeString, cw - 15, 15);
+
+        if (gameMode === '2P') {
+            ctx.save(); ctx.translate(15, ch - 15); ctx.rotate(Math.PI); 
+            ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText(timeString, 0, 0); ctx.restore();
+        }
+    }
+
+    function loop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
+        lastTime = timestamp;
+        if (!gameOver) { updateGame(dt); draw(); }
+        requestAnimationFrame(loop);
+    }
+
+    function startGame(mode) {
+        initAudio(); gameMode = mode;
+        document.getElementById('menu').style.display = 'none'; document.getElementById('game-wrapper').style.display = 'flex';
+        if (mode === '1P') {
+            document.getElementById('p2-ui').style.display = 'none'; document.getElementById('trophies-p2').style.display = 'flex';
+        } else {
+            document.getElementById('p2-ui').style.display = 'flex'; document.getElementById('p2-ui').classList.add('flipped-ui');
+            document.getElementById('trophies-p2').style.display = 'flex';
+        }
+        initPlayerDecks(); createCardsUI(1, 'cards-p1'); createCardsUI(2, 'cards-p2');
+        setTimeout(() => { resize(); requestAnimationFrame(loop); }, 50);
+    }
+</script>
+</body>
+</html>

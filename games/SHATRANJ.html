@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>شطرنج حرفه‌ای</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --highlight: rgba(56, 189, 248, 0.6);
+            --valid-move: #4ade80;
+            --check-color: rgba(239, 68, 68, 0.8);
+            --sq-size: 11vmin; /* کمی بهینه‌تر برای جا شدن قاب تخته */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Tahoma, sans-serif; user-select: none; }
+
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* --- Menu Styles --- */
+        #menu {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+            z-index: 100;
+        }
+
+        #menu h1 {
+            font-size: 8vmin;
+            margin-bottom: 20px;
+            color: #38bdf8;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 4.5vmin;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.1s, background 0.3s;
+        }
+        .btn:active { transform: scale(0.95); }
+
+        /* --- Game Area Styles --- */
+        #game-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        #status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: calc((var(--sq-size) * 8) + 4vmin); /* هم‌عرض با قاب جدید تخته */
+            margin-bottom: 15px;
+            font-size: 4.5vmin;
+            font-weight: bold;
+        }
+
+        #back-btn {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            padding: 5px 15px;
+            font-size: 3.5vmin;
+        }
+
+        /* --- The Board (Upgraded Premium Look) --- */
+        #board-container {
+            padding: 2vmin; /* ضخامت قاب تخته */
+            background: linear-gradient(145deg, #334155, #0f172a);
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 30px rgba(56, 189, 248, 0.15),
+                inset 0 2px 4px rgba(255, 255, 255, 0.15),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            width: calc((var(--sq-size) * 8) + 4vmin);
+            height: calc((var(--sq-size) * 8) + 4vmin);
+        }
+
+        #board {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            border: 2px solid #020617; /* حاشیه تیره داخلی */
+            box-shadow: 0 0 15px rgba(0,0,0,0.7);
+            border-radius: 2px;
+            overflow: hidden; /* جلوگیری از بیرون زدن خانه‌ها */
+        }
+
+        /* --- Squares and Pieces --- */
+        .square {
+            width: var(--sq-size);
+            height: var(--sq-size);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: filter 0.2s;
+        }
+
+        /* زیباتر شدن خانه‌های تخته با گرادیانت */
+        .sq-light { 
+            background: radial-gradient(circle at center, #f8fafc 0%, #cbd5e1 100%);
+        }
+        .sq-dark { 
+            background: radial-gradient(circle at center, #475569 0%, #334155 100%);
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
+        }
+
+        .square.selected { background-color: var(--highlight) !important; filter: brightness(1.2); }
+        
+        /* نشانگر حرکات مجاز (درخشان و زیباتر) */
+        .square.valid-move::after {
+            content: '';
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            background: radial-gradient(circle, var(--valid-move) 0%, rgba(74, 222, 128, 0.2) 100%);
+            box-shadow: 0 0 10px var(--valid-move);
+            border-radius: 50%;
+        }
+
+        /* Modern Check Pulse Animation */
+        @keyframes check-pulse {
+            0% { box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.8); }
+            50% { box-shadow: inset 0 0 30px rgba(239, 68, 68, 1), 0 0 15px rgba(239, 68, 68, 0.8); background-color: rgba(239, 68, 68, 0.4); }
+            100% { box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.8); }
+        }
+        .square.in-check { 
+            animation: check-pulse 1.2s infinite; 
+            background-color: var(--check-color) !important; 
+            z-index: 5;
+        }
+
+        .piece {
+            font-size: calc(var(--sq-size) * 0.85);
+            line-height: 1;
+            pointer-events: none; /* Crucial for touch speed */
+            z-index: 10;
+        }
+
+        /* White Pieces */
+        .piece.w {
+            color: #ffffff;
+            text-shadow: 0 0 3px rgba(0,0,0,0.8), 0 2px 5px rgba(0,0,0,0.5);
+        }
+        /* Black Pieces */
+        .piece.b {
+            color: #111111;
+            text-shadow: 0 0 3px rgba(255,255,255,0.8), 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        /* --- Modals (Promotion & Game Over) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            padding: 30px; 
+            border-radius: 20px; 
+            text-align: center;
+            border: 2px solid #38bdf8;
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.3), inset 0 0 20px rgba(0,0,0,0.5);
+            animation: pop-in 0.3s ease-out;
+            min-width: 70vw;
+        }
+
+        @keyframes pop-in {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Checkmate specific styles */
+        #game-over-modal .modal-box {
+            border-color: #ef4444;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.4), inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        .modal-box h2 { 
+            margin-bottom: 20px; 
+            font-size: 7vmin; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        #game-over-modal h2 { color: #fca5a5; }
+
+        /* Promotion UI */
+        .promo-options {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        .promo-btn {
+            width: calc(var(--sq-size) * 1.5);
+            height: calc(var(--sq-size) * 1.5);
+            background: #334155;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: calc(var(--sq-size) * 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .promo-btn:active { transform: scale(0.9); background: #475569; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Main Menu -->
+    <div id="menu">
+        <h1>شطرنج حرفه‌ای</h1>
+        <button class="btn" onclick="startGame(true)">تک نفره (مبارزه با ربات)</button>
+        <button class="btn" style="background: linear-gradient(135deg, #10b981, #059669);" onclick="startGame(false)">دو نفره (تخت)</button>
+    </div>
+
+    <!-- Game Area -->
+    <div id="game-container">
+        <div id="status-bar">
+            <span id="turn-indicator">نوبت: سفید</span>
+            <button id="back-btn" class="btn" onclick="showMenu()">خروج</button>
+        </div>
+        <div id="board-container">
+            <div id="board"></div>
+        </div>
+    </div>
+
+    <!-- Pawn Promotion Modal -->
+    <div id="promotion-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="color: #38bdf8;">ارتقاء سرباز</h2>
+            <p style="font-size: 3.5vmin;">یک مهره برای جایگزینی انتخاب کنید:</p>
+            <div class="promo-options" id="promo-options">
+                <!-- Buttons injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal (Modern Checkmate) -->
+    <div id="game-over-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="modal-title">کیش و مات!</h2>
+            <p id="modal-sub" style="font-size: 4vmin; margin-bottom: 25px; color: #cbd5e1;"></p>
+            <button class="btn" onclick="showMenu()">بازگشت به منو</button>
+        </div>
+    </div>
+<script>
+    // ==========================================
+    // AUDIO SYSTEM (Offline) - بدون تغییر
+    // ==========================================
+    let audioCtx;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playSound(type) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        
+        if (type === 'move') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
+            gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'capture') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+            gain.gain.setValueAtTime(0.5, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            osc.start(now); osc.stop(now + 0.15);
+        } else if (type === 'check') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(250, now);
+            gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0, now + 0.4);
+            osc.start(now); osc.stop(now + 0.4);
+        } else if (type === 'mate') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(50, now + 1);
+            gain.gain.setValueAtTime(0.6, now); gain.gain.linearRampToValueAtTime(0, now + 1);
+            osc.start(now); osc.stop(now + 1);
+        }
+    }
+
+    // ==========================================
+    // CHESS LOGIC ENGINE
+    // ==========================================
+    const UNICODE_PIECES = {
+        'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
+        'k': '♔', 'q': '♕', 'r': '♖', 'b': '♗', 'n': '♘', 'p': '♙'
+    };
+
+    const INITIAL_BOARD = [
+        ['r','n','b','q','k','b','n','r'],
+        ['p','p','p','p','p','p','p','p'],
+        ['.','.','.','.','.','.','.','.'],
+        ['.','.','.','.','.','.','.','.'],
+        ['.','.','.','.','.','.','.','.'],
+        ['.','.','.','.','.','.','.','.'],
+        ['P','P','P','P','P','P','P','P'],
+        ['R','N','B','Q','K','B','N','R']
+    ];
+
+    class ChessEngine {
+        constructor() {
+            this.board = JSON.parse(JSON.stringify(INITIAL_BOARD));
+            this.turn = 'w';
+            this.inCheck = false;
+            this.isMate = false;
+        }
+
+        isValid(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+        
+        getColor(r, c) {
+            let p = this.board[r][c];
+            if (p === '.') return null;
+            return p === p.toUpperCase() ? 'w' : 'b';
+        }
+
+        getPseudoMoves(board, r, c) {
+            let moves = [];
+            let p = board[r][c];
+            if (p === '.') return moves;
+            let color = p === p.toUpperCase() ? 'w' : 'b';
+            let type = p.toLowerCase();
+            let dirs = [];
+
+            const addLineMoves = (directions) => {
+                for (let d of directions) {
+                    let nr = r + d[0], nc = c + d[1];
+                    while (this.isValid(nr, nc)) {
+                        let targetColor = this.getColor(nr, nc);
+                        if (targetColor === null) {
+                            moves.push({r: nr, c: nc});
+                            nr += d[0]; nc += d[1];
+                        } else {
+                            if (targetColor !== color) moves.push({r: nr, c: nc});
+                            break;
+                        }
+                    }
+                }
+            };
+
+            switch(type) {
+                case 'p':
+                    let dir = color === 'w' ? -1 : 1;
+                    let startRow = color === 'w' ? 6 : 1;
+                    if (this.isValid(r + dir, c) && board[r + dir][c] === '.') {
+                        moves.push({r: r + dir, c: c});
+                        if (r === startRow && board[r + dir*2][c] === '.') {
+                            moves.push({r: r + dir*2, c: c});
+                        }
+                    }
+                    for (let dc of [-1, 1]) {
+                        if (this.isValid(r + dir, c + dc)) {
+                            let tc = this.getColor(r + dir, c + dc);
+                            if (tc !== null && tc !== color) moves.push({r: r + dir, c: c + dc});
+                        }
+                    }
+                    break;
+                case 'n':
+                    dirs = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                    for (let d of dirs) {
+                        let nr = r + d[0], nc = c + d[1];
+                        if (this.isValid(nr, nc) && this.getColor(nr, nc) !== color) moves.push({r: nr, c: nc});
+                    }
+                    break;
+                case 'b': addLineMoves([[-1,-1],[-1,1],[1,-1],[1,1]]); break;
+                case 'r': addLineMoves([[-1,0],[1,0],[0,-1],[0,1]]); break;
+                case 'q': addLineMoves([[-1,-1],[-1,1],[1,-1],[1,1],[-1,0],[1,0],[0,-1],[0,1]]); break;
+                case 'k':
+                    dirs = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+                    for (let d of dirs) {
+                        let nr = r + d[0], nc = c + d[1];
+                        if (this.isValid(nr, nc) && this.getColor(nr, nc) !== color) moves.push({r: nr, c: nc});
+                    }
+                    break;
+            }
+            return moves;
+        }
+
+        // بهینه‌شده برای سرعت بسیار بالاتر (بررسی مستقیم از موقعیت شاه)
+        isKingAttacked(testBoard, color) {
+            let kr = -1, kc = -1;
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    if ((color === 'w' && testBoard[i][j] === 'K') || (color === 'b' && testBoard[i][j] === 'k')) {
+                        kr = i; kc = j; break;
+                    }
+                }
+                if(kr !== -1) break;
+            }
+            if(kr === -1) return true;
+
+            let oppColor = color === 'w' ? 'b' : 'w';
+            let oppPawnDir = oppColor === 'w' ? 1 : -1;
+
+            // 1. بررسی حمله پیاده
+            for (let dc of [-1, 1]) {
+                let pr = kr + oppPawnDir, pc = kc + dc;
+                if (this.isValid(pr, pc)) {
+                    let p = testBoard[pr][pc];
+                    if (p !== '.' && this.getColor(pr, pc) === oppColor && p.toLowerCase() === 'p') return true;
+                }
+            }
+
+            // 2. بررسی حمله اسب
+            let knightDirs = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+            for (let d of knightDirs) {
+                let nr = kr + d[0], nc = kc + d[1];
+                if (this.isValid(nr, nc)) {
+                    let p = testBoard[nr][nc];
+                    if (p !== '.' && this.getColor(nr, nc) === oppColor && p.toLowerCase() === 'n') return true;
+                }
+            }
+
+            // 3. بررسی حمله شاه
+            let kingDirs = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+            for (let d of kingDirs) {
+                let nr = kr + d[0], nc = kc + d[1];
+                if (this.isValid(nr, nc)) {
+                    let p = testBoard[nr][nc];
+                    if (p !== '.' && this.getColor(nr, nc) === oppColor && p.toLowerCase() === 'k') return true;
+                }
+            }
+
+            // 4. بررسی حملات خطی (رخ و وزیر)
+            let straightDirs = [[-1,0],[1,0],[0,-1],[0,1]];
+            for (let d of straightDirs) {
+                let nr = kr + d[0], nc = kc + d[1];
+                while (this.isValid(nr, nc)) {
+                    let p = testBoard[nr][nc];
+                    if (p !== '.') {
+                        if (this.getColor(nr, nc) === oppColor && (p.toLowerCase() === 'r' || p.toLowerCase() === 'q')) return true;
+                        break;
+                    }
+                    nr += d[0]; nc += d[1];
+                }
+            }
+
+            // 5. بررسی حملات مورب (فیل و وزیر)
+            let diagDirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
+            for (let d of diagDirs) {
+                let nr = kr + d[0], nc = kc + d[1];
+                while (this.isValid(nr, nc)) {
+                    let p = testBoard[nr][nc];
+                    if (p !== '.') {
+                        if (this.getColor(nr, nc) === oppColor && (p.toLowerCase() === 'b' || p.toLowerCase() === 'q')) return true;
+                        break;
+                    }
+                    nr += d[0]; nc += d[1];
+                }
+            }
+
+            return false;
+        }
+
+        getLegalMoves(r, c) {
+            let pseudo = this.getPseudoMoves(this.board, r, c);
+            let legal = [];
+            for (let m of pseudo) {
+                let clone = this.board.map(row => [...row]);
+                clone[m.r][m.c] = clone[r][c];
+                clone[r][c] = '.';
+                if (!this.isKingAttacked(clone, this.turn)) legal.push(m);
+            }
+            return legal;
+        }
+
+        getAllLegalMoves() {
+            let allMoves = [];
+            for (let i=0; i<8; i++) {
+                for (let j=0; j<8; j++) {
+                    if (this.getColor(i, j) === this.turn) {
+                        let moves = this.getLegalMoves(i, j);
+                        for(let m of moves) allMoves.push({fr: i, fc: j, tr: m.r, tc: m.c});
+                    }
+                }
+            }
+            return allMoves;
+        }
+
+        makeMove(fr, fc, tr, tc, promoPiece = null) {
+            let captured = this.board[tr][tc] !== '.';
+            let p = this.board[fr][fc];
+            
+            this.board[tr][tc] = p;
+            this.board[fr][fc] = '.';
+
+            if (p.toLowerCase() === 'p' && (tr === 0 || tr === 7)) {
+                this.board[tr][tc] = promoPiece ? promoPiece : (this.turn === 'w' ? 'Q' : 'q');
+            }
+
+            this.turn = this.turn === 'w' ? 'b' : 'w';
+            this.inCheck = this.isKingAttacked(this.board, this.turn);
+            let allMoves = this.getAllLegalMoves();
+            this.isMate = allMoves.length === 0;
+
+            return captured;
+        }
+    }
+
+    // ==========================================
+    // MINIMAX AI (بهینه‌شده برای سرعت و هوش)
+    // ==========================================
+    const pieceValues = { 'p': 100, 'n': 320, 'b': 330, 'r': 500, 'q': 900, 'k': 20000 };
+    
+    // جدول ارزش موقعیت (PST) برای هوشمندتر کردن حرکات بدون افزایش عمق جستجو
+    const PST = {
+        p: [ [0,0,0,0,0,0,0,0], [5,5,5,5,5,5,5,5], [1,1,2,3,3,2,1,1], [0.5,0.5,1,2.5,2.5,1,0.5,0.5], [0,0,0,2,2,0,0,0], [0.5,-0.5,-1,0,0,-1,-0.5,0.5], [0.5,1,1,-2,-2,1,1,0.5], [0,0,0,0,0,0,0,0] ],
+        n: [ [-5,-4,-3,-3,-3,-3,-4,-5], [-4,-2,0,0,0,0,-2,-4], [-3,0,1,1.5,1.5,1,0,-3], [-3,0.5,1.5,2,2,1.5,0.5,-3], [-3,0,1.5,2,2,1.5,0,-3], [-3,0.5,1,1.5,1.5,1,0.5,-3], [-4,-2,0,0.5,0.5,0,-2,-4], [-5,-4,-3,-3,-3,-3,-4,-5] ],
+        b: [ [-2,-1,-1,-1,-1,-1,-1,-2], [-1,0,0,0,0,0,0,-1], [-1,0,0.5,1,1,0.5,0,-1], [-1,0.5,0.5,1,1,0.5,0.5,-1], [-1,0,1,1,1,1,0,-1], [-1,1,1,1,1,1,1,-1], [-1,0.5,0,0,0,0,0.5,-1], [-2,-1,-1,-1,-1,-1,-1,-2] ],
+        r: [ [0,0,0,0,0,0,0,0], [0.5,1,1,1,1,1,1,0.5], [-0.5,0,0,0,0,0,0,-0.5], [-0.5,0,0,0,0,0,0,-0.5], [-0.5,0,0,0,0,0,0,-0.5], [-0.5,0,0,0,0,0,0,-0.5], [-0.5,0,0,0,0,0,0,-0.5], [0,0,0,0.5,0.5,0,0,0] ],
+        q: [ [-2,-1,-1,-0.5,-0.5,-1,-1,-2], [-1,0,0,0,0,0,0,-1], [-1,0,0.5,0.5,0.5,0.5,0,-1], [-0.5,0,0.5,0.5,0.5,0.5,0,-0.5], [0,0,0.5,0.5,0.5,0.5,0,-0.5], [-1,0.5,0.5,0.5,0.5,0.5,0,-1], [-1,0,0.5,0,0,0,0,-1], [-2,-1,-1,-0.5,-0.5,-1,-1,-2] ],
+        k: [ [-3,-4,-4,-5,-5,-4,-4,-3], [-3,-4,-4,-5,-5,-4,-4,-3], [-3,-4,-4,-5,-5,-4,-4,-3], [-3,-4,-4,-5,-5,-4,-4,-3], [-2,-3,-3,-4,-4,-3,-3,-2], [-1,-2,-2,-2,-2,-2,-2,-1], [2,2,0,0,0,0,2,2], [2,3,1,0,0,1,3,2] ]
+    };
+
+    function evaluateBoard(engine) {
+        let score = 0;
+        for(let r=0; r<8; r++) {
+            for(let c=0; c<8; c++) {
+                let p = engine.board[r][c];
+                if(p !== '.') {
+                    let type = p.toLowerCase();
+                    let val = pieceValues[type];
+                    
+                    // اضافه کردن امتیاز موقعیتی
+                    let pstVal = 0;
+                    if (p === p.toUpperCase()) { // سفید
+                        pstVal = PST[type][r][c];
+                    } else { // سیاه (آینه‌ای)
+                        pstVal = PST[type][7-r][c];
+                    }
+                    
+                    score += p === p.toUpperCase() ? (val + pstVal) : -(val + pstVal);
+                }
+            }
+        }
+        return score;
+    }
+
+    function minimax(engine, depth, alpha, beta, isMaximizing) {
+        if (depth === 0 || engine.isMate) {
+            return engine.isMate ? (isMaximizing ? -99999 + depth : 99999 - depth) : evaluateBoard(engine);
+        }
+
+        let moves = engine.getAllLegalMoves();
+        if(moves.length === 0) return isMaximizing ? -99999 : 99999;
+
+        // مرتب‌سازی حرکات: حرکاتی که منجر به زدن مهره می‌شوند اول بررسی شوند (سرعت آلفا-بتا را به شدت افزایش می‌دهد)
+        moves.sort((a, b) => {
+            let scoreA = engine.board[a.tr][a.tc] !== '.' ? 10 : 0;
+            let scoreB = engine.board[b.tr][b.tc] !== '.' ? 10 : 0;
+            return scoreB - scoreA;
+        });
+
+        if (isMaximizing) {
+            let maxEval = -Infinity;
+            for (let m of moves) {
+                // بهینه‌سازی: ذخیره وضعیت به جای ساخت شیء جدید (کاهش شدید مصرف حافظه و لگ)
+                let savedBoard = engine.board.map(row => [...row]);
+                let savedTurn = engine.turn;
+                
+                engine.makeMove(m.fr, m.fc, m.tr, m.tc);
+                let ev = minimax(engine, depth - 1, alpha, beta, false);
+                maxEval = Math.max(maxEval, ev);
+                alpha = Math.max(alpha, ev);
+                
+                // بازگرداندن وضعیت (Undo)
+                engine.board = savedBoard;
+                engine.turn = savedTurn;
+                engine.inCheck = engine.isKingAttacked(engine.board, engine.turn);
+                
+                if (beta <= alpha) break;
+            }
+            return maxEval;
+        } else {
+            let minEval = Infinity;
+            for (let m of moves) {
+                let savedBoard = engine.board.map(row => [...row]);
+                let savedTurn = engine.turn;
+                
+                engine.makeMove(m.fr, m.fc, m.tr, m.tc);
+                let ev = minimax(engine, depth - 1, alpha, beta, true);
+                minEval = Math.min(minEval, ev);
+                beta = Math.min(beta, ev);
+                
+                engine.board = savedBoard;
+                engine.turn = savedTurn;
+                engine.inCheck = engine.isKingAttacked(engine.board, engine.turn);
+                
+                if (beta <= alpha) break;
+            }
+            return minEval;
+        }
+    }
+
+    function getBestMove(engine) {
+        let bestMove = null;
+        let bestValue = Infinity;
+        let moves = engine.getAllLegalMoves();
+        moves.sort(() => Math.random() - 0.5);
+
+        // عمق 3 به دلیل بهینه‌سازی‌های بالا اکنون بسیار سریع اجرا می‌شود
+        const SEARCH_DEPTH = 3;
+
+        for (let m of moves) {
+            let savedBoard = engine.board.map(row => [...row]);
+            let savedTurn = engine.turn;
+            
+            engine.makeMove(m.fr, m.fc, m.tr, m.tc);
+            let boardVal = minimax(engine, SEARCH_DEPTH - 1, -Infinity, Infinity, true);
+            
+            engine.board = savedBoard;
+            engine.turn = savedTurn;
+            engine.inCheck = engine.isKingAttacked(engine.board, engine.turn);
+            
+            if (boardVal < bestValue) {
+                bestValue = boardVal;
+                bestMove = m;
+            }
+        }
+        return bestMove;
+    }
+
+    // ==========================================
+    // GAME UI & CONTROLLER (کاملاً بدون تغییر)
+    // ==========================================
+    let engine;
+    let isAI = false;
+    let selectedSquare = null;
+    let validMoves = [];
+    let gameActive = false;
+    let pendingPromotionMove = null;
+
+    const boardEl = document.getElementById('board');
+    const turnEl = document.getElementById('turn-indicator');
+    const gameOverModal = document.getElementById('game-over-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalSub = document.getElementById('modal-sub');
+    const promoModal = document.getElementById('promotion-modal');
+    const promoOptionsEl = document.getElementById('promo-options');
+
+    function createBoard() {
+        boardEl.innerHTML = '';
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                let sq = document.createElement('div');
+                sq.className = `square ${(r + c) % 2 === 0 ? 'sq-light' : 'sq-dark'}`;
+                sq.dataset.r = r;
+                sq.dataset.c = c;
+                sq.addEventListener('pointerdown', handleSquareClick);
+                boardEl.appendChild(sq);
+            }
+        }
+    }
+
+    function renderBoard() {
+        const squares = boardEl.children;
+        let index = 0;
+        
+        Array.from(squares).forEach(sq => {
+            sq.classList.remove('selected', 'valid-move', 'in-check');
+            sq.innerHTML = '';
+        });
+
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                let p = engine.board[r][c];
+                if (p !== '.') {
+                    let pieceEl = document.createElement('div');
+                    let colorClass = p === p.toUpperCase() ? 'w' : 'b';
+                    pieceEl.className = `piece ${colorClass}`;
+                    pieceEl.innerText = UNICODE_PIECES[p];
+                    squares[index].appendChild(pieceEl);
+
+                    if (engine.inCheck && p.toLowerCase() === 'k' && colorClass === engine.turn) {
+                        squares[index].classList.add('in-check');
+                    }
+                }
+                index++;
+            }
+        }
+
+        if (selectedSquare) {
+            let sqIdx = selectedSquare.r * 8 + selectedSquare.c;
+            squares[sqIdx].classList.add('selected');
+            validMoves.forEach(m => {
+                squares[m.r * 8 + m.c].classList.add('valid-move');
+            });
+        }
+
+        turnEl.innerText = `نوبت: ${engine.turn === 'w' ? 'سفید' : 'مشکی'}`;
+        if(engine.inCheck) {
+            turnEl.innerText += " (کیش!)";
+            turnEl.style.color = "#ef4444";
+        } else {
+            turnEl.style.color = "white";
+        }
+    }
+
+    function handleSquareClick(e) {
+        if (!gameActive || pendingPromotionMove) return;
+        if (isAI && engine.turn === 'b') return; 
+
+        initAudio();
+
+        let r = parseInt(e.target.dataset.r);
+        let c = parseInt(e.target.dataset.c);
+
+        let move = validMoves.find(m => m.r === r && m.c === c);
+        if (move) {
+            let movingPiece = engine.board[selectedSquare.r][selectedSquare.c];
+            if (movingPiece.toLowerCase() === 'p' && (r === 0 || r === 7)) {
+                pendingPromotionMove = { fr: selectedSquare.r, fc: selectedSquare.c, tr: r, tc: c };
+                showPromotionMenu(engine.turn);
+                return;
+            }
+            executeMove(selectedSquare.r, selectedSquare.c, r, c);
+            return;
+        }
+
+        if (engine.getColor(r, c) === engine.turn) {
+            selectedSquare = {r, c};
+            validMoves = engine.getLegalMoves(r, c);
+            renderBoard();
+        } else {
+            selectedSquare = null;
+            validMoves = [];
+            renderBoard();
+        }
+    }
+
+    function showPromotionMenu(color) {
+        promoOptionsEl.innerHTML = '';
+        const options = color === 'w' ? ['Q', 'R', 'B', 'N'] : ['q', 'r', 'b', 'n'];
+        
+        options.forEach(piece => {
+            let btn = document.createElement('div');
+            btn.className = 'promo-btn';
+            
+            let icon = document.createElement('span');
+            icon.className = `piece ${color}`;
+            icon.innerText = UNICODE_PIECES[piece];
+            
+            btn.appendChild(icon);
+            btn.onclick = () => finishPromotion(piece);
+            promoOptionsEl.appendChild(btn);
+        });
+        
+        promoModal.style.display = 'flex';
+    }
+
+    function finishPromotion(pieceStr) {
+        promoModal.style.display = 'none';
+        let pm = pendingPromotionMove;
+        pendingPromotionMove = null;
+        executeMove(pm.fr, pm.fc, pm.tr, pm.tc, pieceStr);
+    }
+
+    function executeMove(fr, fc, tr, tc, promoPiece = null) {
+        let isCapture = engine.makeMove(fr, fc, tr, tc, promoPiece);
+        
+        selectedSquare = null;
+        validMoves = [];
+        renderBoard();
+
+        if (engine.isMate) {
+            gameActive = false;
+            playSound('mate');
+            setTimeout(() => {
+                if (engine.inCheck) {
+                    modalTitle.innerText = "کیش و مات!";
+                    modalTitle.style.color = "#ef4444";
+                    modalSub.innerText = `بازیکن ${engine.turn === 'w' ? 'مشکی' : 'سفید'} پیروز شد.`;
+                } else {
+                    modalTitle.innerText = "پات (مساوی)";
+                    modalTitle.style.color = "#38bdf8";
+                    modalSub.innerText = "هیچ حرکت قانونی وجود ندارد.";
+                }
+                gameOverModal.style.display = 'flex';
+            }, 500);
+            return;
+        } else if (engine.inCheck) {
+            playSound('check');
+        } else {
+            playSound(isCapture ? 'capture' : 'move');
+        }
+
+        if (isAI && engine.turn === 'b' && gameActive) {
+            setTimeout(playAI, 100);
+        }
+    }
+
+    function playAI() {
+        if(!gameActive) return;
+        let move = getBestMove(engine);
+        if (move) {
+            executeMove(move.fr, move.fc, move.tr, move.tc);
+        }
+    }
+
+    function startGame(aiMode) {
+        initAudio();
+        isAI = aiMode;
+        engine = new ChessEngine();
+        gameActive = true;
+        selectedSquare = null;
+        validMoves = [];
+        pendingPromotionMove = null;
+        gameOverModal.style.display = 'none';
+        promoModal.style.display = 'none';
+        
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('game-container').style.display = 'flex';
+
+        createBoard();
+        renderBoard();
+    }
+
+    function showMenu() {
+        gameActive = false;
+        document.getElementById('menu').style.display = 'flex';
+        document.getElementById('game-container').style.display = 'none';
+        gameOverModal.style.display = 'none';
+        promoModal.style.display = 'none';
+    }
+</script>
+</body>
+</html>

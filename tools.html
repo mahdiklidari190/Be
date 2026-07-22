@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بردیا کلیدری | ابزارها</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script>tailwind.config = { darkMode: 'class', theme: { extend: {} } }</script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+  <div id="header-container"></div>
+
+  <section class="py-16 md:py-20 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 scroll-reveal"><span class="gradient-text">ابزارهای امنیت و اتوماسیون</span></h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
+        
+        <article class="project-card card-hover bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-xl scroll-reveal">
+          <div class="h-48 bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center relative overflow-hidden">
+            <div class="flex flex-col items-center justify-center text-white text-center p-4">
+              <i class="fas fa-shield-alt text-4xl mb-2"></i>
+              <h4 class="font-bold text-lg">اسکنر امنیتی</h4>
+            </div>
+          </div>
+          <div class="p-5 md:p-6">
+            <h3 class="text-lg md:text-xl font-bold mb-2 text-gray-800 dark:text-white">Security Scanner Suite</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">ابزار جامع تست نفوذ با اسکن خودکار آسیب‌پذیری‌های OWASP Top 10، گزارش‌گیری حرفه‌ای PDF/CSV و داشبورد مدیریتی ریل‌تایم.</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded text-xs">Python</span>
+              <span class="px-2 py-1 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded text-xs">OWASP</span>
+              <span class="px-2 py-1 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded text-xs">Docker</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card card-hover bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-xl scroll-reveal">
+          <div class="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center relative overflow-hidden">
+            <div class="flex flex-col items-center justify-center text-white text-center p-4">
+              <i class="fas fa-robot text-4xl mb-2"></i>
+              <h4 class="font-bold text-lg">اتوماسیون هوشمند</h4>
+            </div>
+          </div>
+          <div class="p-5 md:p-6">
+            <h3 class="text-lg md:text-xl font-bold mb-2 text-gray-800 dark:text-white">AI Automation System - n8n</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">سیستم اتوماسیون هوشمند با n8n برای مدیریت 200+ workflow و ادغام AI. اتوماسیون کامل فرآیندهای کسب‌وکار از CRM تا ساپورت.</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded text-xs">n8n</span>
+              <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded text-xs">Node.js</span>
+              <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded text-xs">OpenAI API</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-container"></div>
+  <script src="/js/script.js"></script>
+</body>
+</html>

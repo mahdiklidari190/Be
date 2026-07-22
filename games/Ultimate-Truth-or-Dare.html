@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی جرئت یا حقیقت خفن</title>
+    <style>
+        :root {
+            --bg-color: #0f0c29;
+            --bg-grad-1: #302b63;
+            --bg-grad-2: #24243e;
+            --primary: #ff007f;
+            --secondary: #00f2fe;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --truth-color: #00E676;
+            --dare-color: #FF1744;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-color), var(--bg-grad-1), var(--bg-grad-2));
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .screen {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- Start Screen --- */
+        .glass-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+            text-align: center;
+            width: 95%;
+            max-width: 400px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        #playersContainer {
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 55vh;
+            padding-right: 5px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        #playersContainer::-webkit-scrollbar { width: 4px; }
+        #playersContainer::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+
+        .player-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 8px;
+            width: 100%;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--secondary);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus { box-shadow: 0 0 10px var(--secondary); }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-action {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            border-radius: 10px;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .btn-add { background: var(--truth-color); }
+        .btn-remove { background: var(--dare-color); }
+
+        .btn-start {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .btn:hover, .btn-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #fff;
+        }
+
+        /* --- Game Screen --- */
+        .wheel-container {
+            position: relative;
+            width: 90vw;
+            max-width: 400px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 20px var(--secondary) inset;
+            border: 5px solid white;
+            overflow: hidden;
+            direction: ltr; /* جلوگیری از تداخل RTL */
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .player-name-wheel {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 3px black, -1px -1px 3px black;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100px;
+            text-align: center;
+            direction: rtl; /* حفظ نمایش درست فارسی */
+        }
+
+        .bottle-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            margin-top: -50px;
+            margin-left: -50px;
+            z-index: 10;
+            cursor: pointer;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            transform-origin: center;
+        }
+
+        .bottle {
+            width: 104%;
+            height: 100%;
+            font-size: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* ایموجی بطری به سمت بالا-راست متمایل است. با چرخش 45- درجه دقیقاً رو به بالا (ساعت 12) قرار می‌گیرد */
+            transform: rotate(42deg); 
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.5));
+        }
+
+        /* تنظیم دقیق نشانگر روی سر چوب‌پنبه بطری */
+        .hitbox {
+            position: absolute;
+            top: -0px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            /*background: white;*/
+            border-radius: 50%;
+            box-shadow: 0 0 15px white, 0 0 5px var(--secondary);
+            pointer-events: none;
+        }
+
+        /* --- Choice Modal --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+
+        .winner-name {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px var(--secondary);
+        }
+
+        .choice-cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .choice-btn {
+            width: 140px;
+            height: 180px;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+            border: 2px solid white;
+        }
+
+        .truth-btn { background: linear-gradient(135deg, var(--truth-color), #009688); color: white; box-shadow: 0 0 20px var(--truth-color); }
+        .dare-btn { background: linear-gradient(135deg, var(--dare-color), #D50000); color: white; box-shadow: 0 0 20px var(--dare-color); }
+        
+        .choice-btn:hover { transform: translateY(-10px) scale(1.05); }
+        .choice-btn:disabled { filter: grayscale(100%); opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-badge {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .stat-badge.truth-stat { color: var(--truth-color); text-shadow: 0 0 5px var(--truth-color); border-color: var(--truth-color); }
+        .stat-badge.dare-stat { color: var(--dare-color); text-shadow: 0 0 5px var(--dare-color); border-color: var(--dare-color); }
+
+        /* --- Cards Screen --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 600px;
+            width: 100%;
+            perspective: 1000px;
+            margin-bottom: 80px;
+        }
+
+        .card-wrapper {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-wrapper.hide {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+        }
+
+        .card-wrapper.selected {
+            position: fixed;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateY(180deg) scale(1.1);
+            z-index: 200;
+            width: 80%;
+            max-width: 350px;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .card-front {
+            background: repeating-linear-gradient(45deg, #1a1a2e, #1a1a2e 10px, #16213e 10px, #16213e 20px);
+            font-size: 4rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #4b134f, #c94b4b);
+            transform: rotateY(180deg);
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: white;
+            overflow-y: auto;
+        }
+
+        .back-to-game-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--secondary);
+            color: black;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            display: none;
+            z-index: 201;
+            box-shadow: 0 0 20px var(--secondary);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="startScreen" class="screen active">
+        <div class="glass-box">
+            <h1>جرئت یا حقیقت</h1>
+            <div id="playersContainer"></div>
+            <button class="btn btn-start" onclick="startGame()">شروع بازی</button>
+        </div>
+    </div>
+
+    <div id="gameScreen" class="screen">
+        <h2 style="margin-bottom: 30px; font-size: 2rem; text-shadow: 0 0 10px white;">بزن رو بطری!</h2>
+        <div class="wheel-container" id="wheelContainer">
+            <div class="wheel" id="wheel"></div>
+            <div class="bottle-wrapper" id="bottleWrapper" onclick="spinBottle()">
+                <div class="bottle">🍾</div>
+                <div id="hitbox" class="hitbox"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="choiceModal" class="modal-overlay">
+        <h2 class="winner-name" id="winnerName">نام</h2>
+        <div class="choice-cards">
+            <button class="choice-btn truth-btn" id="btnTruth" onclick="openCards('truth')">حقیقت</button>
+            <button class="choice-btn dare-btn" id="btnDare" onclick="openCards('dare')">جرئت</button>
+        </div>
+        <div class="stats-container">
+            <span class="stat-badge truth-stat" id="truthStat">حقیقت باقیمانده : ۲</span>
+            <span class="stat-badge dare-stat" id="dareStat">جرئت باقیمانده : ۱</span>
+        </div>
+    </div>
+
+    <div id="cardsScreen" class="screen">
+        <h2 style="margin-bottom: 20px;">یک کارت انتخاب کن</h2>
+        <div class="cards-grid" id="cardsGrid"></div>
+        <button class="btn back-to-game-btn" id="btnBackToGame" onclick="returnToGame()">بازگشت به بازی</button>
+    </div>
+
+<script>
+    const questionsData = {
+        truth: [
+            // --- سری جدید و خفن حقیقت ---
+            "خجالت‌آورترین پیامی که تا حالا اشتباهی برای کسی فرستادی چی بوده؟",
+            "کدوم یکی از آدم‌های این جمع رو اگه مجبور باشی از زندگیت حذف می‌کنی؟",
+            "تا حالا شده رو کسی کراش داشته باشی ولی به خاطر غرورت بهش نگی؟ کی بوده؟",
+            "ترسناک‌ترین یا عجیب‌ترین چیزی که تو سرچ اینستاگرامت هست چیه؟",
+            "آخرین باری که از ته دل گریه کردی کِی و برای چی بود؟",
+            "اگه بتونی به مدت یک روز نامرئی بشی، اولین کاری که می‌کنی چیه؟",
+            "بزرگترین رازی که از پدر و مادرت پنهان کردی چیه؟",
+            "تو این جمع کی از همه خوش‌تیپ‌تر/خوشگل‌تره؟ (فقط یک نفر رو اسم ببر)",
+            "اگه قرار باشه یک روز جای کسی دیگه تو این جمع باشی، کی رو انتخاب می‌کنی؟",
+            "بدترین سوتی‌ای که تو یک قرار عاشقانه یا مهمونی دادی چی بوده؟",
+            "تا حالا شده تو حموم دستشویی کنی؟ (صادق باش!)",
+            "اگه گوشیت همین الان هک بشه، از لو رفتن کدوم چت بیشتر از همه می‌ترسی؟",
+            "بی‌ارزش‌ترین دلیلی که به خاطرش با یکی دعوا کردی چی بوده؟",
+            "تا حالا شده پشت سر صمیمی‌ترین دوستت غیبت کنی؟ چی گفتی؟",
+            "اگه بهت یک میلیارد پول بدن تا با یکی از افراد این جمع برای همیشه قطع رابطه کنی، کی رو انتخاب می‌کنی؟",
+            "عجیب‌ترین عادتی که موقع تنهایی داری چیه؟",
+            "کدوم ویژگی اخلاقی خودت رو بیشتر از همه پنهان می‌کنی؟",
+            "تا حالا شده از روی حسادت، کار کسی رو خراب کنی یا براش بد بخوای؟",
+            "اگه قرار باشه فقط یک نفر از این جمع تو مراسم عروسیت دعوت نشه، اون کیه؟",
+            "احمقانه‌ترین دروغی که برای پیچوندن یک نفر گفتی چی بوده؟",
+            "چه کسی تو این جمع به نظرت از همه دو رو تره؟",
+            "تا حالا شده پارتنر یا دوست کسی رو تو ذهنت قضاوت کنی و بگی 'اینا اصلا به هم نمیان'؟",
+            "اگه بگن فردا روز آخر زندگیته، از چه کاری که نکردی بیشتر پشیمونی؟",
+            "خنده‌دارترین اسمی که روی یکی از معلم‌ها یا اساتیدت گذاشتی چی بوده؟",
+            "تا حالا شده اکانت فیک بسازی تا اکس یا کراشت رو چک کنی؟",
+            "کدوم یکی از افراد این جمع به نظرت آینده درخشان‌تری داره؟",
+            "تا حالا شده چیزی رو بدزدی؟ (حتی یک چیز خیلی کوچک)",
+            "اگه مجبور باشی با یکی از افراد اینجا توی یک جزیره گیر بیفتی، کی رو انتخاب می‌کنی؟",
+            "تا حالا شده به خاطر جلب توجه، خودت رو به مریضی بزنی؟",
+            "چه چیزی در مورد خودت هست که ازش متنفری؟",
+            "اگه بتونی ذهن یک نفر تو این جمع رو برای یک ساعت بخونی، اون کیه؟",
+            "به نظرت لوس‌ترین آدم این جمع کیه؟",
+            "آخرین باری که به شدت احساس حسادت کردی کِی بود؟",
+            "اگه بگن باید تا آخر عمر فقط با یک نفر از این جمع حرف بزنی، اون کیه؟",
+            "بدترین کادویی که تا حالا گرفتی از طرف کی بوده و چی بوده؟",
+            "تا حالا شده غذایی که روی زمین افتاده رو بخوری؟",
+            "اگه پلیس بیاد تو رو دستگیر کنه، دوستانت فکر می‌کنن به چه جرمی دستگیر شدی؟",
+            "عجیب‌ترین چیزی که تا حالا توی خواب گفتی یا انجام دادی چیه؟",
+            "کدوم عضو این جمع به نظرت بیشترین استعداد رو داره ولی ازش استفاده نمی‌کنه؟",
+            "تا حالا شده توی جمعی وانمود کنی یک چیزی رو می‌دونی در حالی که اصلا نمی‌دونستی؟",
+            "اگه بتونی یک قانون برای کل دنیا بذاری که همه رعایت کنن، اون چیه؟",
+            "به نظرت بی‌مزه ترین آدم این جمع کیه؟",
+            "کدوم کارته که همیشه می‌ندازی گردن بقیه؟",
+            "اگه قرار باشه راز یکی از اعضای این جمع رو فاش کنی (اگه می‌دونستی)، اون کی بود؟",
+            "به نظرت در جمع فعلی، چه کسی کمترین اعتماد به نفس رو داره؟",
+            "تا حالا شده هدیه‌ای که کسی بهت داده رو بندازی دور یا بدی به یکی دیگه؟",
+            "پایین‌ترین کاری که برای جلب توجه یک نفر انجام دادی چی بوده؟",
+            "چیزی هست که به خاطرش خودت رو هرگز نبخشیده باشی؟",
+            "آخرین باری که از روی حسادت یک تصمیم گرفتی کی بود؟",
+            "بدترین نمره‌ای که تو مدرسه یا دانشگاه گرفتی و قایمش کردی چند بوده؟",
+            "تا حالا شده از شکست خوردن یکی از دوستانت (حتی تو دلت) خوشحال بشی؟",
+            "بزرگترین ترست توی زندگی چیه که تا حالا به کسی نگفتی؟",
+            "اگه همین الان گوشیت رو بدن دست بغل دستیت تا گالریتو ببینه، چه حسی بهت دست میده؟",
+            "تا حالا شده بخوای با کسی کات کنی ولی به خاطر دلسوزی نتونی؟",
+            "کدوم یکی از اعضای این جمع به نظرت از همه مرموزتره؟",
+            "اگه بتونی به گذشته برگردی، کدوم اشتباهت رو جبران می‌کنی؟",
+            "خجالت‌آورترین لقبی که تو بچگی بهت می‌دادن چی بوده؟",
+            "تا حالا شده به کسی بگی 'تو راهتم' در حالی که هنوز تو رختخواب بودی؟",
+            "اگه قرار باشه یک روز کامل به جای یکی از سلبریتی‌ها باشی، کی رو انتخاب می‌کنی؟",
+            "تا حالا شده چیزی رو بشکنی و بندازی گردن یکی دیگه؟",
+            "بدترین شایعه‌ای که در مورد خودت شنیدی چی بوده؟",
+            "تا حالا شده به دوست صمیمیِ کراشت حسودی کنی؟",
+            "اگه بتونی آینده یکی از افراد این جمع رو ببینی، کی رو انتخاب می‌کنی؟",
+            "تا حالا شده تو مهمونی، غذایی رو که دوست نداشتی یواشکی بریزی دور؟",
+            "اگه بگن تا آخر عمرت فقط می‌تونی یک نوع غذا بخوری، چیه؟",
+            "چه چیزی تو رو به شدت عصبانی می‌کنه ولی بقیه بهش می‌خندن؟",
+            "تا حالا شده برای اینکه کسی رو نبینی، مسیرت رو کج کنی؟",
+            "اگه یک میلیارد تومن پول پیدا کنی، اولین چیزی که می‌خری چیه؟",
+            "به نظرت تو این جمع کی از همه بیشتر دروغ میگه؟",
+            "تا حالا شده حرفی بزنی که بلافاصله از گفتنش پشیمون بشی؟",
+            "اگه مجبور باشی با یکی از دشمنات صلح کنی، اون کیه؟",
+            "تا حالا شده به خاطر ترس از قضاوت بقیه، کاری رو که دوست داشتی انجام ندی؟"
+        ],
+        dare: [
+            // --- سری جدید و خفن شجاعت / جرئت ---
+            "آخرین پیام دایرکت اینستاگرامت رو با صدای بلند برای همه بخون.",
+            "به پنجمین نفر توی لیست چت‌هات پیام بده: 'من می‌دونم دیشب چیکار کردی!'",
+            "گوشیت رو بده به نفر سمت راستت تا یک استوری به دلخواه خودش برات بذاره (باید ۵ دقیقه بمونه).",
+            "یک قاشق سس مایونز یا کچاپ خالی بخور.",
+            "تا آخر این دور از بازی، با لهجه غلیظ (مثلا عربی، لری، ترکی یا هندی) حرف بزن.",
+            "برو جلوی آینه و به مدت ۱ دقیقه با خودت مثل یک دیوانه دعوا کن.",
+            "به یکی از همکلاسی‌ها یا همکارهای قدیمیت پیام بده: 'هنوزم بهت فکر می‌کنم.'",
+            "چشم‌هات رو ببند، بقیه یک چیزی از روی میز می‌ذارن تو دهنت، باید حدس بزنی چیه.",
+            "کفش نفر سمت چپت رو دربیار و مثل گوشی موبایل بگیر در گوشت و ۱ دقیقه باهاش 'الو الو' کن.",
+            "به یکی از اعضای خانوادت زنگ بزن و بگو: 'من همین الان تصادف کردم ولی ماشین خودم نبود، دزدیدمش!'",
+            "برای ۲ دقیقه آینده، هرکسی هرچی گفت تو باید مثل طوطی حرفش رو تکرار کنی.",
+            "یک عکس به شدت زشت و کج و کوله از خودت بگیر و بفرست تو گروه خانوادگی.",
+            "به یکی از کانتکت‌هات که خیلی وقته باهاش حرف نزدی پیام بده: 'پول داری ۳ میلیون تا فردا بهم قرض بدی؟'",
+            "روی زمین دراز بکش و مثل یک کرم روی زمین بخز تا برسی به اون سر اتاق.",
+            "یک لیوان آب رو بذار رو سرت و سعی کن بدون اینکه بیفته، ۱۰ قدم راه بری.",
+            "به مدت ۳ دقیقه، هر وقت نوبت کسی شد که حرف بزنه، تو باید با صدای بلند عطسه کنی.",
+            "اجازه بده نفر روبه‌روییت با خودکار روی پیشونیت یک کلمه (غیرتوهین‌آمیز) بنویسه.",
+            "یک ویس برای کراشت یا یک دوست معمولی بفرست و توش فقط صدای گوسفند دربیار.",
+            "جوراب یکی از افراد جمع رو دربیار و مثل دستکش دستت کن تا دور بعدیِ خودت.",
+            "زنگ بزن به یک رستوران فست‌فود و سفارش قرمه‌سبزی بده.",
+            "آخرین عکسی که اسکرین‌شات گرفتی رو تو استوری اینستاگرام یا واتساپت بذار.",
+            "به مدت ۲ دقیقه، ادای میمون دربیار (هم صدا، هم حرکت).",
+            "اجازه بده یکی از بچه‌های جمع موهات رو به عجیب‌ترین شکل ممکن ببنده یا مدل بده.",
+            "دستت رو بکن تو یک کاسه آب یخ و تا ۶۰ ثانیه همونجا نگه دار.",
+            "گوشیت رو آنلاک کن و بده به نفر سمت چپی تا ۱ دقیقه هرجاییش خواست سرک بکشه.",
+            "به یکی از دوستات زنگ بزن و بدون سلام کردن بگو: 'جسد رو کجا قایم کنیم؟' و قطع کن.",
+            "یک لیوان آب رو که توش نمک و فلفل ریختن، یک قلوپ بخور.",
+            "به مدت ۵ دقیقه، به جای راه رفتن فقط باید لی‌لی بری.",
+            "سعی کن بدون استفاده از دست، یک خوراکی رو از دست نفر سمت راستت بخوری.",
+            "آخرین سرچ گوگلت رو به همه نشون بده.",
+            "به کراشت یا کسی که تو ذهنت جذابه پیام بده: 'تو خیلی جذابی، می‌دونستی؟'",
+            "تا ۵ دقیقه آینده حق نداری از کلمه‌های 'آره'، 'نه' و 'باشه' استفاده کنی.",
+            "مثل یک گزارشگر فوتبال، به مدت ۱ دقیقه اتفاقات داخل اتاق رو با هیجان گزارش کن.",
+            "یک تکه پیاز خام رو مثل سیب گاز بزن.",
+            "لباسات رو (مثلا تیشرت یا ژاکتت رو) برعکس بپوش و تا آخر بازی همونطور بمون.",
+            "برو جلوی در خونه/اتاق و با صدای بلند داد بزن: 'من عاشق بوی جورابم!'",
+            "به اولین نفری که تو اینستاگرامت استوری گذاشته ریپلای کن: 'وای چقدر تو زشتی!' (بعدش می‌تونی بگی بازی بوده).",
+            "با دهن پر از آب، سعی کن یک جوک تعریف کنی بدون اینکه آب بیرون بریزه.",
+            "تا دور بعدیِ خودت، چشم‌هات رو ببند و حق نداری بازشون کنی.",
+            "یک آهنگ پاپ ایرانی رو با لحن حماسی و شاهنامه‌ای بخون.",
+            "برو تو لیست مخاطبینت، چشم بسته روی یکی کلیک کن و زنگ بزن بگو 'دلم برات تنگ شده'.",
+            "برای ۱ دقیقه نقش یک ربات رو بازی کن که باتریش داره تموم میشه.",
+            "اجازه بده نفر سمت راستت یک پیام تو توییتر یا تردزت بنویسه و پست کنه.",
+            "دو تا از انگشت‌هات رو بکن تو سوراخ دماغت و با بقیه یک عکس سلفی بگیر.",
+            "به یکی از فامیل‌های دورت زنگ بزن و بگو می‌خوای بری خونشون تلپ شی.",
+            "یک رقص عجیب و خنده‌دار به مدت ۳۰ ثانیه برای جمع اجرا کن.",
+            "تا ۱۰ دقیقه آینده هر وقت می‌خوای بخندی، باید بدون صدا بخندی.",
+            "عجیب‌ترین شکلکی که می‌تونی رو با صورتت دربیار و بذار بقیه ازت عکس بگیرن.",
+            "به یکی از اساتید یا رئیس‌ت پیام بده: 'شما خیلی کیوتی!'",
+            "تا آخر بازی باید به جای اسم بردن از افراد، با اشاره دست نشونشون بدی.",
+            "کفشت رو دربیار و بوش کن و با لذت بگو: 'وای چه بوی خوبی!'",
+            "یک دروغ شاخدار در مورد خودت بساز و سعی کن جمع رو متقاعد کنی که راسته.",
+            "تا ۳ دقیقه آینده مثل یک گربه روی چهار دست و پا راه برو."
+        ]
+    };
+
+
+    let poolTruth = [...questionsData.truth];
+    let poolDare = [...questionsData.dare];
+
+    let playerInputs = ['']; 
+    let players = [];
+    let currentPlayerIndex = null;
+    let currentBottleRotation = 0;
+    let isSpinning = false;
+    let currentCategory = '';
+    let spinSoundInterval;
+
+    const colors = ['#FF1744', '#00E676', '#2979FF', '#FFEA00', '#D500F9', '#FF9100', '#00B0FF', '#76FF03'];
+
+    // --- سیستم صدای مدرن بازی (کاملا آفلاین تولید می‌شود) ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+            // صدای کلیک مدرن UI
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+            
+            gainNode.gain.setValueAtTime(0.4, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            
+            osc.start(now);
+            osc.stop(now + 0.05);
+        } else if (type === 'tick') {
+            // صدای تیک تیک مکانیکی چرخونه
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.exponentialRampToValueAtTime(50, now + 0.03);
+            
+            gainNode.gain.setValueAtTime(0.15, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.03);
+            
+            osc.start(now);
+            osc.stop(now + 0.03);
+        } else if (type === 'win') {
+            // صدای پیروزی و برد (یک آکورد کوتاه و زیبا)
+            const freqs = [523.25, 659.25, 783.99, 1046.50]; // آکورد C Major
+            freqs.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+
+                const startTime = now + (i * 0.08); // پخش با تاخیر کم (آرپژ)
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(0.2, startTime + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.5);
+
+                osc.start(startTime);
+                osc.stop(startTime + 0.5);
+            });
+        }
+    }
+
+    function renderInputs() {
+        const container = document.getElementById('playersContainer');
+        container.innerHTML = '';
+        
+        playerInputs.forEach((val, index) => {
+            const div = document.createElement('div');
+            div.className = 'player-input-group';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `نام بازیکن ${index + 1}`;
+            input.value = val;
+            input.oninput = (e) => { playerInputs[index] = e.target.value; };
+            div.appendChild(input);
+
+            const btn = document.createElement('button');
+            if (index === playerInputs.length - 1) {
+                btn.className = 'btn-action btn-add';
+                btn.innerText = '+';
+                btn.onclick = () => {
+                    playSound('click');
+                    playerInputs.push('');
+                    renderInputs();
+                };
+            } else {
+                btn.className = 'btn-action btn-remove';
+                btn.innerText = '-';
+                btn.onclick = () => {
+                    playSound('click');
+                    playerInputs.splice(index, 1);
+                    renderInputs();
+                };
+            }
+            div.appendChild(btn);
+            container.appendChild(div);
+        });
+    }
+
+    renderInputs();
+
+    function startGame() {
+        playSound('click');
+        players = [];
+        playerInputs.forEach(name => {
+            if (name.trim() !== '') {
+                players.push({ name: name.trim(), truthUsed: 0, dareUsed: 0 });
+            }
+        });
+
+        if (players.length < 2) {
+            alert('برای شروع بازی حداقل به ۲ بازیکن نیاز است!');
+            return;
+        }
+
+        buildWheel();
+        switchScreen('startScreen', 'gameScreen');
+    }
+
+    function buildWheel() {
+        const wheel = document.getElementById('wheel');
+        const wheelContainer = document.getElementById('wheelContainer');
+        wheel.innerHTML = '';
+        
+        document.querySelectorAll('.player-name-wheel').forEach(el => el.remove());
+
+        let gradientParts = [];
+        const sliceAngle = 360 / players.length;
+
+        players.forEach((player, index) => {
+            const startAngle = index * sliceAngle;
+            const endAngle = (index + 1) * sliceAngle;
+            const color = colors[index % colors.length];
+            gradientParts.push(`${color} ${startAngle}deg ${endAngle}deg`);
+
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'player-name-wheel';
+            nameDiv.innerText = player.name;
+            
+            const midAngle = startAngle + (sliceAngle / 2);
+            const rad = (midAngle - 90) * (Math.PI / 180);
+            const radius = 35;
+            
+            const leftPos = 50 + (Math.cos(rad) * radius);
+            const topPos = 50 + (Math.sin(rad) * radius);
+
+            nameDiv.style.left = `${leftPos}%`;
+            nameDiv.style.top = `${topPos}%`;
+            nameDiv.style.transform = `translate(-50%, -50%) rotate(${midAngle}deg)`;
+            
+            wheelContainer.appendChild(nameDiv);
+        });
+
+        wheel.style.background = `conic-gradient(${gradientParts.join(', ')})`;
+    }
+
+    function spinBottle() {
+        if (isSpinning) return;
+        playSound('click');
+        isSpinning = true;
+
+        const sliceAngle = 360 / players.length;
+        const randomSpins = (Math.floor(Math.random() * 4) + 5) * 360; 
+        let randomDegree = Math.random() * 360;
+        
+        let projectedMod = (currentBottleRotation + randomDegree) % 360;
+        if (projectedMod < 0) projectedMod += 360;
+        let positionInSlice = projectedMod % sliceAngle;
+        
+        const safeMargin = Math.min(10, sliceAngle / 4); 
+        if (positionInSlice < safeMargin) {
+            randomDegree += (safeMargin - positionInSlice);
+        } else if (positionInSlice > sliceAngle - safeMargin) {
+            randomDegree -= (positionInSlice - (sliceAngle - safeMargin));
+        }
+
+        currentBottleRotation += (randomSpins + randomDegree);
+
+        const wrapper = document.getElementById('bottleWrapper');
+        wrapper.style.transform = `rotate(${currentBottleRotation}deg)`;
+
+        let ticks = 0;
+        spinSoundInterval = setInterval(() => {
+            playSound('tick');
+            ticks++;
+            if (ticks > 25) clearInterval(spinSoundInterval);
+        }, 150);
+
+        setTimeout(() => {
+            clearInterval(spinSoundInterval);
+            let finalAngle = currentBottleRotation % 360;
+            if (finalAngle < 0) finalAngle += 360;
+            
+            currentPlayerIndex = Math.floor(finalAngle / sliceAngle);
+
+            isSpinning = false;
+            playSound('win');
+            showChoiceModal();
+        }, 4000);
+    }
+
+    function showChoiceModal() {
+        const player = players[currentPlayerIndex];
+        
+        if (player.truthUsed >= 2 && player.dareUsed >= 1) {
+            player.truthUsed = 0; player.dareUsed = 0;
+        }
+
+        document.getElementById('winnerName').innerText = player.name;
+        
+        const btnTruth = document.getElementById('btnTruth');
+        const btnDare = document.getElementById('btnDare');
+        const truthStat = document.getElementById('truthStat');
+        const dareStat = document.getElementById('dareStat');
+
+        btnTruth.disabled = player.truthUsed >= 2;
+        btnDare.disabled = player.dareUsed >= 1;
+
+        truthStat.innerText = `حقیقت باقیمانده : ${2 - player.truthUsed}`;
+        dareStat.innerText = `جرئت باقیمانده : ${1 - player.dareUsed}`;
+
+        document.getElementById('choiceModal').classList.add('active');
+    }
+
+    function openCards(category) {
+        playSound('click');
+        currentCategory = category;
+        const player = players[currentPlayerIndex];
+
+        if(category === 'truth') player.truthUsed++;
+        if(category === 'dare') player.dareUsed++;
+
+        document.getElementById('choiceModal').classList.remove('active');
+        generateCards();
+        switchScreen('gameScreen', 'cardsScreen');
+    }
+
+    function generateCards() {
+        const grid = document.getElementById('cardsGrid');
+        grid.innerHTML = '';
+        document.getElementById('btnBackToGame').style.display = 'none';
+
+        // ارجاع به منبع اصلی بر اساس دسته‌بندی
+        let currentPoolRef = currentCategory === 'truth' ? poolTruth : poolDare;
+        const originalDb = questionsData[currentCategory];
+
+        // اگر سوالات باقیمانده در بانک کمتر از 4 تا شد، دوباره شارژش میکنیم
+        if (currentPoolRef.length < 4) {
+            if(currentCategory === 'truth') {
+                poolTruth = [...originalDb];
+                currentPoolRef = poolTruth;
+            } else {
+                poolDare = [...originalDb];
+                currentPoolRef = poolDare;
+            }
+        }
+
+        // انتخاب 4 سوال تصادفی برای نمایش (بدون حذف دائمی از بانک در این مرحله)
+        let tempPool = [...currentPoolRef];
+        let selectedQuestionsForCards = [];
+        for (let i = 0; i < 4; i++) {
+            let randomIndex = Math.floor(Math.random() * tempPool.length);
+            selectedQuestionsForCards.push(tempPool[randomIndex]);
+            tempPool.splice(randomIndex, 1); 
+        }
+
+        for (let i = 0; i < 4; i++) {
+            const card = document.createElement('div');
+            card.className = 'card-wrapper';
+            card.innerHTML = `
+                <div class="card-front">?</div>
+                <div class="card-back">${selectedQuestionsForCards[i]}</div>
+            `;
+            
+            card.onclick = function() {
+                if(card.classList.contains('selected')) return;
+                playSound('click');
+                // فقط همون سوالی که کاربر روش کلیک کرده رو از بانک اصلی حذف میکنیم
+                selectCard(card, selectedQuestionsForCards[i]);
+            };
+
+            grid.appendChild(card);
+        }
+    }
+
+    function selectCard(selectedCard, questionText) {
+        // حذف سوال انتخاب شده از بانک (جلوگیری از تکرار مجدد همون سوال در آینده)
+        let targetPool = currentCategory === 'truth' ? poolTruth : poolDare;
+        const indexToRemove = targetPool.indexOf(questionText);
+        if (indexToRemove > -1) {
+            targetPool.splice(indexToRemove, 1);
+        }
+
+        const allCards = document.querySelectorAll('.card-wrapper');
+        allCards.forEach(card => {
+            if (card !== selectedCard) {
+                card.classList.add('hide'); 
+            }
+        });
+
+        setTimeout(() => {
+            selectedCard.classList.add('selected'); 
+            setTimeout(() => {
+                document.getElementById('btnBackToGame').style.display = 'block';
+                document.getElementById('btnBackToGame').style.animation = 'none';
+            }, 500);
+        }, 300);
+    }
+
+    function returnToGame() {
+        playSound('click');
+        switchScreen('cardsScreen', 'gameScreen');
+    }
+
+    function switchScreen(fromId, toId) {
+        document.getElementById(fromId).classList.remove('active');
+        document.getElementById(toId).classList.add('active');
+    }
+
+</script>
+</body>
+</html>

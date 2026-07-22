@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بردیا کلیدری | پروژه‌ها</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script>tailwind.config = { darkMode: 'class', theme: { extend: {} } }</script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+  <div id="header-container"></div>
+
+  <section class="py-16 md:py-20 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 scroll-reveal"><span class="gradient-text">پروژه‌های وب و نرم‌افزار</span></h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
+        
+        <article class="project-card card-hover bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-xl scroll-reveal">
+          <div class="h-48 bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center relative overflow-hidden">
+            <div class="flex flex-col items-center justify-center text-white text-center p-4">
+              <i class="fas fa-shopping-cart text-4xl mb-2"></i>
+              <h4 class="font-bold text-lg">پلتفرم فروشگاهی</h4>
+            </div>
+          </div>
+          <div class="p-5 md:p-6">
+            <h3 class="text-lg md:text-xl font-bold mb-2 text-gray-800 dark:text-white">E-Commerce Platform - پلتفرم B2B2C</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">فروشگاه ساز حرفه‌ای با پنل ادمین پیشرفته، سیستم پرداخت زرین‌پال و IDPay، مدیریت انبار هوشمند و پنل فروشندگان. پشتیبانی از 50K محصول.</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded text-xs">Laravel 10</span>
+              <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded text-xs">Vue.js 3</span>
+              <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded text-xs">Redis</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card card-hover bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-xl scroll-reveal">
+          <div class="h-48 bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center relative overflow-hidden">
+            <div class="flex flex-col items-center justify-center text-white text-center p-4">
+              <i class="fas fa-chart-line text-4xl mb-2"></i>
+              <h4 class="font-bold text-lg">داشبورد تحلیل داده</h4>
+            </div>
+          </div>
+          <div class="p-5 md:p-6">
+            <h3 class="text-lg md:text-xl font-bold mb-2 text-gray-800 dark:text-white">Analytics Dashboard - BI Tool</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">داشبورد تحلیل داده‌های تجاری با نمودارهای زنده Chart.js، گزارش‌گیری پیشرفته و پیش‌بینی فروش با ML. اتصال به دیتاسورس‌های متنوع.</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-xs">React</span>
+              <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-xs">Python</span>
+              <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-xs">FastAPI</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-container"></div>
+  <script src="/js/script.js"></script>
+</body>
+</html>

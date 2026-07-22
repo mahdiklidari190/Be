@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Brain Duel</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+
+<style>
+    :root {
+        --dark-bg: #050510;
+        --player-bg-start: #0a192f;
+        --player-bg-end: #023e8a;
+        --enemy-bg-start: #2b0b0b;
+        --enemy-bg-end: #780000;
+        --correct-color: #34d399; 
+        --wrong-color: #fb7185; 
+        --accent-glow: #38bdf8;
+    }
+
+    * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Vazirmatn', sans-serif;
+        background: var(--dark-bg); color: white; overflow: hidden; touch-action: manipulation;
+    }
+
+    /* ذرات شناور پس‌زمینه */
+    #particles-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
+    .math-particle { position: absolute; color: rgba(255, 255, 255, 0.05); font-weight: bold; animation: floatUp linear infinite; }
+    @keyframes floatUp {
+        0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+        20% { opacity: 1; }
+        80% { opacity: 1; }
+        100% { transform: translateY(-20vh) rotate(360deg) scale(1.5); opacity: 0; }
+    }
+
+    /* --- صفحه اصلی --- */
+    #main-menu {
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        height: 100vh; background: radial-gradient(circle at 50% -20%, #1e1e38 0%, #05050a 80%);
+        z-index: 50; position: absolute; width: 100%; transition: opacity 0.5s ease;
+    }
+
+    .menu-card {
+        background: rgba(255, 255, 255, 0.03); 
+        backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px;
+        padding: 50px 30px; display: flex; flex-direction: column; gap: 20px; align-items: center;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2);
+        animation: floatCard 6s ease-in-out infinite; z-index: 2; width: 90%; max-width: 420px; text-align: center;
+    }
+
+    @keyframes floatCard { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    #main-menu h1 {
+        font-size: 3.2rem; margin-bottom: 0; font-weight: 900; letter-spacing: -1px;
+        background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #38bdf8 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        text-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+    }
+
+    .menu-subtitle { color: rgba(255, 255, 255, 0.5); font-size: 1rem; margin-bottom: 25px; font-weight: 400; letter-spacing: 1px; }
+
+    .menu-btn {
+        width: 100%; padding: 18px; font-size: 1.15rem; font-weight: 600; font-family: inherit;
+        color: white; background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: flex; justify-content: center; align-items: center; gap: 10px;
+    }
+    
+    .menu-btn:hover, .menu-btn:active {
+        background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); transform: scale(1.02);
+    }
+
+    /* --- زمین بازی --- */
+    #arena { height: 100vh; display: none; flex-direction: column; opacity: 0; transition: opacity 0.5s ease; }
+    
+    .field { height: calc(50% - 35px); flex: none; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+    
+    #enemy { background: linear-gradient(135deg, var(--enemy-bg-start), var(--enemy-bg-end)); transform: rotate(180deg); }
+    #player { background: linear-gradient(135deg, var(--player-bg-start), var(--player-bg-end)); }
+
+    /* لرزش هنگام اشتباه برای بازیکن آبی */
+    .shake { animation: shakeAnim 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shakeAnim { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
+
+    /* لرزش اختصاصی بازیکن قرمز (برای حفظ چرخش ۱۸۰ درجه) */
+    .shake-enemy { animation: shakeAnimEnemy 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shakeAnimEnemy { 10%, 90% { transform: rotate(180deg) translate3d(-2px, 0, 0); } 20%, 80% { transform: rotate(180deg) translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: rotate(180deg) translate3d(-8px, 0, 0); } 40%, 60% { transform: rotate(180deg) translate3d(8px, 0, 0); } }
+
+    /* --- رودخانه --- */
+    #river {
+        height: 70px; flex: none; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+        display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+        padding: 0 20px; box-shadow: 0 0 30px rgba(0,0,0,0.9); z-index: 10;
+        border-top: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        direction: ltr; 
+    }
+
+    .river-side { display: flex; align-items: center; gap: 12px; transition: transform 0.3s ease; }
+    
+    .score-box {
+        font-size: 1.2rem; font-weight: bold; background: rgba(255,255,255,0.05); 
+        padding: 6px 14px; border-radius: 14px; display: flex; align-items: center; gap: 6px;
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .score-box.red { border: 1px solid rgba(251, 113, 133, 0.3); color: #fda4af; }
+    .score-box.blue { border: 1px solid rgba(56, 189, 248, 0.3); color: #bae6fd; }
+
+    #global-timer { font-size: 1.8rem; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+    .urgent-time { color: var(--wrong-color) !important; animation: pulseRed 0.5s infinite; text-shadow: 0 0 20px red !important; }
+    @keyframes pulseRed { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+    .results-container { display: flex; gap: 6px; }
+    .result-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: all 0.3s; }
+    .result-dot.correct { background-color: var(--correct-color); box-shadow: 0 0 10px var(--correct-color); }
+    .result-dot.wrong { background-color: var(--wrong-color); box-shadow: 0 0 10px var(--wrong-color); }
+
+    /* اجزای بازی */
+    .question-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+    .question { font-size: 4.5rem; font-weight: 900; text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); letter-spacing: 2px; direction: ltr; }
+    
+    .timer-bar { width: 80%; max-width: 320px; height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 6px; overflow: hidden; }
+    .timer-bar-inner { height: 100%; width: 100%; background: var(--correct-color); transition: width 0.1s linear; box-shadow: 0 0 10px var(--correct-color); }
+
+    .answers { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 30px; width: 90%; max-width: 450px; direction: ltr; }
+    .answers button {
+        width: 70px; height: 70px; font-size: 1.6rem; font-weight: bold; font-family: inherit;
+        border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer;
+        background: rgba(255, 255, 255, 0.05); color: white; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2); transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex; justify-content: center; align-items: center;
+    }
+    .answers button:active { transform: scale(0.85); background: white; color: black; box-shadow: 0 0 20px white; }
+    .answers button:disabled { opacity: 0.3; transform: scale(0.95); cursor: not-allowed; }
+
+    /* --- صفحه پایان --- */
+    #end-screen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95);
+        display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100;
+        opacity: 0; transition: opacity 0.5s ease; backdrop-filter: blur(15px); text-align: center; padding: 20px;
+    }
+    #end-screen h2 { font-size: 3.5rem; margin-bottom: 10px; text-shadow: 0 0 30px rgba(255,255,255,0.5); animation: floatCard 3s infinite; font-weight: 900; }
+    .confetti { position: absolute; width: 10px; height: 10px; z-index: 99; border-radius: 2px; }
+
+    /* --- Media Queries برای موبایل --- */
+    @media (max-width: 600px) {
+        #main-menu h1 { font-size: 2.5rem; }
+        .menu-card { padding: 40px 20px; border-radius: 30px; }
+        .menu-btn { font-size: 1.05rem; padding: 16px; border-radius: 16px; }
+        
+        .field { height: calc(50% - 30px); }
+        #river { padding: 0 10px; height: 60px; }
+        
+        .score-box { font-size: 1rem; padding: 4px 10px; border-radius: 10px; }
+        #global-timer { font-size: 1.5rem; }
+        .result-dot { width: 8px; height: 8px; }
+        .river-side { gap: 8px; }
+        
+        .question { font-size: 3.5rem; }
+        .answers button { width: 60px; height: 60px; font-size: 1.4rem; border-radius: 16px; }
+        
+        #end-screen h2 { font-size: 2.5rem; }
+    }
+    @media (max-height: 700px) {
+        .answers { margin-top: 15px; }
+        .question { font-size: 2.8rem; }
+        .answers button { width: 55px; height: 55px; font-size: 1.2rem; }
+    }
+</style>
+</head>
+<body>
+
+<!-- ذرات پس‌زمینه -->
+<div id="particles-container"></div>
+
+<!-- صفحه اصلی (منو) -->
+<div id="main-menu">
+    <div class="menu-card">
+        <h1>نبرد ریاضی</h1>
+        <div class="menu-subtitle">زمان مبارزه: ۱۰ دقیقه </div>
+        <button class="menu-btn" onclick="startGame('bot')">🤖 بازی با هوش مصنوعی</button>
+        <button class="menu-btn" onclick="startGame('pvp')">👥 بازی دو نفره (یک گوشی)</button>
+    </div>
+</div>
+
+<!-- زمین بازی -->
+<div id="arena">
+    <!-- زمین بازیکن قرمز (دشمن/بالا) -->
+    <div id="enemy" class="field">
+        <div class="question-wrapper">
+            <div class="question" id="q2"></div>
+            <div class="timer-bar"><div id="timer2" class="timer-bar-inner"></div></div>
+        </div>
+        <div class="answers" id="a2"></div>
+    </div>
+
+    <!-- رودخانه وسط (شامل امتیازات و تایمر) -->
+    <div id="river">
+        <!-- سمت چپ: قرمز -->
+        <div class="river-side left" id="red-river-side">
+            <div class="score-box red" id="s2">🔴 <span id="score-bot">0</span></div>
+            <div class="results-container" id="p2-results"></div>
+        </div>
+        
+        <!-- وسط: تایمر کل -->
+        <div id="global-timer">10:00</div>
+        
+        <!-- سمت راست: آبی -->
+        <div class="river-side right">
+            <div class="results-container" id="p1-results"></div>
+            <div class="score-box blue" id="s1">🔵 <span id="score-user">0</span></div>
+        </div>
+    </div>
+
+    <!-- زمین بازیکن آبی (شما/پایین) -->
+    <div id="player" class="field">
+        <div class="question-wrapper">
+            <div class="question" id="q1"></div>
+            <div class="timer-bar"><div id="timer1" class="timer-bar-inner"></div></div>
+        </div>
+        <div class="answers" id="a1"></div>
+    </div>
+</div>
+
+<!-- صفحه پایان -->
+<div id="end-screen">
+    <h2 id="winner-text">پایان بازی!</h2>
+    <p id="final-score" style="font-size: 1.5rem; margin-bottom: 30px; color: #ccc; direction: ltr; font-weight: bold;"></p>
+    <button class="menu-btn" style="max-width: 300px; margin: 0 auto;" onclick="location.reload()">بازگشت به منو</button>
+</div>
+
+<script>
+    // تنظیمات ذرات پس زمینه
+    const symbols = ['+', '-', '×', '÷', '=', '%', '∑', 'π', '∞', '√'];
+    const container = document.getElementById('particles-container');
+    for(let i=0; i<25; i++) {
+        let span = document.createElement('span');
+        span.className = 'math-particle';
+        span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        span.style.left = Math.random() * 100 + 'vw';
+        span.style.fontSize = (Math.random() * 30 + 15) + 'px';
+        span.style.animationDuration = (Math.random() * 12 + 8) + 's';
+        span.style.animationDelay = (Math.random() * 5) + 's';
+        container.appendChild(span);
+    }
+
+    const MATCH_DURATION = 600; 
+    const QUESTION_TIME = 8000; 
+    
+    let gameMode = 'bot';
+    let score1 = 0, score2 = 0;
+    let ans1 = null, ans2 = null;
+    let p1History = [], p2History = [];
+    let qTimer1, qTimer2, botTimerId, mainGameTimer;
+    let timeLeft = MATCH_DURATION;
+    let isGameRunning = false;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+
+    function startGame(mode) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        gameMode = mode;
+        
+        let redSide = document.getElementById('red-river-side');
+
+        if (gameMode === 'bot') {
+            document.getElementById('enemy').style.pointerEvents = 'none';
+            redSide.style.transform = 'rotate(0deg)'; // حالت عادی
+            redSide.style.flexDirection = 'row'; // ترتیب عادی (امتیاز سمت دیوار)
+        } else {
+            document.getElementById('enemy').style.pointerEvents = 'auto';
+            redSide.style.transform = 'rotate(180deg)'; // چرخش برای بازیکن دوم
+            redSide.style.flexDirection = 'row-reverse'; // برعکس کردن ترتیب برای حفظ جایگاه جعبه امتیاز سمت دیوار
+        }
+
+        let menu = document.getElementById('main-menu');
+        let arena = document.getElementById('arena');
+        menu.style.opacity = '0';
+        setTimeout(() => {
+            menu.style.display = 'none';
+            arena.style.display = 'flex';
+            setTimeout(() => arena.style.opacity = '1', 50);
+        }, 500);
+        
+        isGameRunning = true;
+        score1 = 0; score2 = 0;
+        p1History = []; p2History = [];
+        timeLeft = MATCH_DURATION;
+        
+        updateScoreUI();
+        updateResultsUI(1); updateResultsUI(2);
+        makeQ(1); makeQ(2);
+        
+        if (gameMode === 'bot') botTick();
+        
+        mainGameTimer = setInterval(() => {
+            timeLeft--;
+            updateGlobalTimer();
+            if (timeLeft <= 10 && timeLeft > 0) {
+                document.getElementById('global-timer').classList.add('urgent-time');
+                playEpicTick();
+            }
+            if (timeLeft <= 0) endGame();
+        }, 1000);
+    }
+
+    function updateGlobalTimer() {
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        document.getElementById('global-timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+    }
+
+    function makeQ(player) {
+        if (!isGameRunning) return;
+        
+        let a = rand(1, 20), b = rand(1, 20);
+        let op = ["+", "-", "×"][rand(0, 2)];
+        if (op === "-" && a < b) [a, b] = [b, a];
+
+        let ans = (op === "+") ? a + b : (op === "-") ? a - b : a * b;
+        let q = `${a} ${op} ${b}`;
+
+        if (player === 1) { 
+            ans1 = ans; document.getElementById("q1").innerText = q; drawAns("a1", ans, 1); startQTimer(1); 
+        } else { 
+            ans2 = ans; document.getElementById("q2").innerText = q; drawAns("a2", ans, 2); 
+            startQTimer(2); 
+        }
+    }
+
+    function drawAns(boxId, correctAns, player) {
+        let options = new Set([correctAns]);
+        
+        while (options.size < 4) {
+            let fake = correctAns + rand(-10, 10);
+            if (fake !== correctAns && fake >= 0) options.add(fake);
+        }
+        
+        let arr = Array.from(options).sort(() => Math.random() - 0.5);
+        
+        let container = document.getElementById(boxId);
+        container.innerHTML = "";
+        arr.forEach(val => {
+            let btn = document.createElement("button");
+            btn.innerText = val;
+            btn.onpointerdown = () => check(player, val);
+            container.appendChild(btn);
+        });
+    }
+
+    function check(player, selectedVal) {
+        if (!isGameRunning) return;
+        
+        let isP1 = (player === 1);
+        let correctAns = isP1 ? ans1 : ans2;
+        let isCorrect = (selectedVal === correctAns);
+        let fieldId = isP1 ? 'player' : 'enemy';
+        
+        document.querySelectorAll(`#${isP1 ? 'a1' : 'a2'} button`).forEach(b => b.disabled = true);
+        stopQTimer(player);
+
+        if (isCorrect) {
+            isP1 ? score1++ : score2++;
+            beep(isP1 ? 800 : 500, "sine", 0.15);
+        } else {
+            beep(150, "sawtooth", 0.2);
+            let field = document.getElementById(fieldId);
+            let shakeClass = isP1 ? 'shake' : 'shake-enemy';
+            field.classList.remove(shakeClass);
+            void field.offsetWidth;
+            field.classList.add(shakeClass);
+        }
+        
+        (isP1 ? p1History : p2History).push(isCorrect);
+        if ((isP1 ? p1History : p2History).length > 5) (isP1 ? p1History : p2History).shift();
+
+        updateScoreUI();
+        updateResultsUI(player);
+        
+        setTimeout(() => makeQ(player), 400);
+    }
+
+    function startQTimer(player) {
+        stopQTimer(player);
+        let timerEl = document.getElementById(`timer${player}`);
+        let width = 100;
+        timerEl.style.width = '100%'; 
+        timerEl.style.background = 'var(--correct-color)';
+        timerEl.style.boxShadow = '0 0 10px var(--correct-color)';
+
+        let interval = setInterval(() => {
+            width -= (100 / (QUESTION_TIME / 50));
+            timerEl.style.width = width + '%';
+            if (width < 40) { timerEl.style.background = '#facc15'; timerEl.style.boxShadow = '0 0 10px #facc15'; }
+            if (width < 15) { timerEl.style.background = 'var(--wrong-color)'; timerEl.style.boxShadow = '0 0 10px var(--wrong-color)'; }
+            
+            if (width <= 0) { clearInterval(interval); check(player, null); }
+        }, 50);
+
+        if (player === 1) qTimer1 = interval; else qTimer2 = interval;
+    }
+
+    function stopQTimer(player) {
+        clearInterval(player === 1 ? qTimer1 : qTimer2);
+    }
+
+    function updateScoreUI() {
+        document.getElementById("score-user").innerText = score1;
+        document.getElementById("score-bot").innerText = score2;
+    }
+
+    function updateResultsUI(player) {
+        let container = document.getElementById(`p${player}-results`);
+        container.innerHTML = "";
+        let history = player === 1 ? p1History : p2History;
+        for (let i = 0; i < 5; i++) {
+            let dot = document.createElement("div");
+            dot.className = "result-dot";
+            if (i < history.length) dot.classList.add(history[i] ? "correct" : "wrong");
+            container.appendChild(dot);
+        }
+    }
+
+    function botTick() {
+        if (!isGameRunning) return;
+        botTimerId = setTimeout(() => {
+            if (isGameRunning) check(2, Math.random() > 0.35 ? ans2 : ans2 + rand(-3, 3));
+            botTick();
+        }, rand(2500, 5500));
+    }
+
+    function createConfetti() {
+        const colors = ['#34d399', '#38bdf8', '#facc15', '#fb7185'];
+        for (let i = 0; i < 80; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.random() * 100 + 'vw';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.top = '-10px';
+            document.body.appendChild(conf);
+            
+            let fallSpeed = Math.random() * 3 + 2;
+            let rotateSpeed = Math.random() * 10;
+            let time = 0;
+            let int = setInterval(() => {
+                time += 0.05;
+                conf.style.top = (time * fallSpeed * 20) + 'px';
+                conf.style.transform = `rotate(${time * rotateSpeed * 50}deg) translateX(${Math.sin(time) * 15}px)`;
+                if (parseFloat(conf.style.top) > window.innerHeight) {
+                    clearInterval(int);
+                    conf.remove();
+                }
+            }, 50);
+        }
+    }
+
+    function endGame() {
+        isGameRunning = false;
+        clearInterval(mainGameTimer); stopQTimer(1); stopQTimer(2); clearTimeout(botTimerId);
+        
+        let screen = document.getElementById('end-screen');
+        let title = document.getElementById('winner-text');
+        
+        if (score1 > score2) { 
+            title.innerText = "🎉 شما برنده شدید! 🎉"; 
+            title.style.color = "var(--correct-color)";
+            title.style.textShadow = "0 0 30px var(--correct-color)";
+            createConfetti();
+        }
+        else if (score2 > score1) { 
+            title.innerText = "💀 باختی! 💀"; 
+            title.style.color = "var(--wrong-color)";
+            title.style.textShadow = "0 0 30px var(--wrong-color)";
+        }
+        else { 
+            title.innerText = "🤝 مساوی! 🤝"; 
+            title.style.color = "white"; 
+        }
+        
+        document.getElementById('final-score').innerText = `🔵 Blue: ${score1}  |  🔴 Red: ${score2}`;
+        screen.style.display = 'flex';
+        setTimeout(() => screen.style.opacity = '1', 50);
+    }
+
+    function beep(freq, type = "sine", duration = 0.1) {
+        if (!audioCtx) return;
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.type = type; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playEpicTick() {
+        if (!audioCtx) return;
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.type = "square"; osc.frequency.setValueAtTime(80, audioCtx.currentTime); 
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
+</script>
+</body>
+</html>

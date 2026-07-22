@@ -1,0 +1,79 @@
+<!-- header.html -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="description" content="Bardia Klidari - Full Stack Developer & Unity Expert with 6+ years experience in game development, web apps, cyber security, and AI automation.">
+<meta name="keywords" content="Unity Developer, React Developer, Laravel, Cyber Security, AI Automation, Full Stack Developer, Bardia Klidari">
+<meta name="author" content="Bardia Klidari">
+<meta name="robots" content="index,follow">
+
+<meta property="og:title" content="Bardia Klidari - Full Stack Developer & Unity Expert">
+<meta property="og:description" content="Professional developer specializing in Unity, React, Laravel, and AI automation">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bardiaklidari.com">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:locale:alternate" content="en_US">
+
+<title>Bardia Klidari - Full Stack Developer & Unity Expert</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+
+<nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-40 transition-colors duration-500 backdrop-blur-lg bg-opacity-95 dark:bg-opacity-95" role="navigation" aria-label="Main navigation">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl md:text-2xl font-bold gradient-text" data-i18n="brand.name">Bardia Klidari</h1>
+    
+    <div class="hidden md:flex items-center space-x-6 space-x-reverse">
+      <div class="flex items-center space-x-4 space-x-reverse">
+        <button id="langSwitch" class="language-btn bg-indigo-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 flex items-center space-x-2 space-x-reverse text-sm" aria-label="Switch language">
+          <i class="fas fa-language text-base" aria-hidden="true"></i>
+          <span id="langText">EN</span>
+        </button>
+        <div id="themeToggle" class="theme-toggle-wrapper" role="switch" aria-checked="false" aria-label="Toggle dark mode">
+          <div class="sun-icon" aria-hidden="true">☀️</div>
+          <div class="moon-icon" aria-hidden="true">🌙</div>
+          <div class="theme-toggle-slider"></div>
+        </div>
+      </div>
+      <div class="flex space-x-6 space-x-reverse">
+        <a href="index.html#about" class="nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium" data-i18n="nav.about">درباره من</a>
+        <a href="index.html#skills" class="nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium" data-i18n="nav.skills">مهارت‌ها</a>
+        <a href="games.html" class="nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium" data-i18n="nav.games">بازی‌ها</a>
+        <a href="projects.html" class="nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium" data-i18n="nav.projects">پروژه‌ها</a>
+        <a href="tools.html" class="nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium" data-i18n="nav.tools">ابزارها</a>
+        <a href="articles.html" class="nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium" data-i18n="nav.articles">مقاله‌ها</a>
+        <a href="index.html#contact" class="nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium" data-i18n="nav.contact">تماس</a>
+      </div>
+    </div>
+    
+    <button id="mobileMenuBtn" class="md:hidden text-gray-700 dark:text-gray-300 text-2xl" aria-label="Open mobile menu" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+  </div>
+  
+  <div id="mobileMenu" class="mobile-menu md:hidden bg-white dark:bg-gray-800 border-t dark:border-gray-700">
+    <div class="px-4 py-3 space-y-3">
+      <div class="flex items-center justify-between mb-3">
+        <button id="langSwitchMobile" class="language-btn bg-indigo-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 flex items-center space-x-2 space-x-reverse text-sm" aria-label="Switch language on mobile">
+          <i class="fas fa-language text-base" aria-hidden="true"></i>
+          <span id="langTextMobile">EN</span>
+        </button>
+        <div id="themeToggleMobile" class="theme-toggle-wrapper" role="switch" aria-checked="false" aria-label="Toggle dark mode on mobile">
+          <div class="sun-icon" aria-hidden="true">☀️</div>
+          <div class="moon-icon" aria-hidden="true">🌙</div>
+          <div class="theme-toggle-slider"></div>
+        </div>
+      </div>
+      <a href="index.html#about" class="block nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition py-2" data-i18n="nav.about">درباره من</a>
+      <a href="index.html#skills" class="block nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition py-2" data-i18n="nav.skills">مهارت‌ها</a>
+      <a href="games.html" class="block nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition py-2" data-i18n="nav.games">بازی‌ها</a>
+      <a href="projects.html" class="block nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition py-2" data-i18n="nav.projects">پروژه‌ها</a>
+      <a href="tools.html" class="block nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition py-2" data-i18n="nav.tools">ابزارها</a>
+      <a href="articles.html" class="block nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition py-2" data-i18n="nav.articles">مقاله‌ها</a>
+      <a href="index.html#contact" class="block nav-link text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition py-2" data-i18n="nav.contact">تماس</a>
+    </div>
+  </div>
+</nav>

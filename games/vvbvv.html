@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Pong - Fast & Responsive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&family=Orbitron:wght@700&display=swap');
+
+        :root {
+            --bg-color: #020205;
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ea;
+            --neon-green: #00ff66;
+            --sky-blue: #00bfff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Vazirmatn', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            height: 100dvh; 
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 600px;
+            background-color: #050510;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2) inset, 0 0 20px rgba(0, 243, 255, 0.4);
+            overflow: hidden;
+        }
+
+        /* بهینه‌سازی: گرید با CSS به جای Canvas رندر می‌شود (بسیار سریع‌تر) */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.08) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 1;
+            will-change: background-position;
+        }
+
+        .crt-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.8);
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(2, 2, 5, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 30;
+            transition: opacity 0.4s ease;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
+            letter-spacing: 4px;
+            text-align: center;
+            animation: pulsate 1.5s infinite alternate;
+        }
+
+        @keyframes pulsate {
+            100% { text-shadow: 0 0 4px #fff, 0 0 11px var(--neon-pink), 0 0 19px var(--neon-pink), 0 0 40px var(--neon-pink); }
+            0% { text-shadow: 0 0 2px #fff, 0 0 4px var(--neon-pink), 0 0 6px var(--neon-pink), 0 0 10px var(--neon-pink); }
+        }
+
+        .btn {
+            position: relative;
+            background: rgba(0, 243, 255, 0.05);
+            color: var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            margin: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2) inset, 0 0 15px rgba(0, 243, 255, 0.2);
+            text-transform: uppercase;
+            overflow: hidden;
+            will-change: transform, box-shadow;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.4), transparent);
+            transform: skewX(-20deg);
+            animation: buttonShine 3s infinite;
+        }
+
+        @keyframes buttonShine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .btn:active {
+            background: rgba(0, 243, 255, 0.2);
+            color: #fff;
+            box-shadow: 0 0 30px var(--neon-blue), 0 0 15px var(--neon-blue) inset;
+            transform: scale(0.98);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(2px, 2px) rotate(0deg); }
+            20% { transform: translate(-3px, -2px) rotate(-1deg); }
+            40% { transform: translate(3px, -2px) rotate(1deg); }
+            60% { transform: translate(-3px, 2px) rotate(0deg); }
+            80% { transform: translate(2px, -3px) rotate(-1deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+        }
+        .shake {
+            animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div class="grid-bg" id="gridBg"></div>
+        <div class="crt-overlay"></div>
+        
+        <div id="main-menu" class="screen">
+            <h1>NEON<br>PONG</h1>
+            <button class="btn" onclick="startGame(true)">تک نفره (با هوش مصنوعی)</button>
+            <button class="btn" onclick="startGame(false)">دو نفره</button>
+        </div>
+
+        <div id="game-over-screen" class="screen hidden">
+            <h1 id="winner-text">بازیکن پیروز شد!</h1>
+            <button class="btn" onclick="showMainMenu()">بازگشت به منو</button>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false }); // بهینه‌سازی: غیرفعال کردن آلفا برای پس‌زمینه
+        const container = document.getElementById('game-container');
+        const gridBg = document.getElementById('gridBg');
+        const mainMenu = document.getElementById('main-menu');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const winnerText = document.getElementById('winner-text');
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        let gameLoopId;
+        let isSinglePlayer = true;
+        let isGameOver = false;
+        let gameTime = 0; 
+
+        let GAME_WIDTH = 600;
+        let GAME_HEIGHT = 1066;
+
+        const PADDLE_WIDTH = 130;
+        const PADDLE_HEIGHT = 18;
+        const PADDLE_OFFSET_Y = 120;
+        const BALL_SIZE = 16;
+        const MAX_LIVES = 3;
+        
+        const INITIAL_BALL_SPEED = 11;
+        const PADDLE_SPEED = 14;
+        const WALL_SIDE_THICKNESS = 14; 
+        
+        const COLOR_BG = '#050510';
+        const COLOR_BALL = '#00ff66';
+        const COLOR_PADDLE_TOP = '#ff00ea';
+        const COLOR_PADDLE_BOTTOM = '#00f3ff';
+        const COLOR_SKY_BLUE = '#00bfff';
+
+        let ball = { x: 0, y: 0, vx: 0, vy: 0, speed: INITIAL_BALL_SPEED, trail: [] };
+        let paddleTop = { x: 0, y: PADDLE_OFFSET_Y, width: PADDLE_WIDTH, height: PADDLE_HEIGHT, lives: MAX_LIVES };
+        let paddleBottom = { x: 0, y: GAME_HEIGHT - PADDLE_OFFSET_Y - PADDLE_HEIGHT, width: PADDLE_WIDTH, height: PADDLE_HEIGHT, lives: MAX_LIVES };
+        
+        let particles = [];
+        const keys = { ArrowLeft: false, ArrowRight: false, a: false, d: false };
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'paddle') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(700, now + 0.1);
+                gainNode.gain.setValueAtTime(0.3, now); // کمی کاهش برای جلوگیری از دیستورشن
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'wall') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                gainNode.gain.setValueAtTime(0.15, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'goal') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+                gainNode.gain.setValueAtTime(0.5, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.linearRampToValueAtTime(800, now + 0.5);
+                gainNode.gain.setValueAtTime(0.4, now);
+                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        }
+
+        function screenShake() {
+            container.classList.remove('shake');
+            void container.offsetWidth; 
+            container.classList.add('shake');
+        }
+
+        function createSparks(x, y, color, normalY) {
+            // بهینه‌سازی: کاهش تعداد ذرات از 20 به 12 برای حفظ فریم‌ریت بدون افت بصری محسوس
+            for (let i = 0; i < 12; i++) {
+                const angle = (Math.random() - 0.5) * Math.PI; 
+                const speed = Math.random() * 8 + 4;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.sin(angle) * speed,
+                    vy: (normalY + (Math.random() - 0.5)) * speed,
+                    life: 1,
+                    color: color
+                });
+            }
+        }
+
+        function resizeCanvas() {
+            const rect = container.getBoundingClientRect();
+            // بهینه‌سازی حیاتی: محدود کردن DPR به حداکثر 2. 
+            // گوشی‌های 3x یا 4x بدون این محدودیت، محاسبات سایه را 9 تا 16 برابر سنگین‌تر می‌کنند.
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            
+            GAME_WIDTH = 600;
+            GAME_HEIGHT = 600 * (rect.height / rect.width);
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            const scale = rect.width / GAME_WIDTH;
+            ctx.scale(dpr * scale, dpr * scale);
+
+            paddleBottom.y = GAME_HEIGHT - PADDLE_OFFSET_Y - PADDLE_HEIGHT;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function showMainMenu() {
+            gameOverScreen.classList.add('hidden');
+            mainMenu.classList.remove('hidden');
+        }
+
+        function startGame(singlePlayer) {
+            isSinglePlayer = singlePlayer;
+            isGameOver = false;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            paddleTop.lives = MAX_LIVES;
+            paddleBottom.lives = MAX_LIVES;
+            paddleTop.x = GAME_WIDTH / 2 - PADDLE_WIDTH / 2;
+            paddleBottom.x = GAME_WIDTH / 2 - PADDLE_WIDTH / 2;
+            particles = [];
+            gameTime = 0;
+            
+            mainMenu.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            
+            resetBall();
+            
+            if (gameLoopId) cancelAnimationFrame(gameLoopId);
+            gameLoopId = requestAnimationFrame(update);
+        }
+
+        function resetBall() {
+            ball.x = GAME_WIDTH / 2;
+            ball.y = GAME_HEIGHT / 2;
+            ball.speed = INITIAL_BALL_SPEED;
+            ball.trail = [];
+            
+            const angle = (Math.random() * Math.PI / 3) - Math.PI / 6;
+            const direction = Math.random() > 0.5 ? 1 : -1;
+            
+            ball.vx = Math.sin(angle) * ball.speed;
+            ball.vy = Math.cos(angle) * ball.speed * direction;
+        }
+
+        function endGame(winner) {
+            isGameOver = true;
+            cancelAnimationFrame(gameLoopId); 
+            playSound('win');
+            
+            winnerText.textContent = `بازیکن ${winner} پیروز شد!`;
+            winnerText.style.color = COLOR_SKY_BLUE;
+            winnerText.style.textShadow = `0 0 10px ${COLOR_SKY_BLUE}, 0 0 30px ${COLOR_SKY_BLUE}`;
+            
+            gameOverScreen.classList.remove('hidden');
+        }
+
+        function isColliding(b, p) {
+            return (b.x + BALL_SIZE / 2 >= p.x &&
+                    b.x - BALL_SIZE / 2 <= p.x + p.width &&
+                    b.y + BALL_SIZE / 2 >= p.y &&
+                    b.y - BALL_SIZE / 2 <= p.y + p.height);
+        }
+
+        function update() {
+            if (isGameOver) return;
+            gameTime += 2;
+
+            // بهینه‌سازی: حرکت گرید با CSS به جای رسم در Canvas
+            gridBg.style.backgroundPositionY = `-${gameTime % 60}px`;
+
+            ball.trail.push({x: ball.x, y: ball.y});
+            if (ball.trail.length > 5) ball.trail.shift();
+
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+
+            if (ball.x - BALL_SIZE / 2 <= WALL_SIDE_THICKNESS) {
+                ball.x = WALL_SIDE_THICKNESS + BALL_SIZE / 2;
+                ball.vx = Math.abs(ball.vx); 
+                playSound('wall');
+                let sparkColor = ball.y < GAME_HEIGHT / 2 ? COLOR_PADDLE_BOTTOM : COLOR_PADDLE_TOP;
+                createSparks(ball.x, ball.y, sparkColor, 0);
+            } else if (ball.x + BALL_SIZE / 2 >= GAME_WIDTH - WALL_SIDE_THICKNESS) {
+                ball.x = GAME_WIDTH - WALL_SIDE_THICKNESS - BALL_SIZE / 2;
+                ball.vx = -Math.abs(ball.vx); 
+                playSound('wall');
+                let sparkColor = ball.y < GAME_HEIGHT / 2 ? COLOR_PADDLE_BOTTOM : COLOR_PADDLE_TOP;
+                createSparks(ball.x, ball.y, sparkColor, 0);
+            }
+
+            const MAX_BOUNCE_ANGLE = Math.PI / 3; 
+
+            if (ball.vy > 0 && isColliding(ball, paddleBottom)) {
+                let hitPoint = (ball.x - (paddleBottom.x + paddleBottom.width / 2)) / (paddleBottom.width / 2);
+                hitPoint = Math.max(-1, Math.min(1, hitPoint)); 
+                let bounceAngle = hitPoint * MAX_BOUNCE_ANGLE;
+                
+                ball.speed = Math.min(ball.speed + 0.6, 22); 
+                
+                ball.vx = Math.sin(bounceAngle) * ball.speed;
+                ball.vy = -Math.cos(bounceAngle) * ball.speed;
+                
+                ball.y = paddleBottom.y - BALL_SIZE / 2;
+                playSound('paddle');
+                createSparks(ball.x, ball.y, COLOR_PADDLE_BOTTOM, -1);
+            }
+
+            if (ball.vy < 0 && isColliding(ball, paddleTop)) {
+                let hitPoint = (ball.x - (paddleTop.x + paddleTop.width / 2)) / (paddleTop.width / 2);
+                hitPoint = Math.max(-1, Math.min(1, hitPoint));
+                let bounceAngle = hitPoint * MAX_BOUNCE_ANGLE;
+                
+                ball.speed = Math.min(ball.speed + 0.6, 22);
+                
+                ball.vx = Math.sin(bounceAngle) * ball.speed;
+                ball.vy = Math.cos(bounceAngle) * ball.speed;
+                
+                ball.y = paddleTop.y + paddleTop.height + BALL_SIZE / 2;
+                playSound('paddle');
+                createSparks(ball.x, ball.y, COLOR_PADDLE_TOP, 1);
+            }
+
+            if (ball.y < 0) {
+                paddleTop.lives--;
+                playSound('goal');
+                screenShake();
+                createSparks(ball.x, 20, COLOR_PADDLE_TOP, 1);
+                if (paddleTop.lives <= 0) { endGame('پایین'); return; } 
+                else resetBall();
+            } else if (ball.y > GAME_HEIGHT) {
+                paddleBottom.lives--;
+                playSound('goal');
+                screenShake();
+                createSparks(ball.x, GAME_HEIGHT - 20, COLOR_PADDLE_BOTTOM, -1);
+                if (paddleBottom.lives <= 0) { endGame('بالا'); return; } 
+                else resetBall();
+            }
+
+            if (keys.ArrowLeft) paddleBottom.x -= PADDLE_SPEED;
+            if (keys.ArrowRight) paddleBottom.x += PADDLE_SPEED;
+            
+            if (!isSinglePlayer) {
+                if (keys.a) paddleTop.x -= PADDLE_SPEED;
+                if (keys.d) paddleTop.x += PADDLE_SPEED;
+            } else {
+                let aiTarget = ball.x - paddleTop.width / 2;
+                let aiSpeed = (aiTarget - paddleTop.x) * 0.15;
+                aiSpeed = Math.max(-16, Math.min(16, aiSpeed));
+                paddleTop.x += aiSpeed; 
+            }
+
+            paddleBottom.x = Math.max(WALL_SIDE_THICKNESS, Math.min(GAME_WIDTH - paddleBottom.width - WALL_SIDE_THICKNESS, paddleBottom.x));
+            paddleTop.x = Math.max(WALL_SIDE_THICKNESS, Math.min(GAME_WIDTH - paddleTop.width - WALL_SIDE_THICKNESS, paddleTop.x));
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.05; // کمی سریع‌تر محو می‌شوند تا آرایه زودتر خالی شود
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            draw();
+            gameLoopId = requestAnimationFrame(update);
+        }
+
+        function drawRoundRect(x, y, w, h, radius, color, glow) {
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, radius);
+            ctx.fillStyle = color;
+            ctx.shadowBlur = glow;
+            ctx.shadowColor = color;
+            ctx.fill();
+            ctx.shadowBlur = 0; // ریست کردن سریع
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fill();
+        }
+
+        function drawLives() {
+            const lifeWidth = 25;
+            const lifeHeight = 6;
+            const margin = 10;
+            
+            const totalWidthTop = (paddleTop.lives * (lifeWidth + margin)) - margin;
+            const totalWidthBottom = (paddleBottom.lives * (lifeWidth + margin)) - margin;
+            
+            for(let i=0; i<paddleTop.lives; i++) {
+                drawRoundRect(GAME_WIDTH/2 - totalWidthTop/2 + i*(lifeWidth+margin), 40, lifeWidth, lifeHeight, 3, COLOR_PADDLE_TOP, 10);
+            }
+            for(let i=0; i<paddleBottom.lives; i++) {
+                drawRoundRect(GAME_WIDTH/2 - totalWidthBottom/2 + i*(lifeWidth+margin), GAME_HEIGHT - 40, lifeWidth, lifeHeight, 3, COLOR_PADDLE_BOTTOM, 10);
+            }
+        }
+
+        function draw() {
+            // بهینه‌سازی: clearRect سریع‌تر از fillRect برای پاک کردن است وقتی alpha: false است
+            ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            ctx.fillStyle = COLOR_BG;
+            ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+            // خط وسط
+            ctx.setLineDash([20, 20]);
+            ctx.beginPath();
+            ctx.moveTo(0, GAME_HEIGHT / 2);
+            ctx.lineTo(GAME_WIDTH, GAME_HEIGHT / 2);
+            ctx.strokeStyle = 'rgba(255, 0, 234, 0.15)'; 
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // رسم دیوارها
+            drawRoundRect(0, 0, WALL_SIDE_THICKNESS, GAME_HEIGHT / 2, 0, COLOR_PADDLE_BOTTOM, 15);
+            drawRoundRect(GAME_WIDTH - WALL_SIDE_THICKNESS, 0, WALL_SIDE_THICKNESS, GAME_HEIGHT / 2, 0, COLOR_PADDLE_BOTTOM, 15);
+            drawRoundRect(0, GAME_HEIGHT / 2, WALL_SIDE_THICKNESS, GAME_HEIGHT / 2, 0, COLOR_PADDLE_TOP, 15);
+            drawRoundRect(GAME_WIDTH - WALL_SIDE_THICKNESS, GAME_HEIGHT / 2, WALL_SIDE_THICKNESS, GAME_HEIGHT / 2, 0, COLOR_PADDLE_TOP, 15);
+
+            drawLives();
+
+            // دنباله توپ
+            for (let i = 0; i < ball.trail.length; i++) {
+                let alpha = (i + 1) / (ball.trail.length + 1) * 0.4;
+                let size = (BALL_SIZE / 2) * (0.6 + (i / ball.trail.length) * 0.4);
+                
+                ctx.beginPath();
+                ctx.arc(ball.trail[i].x, ball.trail[i].y, size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 255, 102, ${alpha})`;
+                ctx.fill();
+            }
+
+            // رسم بازیکن‌ها
+            drawRoundRect(paddleTop.x, paddleTop.y, paddleTop.width, paddleTop.height, 8, COLOR_PADDLE_TOP, 15);
+            drawRoundRect(paddleBottom.x, paddleBottom.y, paddleBottom.width, paddleBottom.height, 8, COLOR_PADDLE_BOTTOM, 15);
+
+            // رسم توپ اصلی
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, BALL_SIZE / 2, 0, Math.PI * 2);
+            ctx.fillStyle = COLOR_BALL;
+            ctx.shadowBlur = 15; // کاهش از 20 به 15
+            ctx.shadowColor = COLOR_BALL;
+            ctx.fill();
+            
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, BALL_SIZE / 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+
+            // رسم ذرات (بهینه‌شده: بدون shadowBlur برای ذرات ریز)
+            for (let p of particles) {
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p.x - p.vx * 1.5, p.y - p.vy * 1.5);
+                ctx.strokeStyle = p.color;
+                ctx.lineWidth = 2; // کمی باریک‌تر برای ظاهر تمیزتر
+                ctx.lineCap = 'round';
+                ctx.globalAlpha = Math.max(0, p.life);
+                // حذف ctx.shadowBlur از اینجا بیشترین تأثیر را در سرعت موبایل دارد
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        window.addEventListener('keydown', (e) => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+        window.addEventListener('keyup', (e) => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+
+        function handleTouch(e) {
+            e.preventDefault(); 
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = GAME_WIDTH / rect.width;
+            
+            for (let i = 0; i < e.touches.length; i++) {
+                const touch = e.touches[i];
+                const touchX = (touch.clientX - rect.left) * scaleX;
+                const touchY = touch.clientY - rect.top; // فقط برای تشخیص بالا/پایین نیاز است
+
+                if (!isSinglePlayer && touchY < rect.height / 2) {
+                    paddleTop.x = touchX - paddleTop.width / 2;
+                } else if (touchY >= rect.height / 2) {
+                    paddleBottom.x = touchX - paddleBottom.width / 2;
+                }
+            }
+        }
+
+        canvas.addEventListener('touchstart', handleTouch, {passive: false});
+        canvas.addEventListener('touchmove', handleTouch, {passive: false});
+
+    </script>
+</body>
+</html>
