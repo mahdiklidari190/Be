@@ -55,7 +55,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
 
-  <!-- ============ SCHEMA: ProfilePage ============ -->
+  <!-- ============ SCHEMAS ============ -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -91,8 +91,6 @@
     }
   }
   </script>
-
-  <!-- ============ SCHEMA: WebSite ============ -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -102,8 +100,6 @@
     "inLanguage": "fa-IR"
   }
   </script>
-
-  <!-- ============ SCHEMA: BreadcrumbList ============ -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -114,8 +110,6 @@
     ]
   }
   </script>
-
-  <!-- ============ SCHEMA: Skills ItemList ============ -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -136,27 +130,20 @@
   </script>
 
   <style>
-    /* ===== ANIMATIONS ===== */
     @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
     @keyframes floating{0%{transform:translateY(0)}50%{transform:translateY(-15px)}100%{transform:translateY(0)}}
     @keyframes spinBorder{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
 
     .skill-progress{position:relative;overflow:hidden}
     .skill-progress::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2s infinite}
-
     .floating{animation:floating 3s ease-in-out infinite}
-
     .spin-border{animation:spinBorder 15s linear infinite}
-
-    /* ===== SCROLL REVEAL ===== */
     .scroll-reveal{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(.4,0,.2,1)}
     .scroll-reveal.revealed{opacity:1;transform:translateY(0)}
-
-    /* ===== CARD HOVER ===== */
     .card-hover{transition:all .3s cubic-bezier(.4,0,.2,1)}
     .card-hover:hover{transform:translateY(-10px) scale(1.02)}
 
-    /* ===== BUTTONS ===== */
     .btn-cool{position:relative;overflow:hidden;transition:all .4s cubic-bezier(.4,0,.2,1);z-index:1}
     .btn-cool::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transition:left .6s ease;z-index:-1}
     .btn-cool:hover::before{left:100%}
@@ -166,9 +153,18 @@
     .btn-cool-outline:hover::after{height:100%}
     .btn-cool-outline:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.6);box-shadow:0 10px 25px -5px rgba(255,255,255,.2)}
 
-    /* ===== TYPED CURSOR ===== */
-    .typed-cursor{color:inherit;opacity:1;animation:blink .7s infinite}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    /* ===== TYPED CURSOR - فقط یکی ===== */
+    .typed-cursor{
+      display:inline-block;
+      color:inherit;
+      opacity:1;
+      animation:cursorBlink .7s infinite;
+      font-weight:100;
+    }
+
+    /* ===== HERO NAME & ROLE ===== */
+    #typed-name{min-height:1.2em;display:inline-block}
+    #typed-role{min-height:1.2em;display:inline-block}
   </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
@@ -181,12 +177,14 @@
     <section class="parallax-bg" aria-labelledby="hero-heading">
       <div class="container mx-auto px-4 py-12 sm:py-16 md:py-20 relative z-10">
         <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+
+          <!-- متن -->
           <div class="text-center md:text-right">
             <h1 id="hero-heading" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4">
-              <span id="typed-name">بردیا کلیدری</span>
+              <span id="typed-name" aria-label="بردیا کلیدری"></span>
             </h1>
             <p class="text-lg sm:text-xl md:text-2xl text-white/90 mb-5 sm:mb-6 min-h-[3rem]">
-              <span id="typed-role">طراح وب، متخصص SEO و هوش مصنوعی</span>
+              <span id="typed-role" aria-label="طراح وب، متخصص سئو و هوش مصنوعی"></span>
             </p>
             <div class="flex flex-col sm:flex-row flex-wrap justify-center md:justify-start gap-2 sm:gap-3 md:gap-4">
               <a href="https://klidari.ir/" class="btn-cool bg-white text-indigo-600 px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-full font-bold flex items-center justify-center space-x-2 space-x-reverse text-sm sm:text-base">
@@ -197,6 +195,8 @@
               </a>
             </div>
           </div>
+
+          <!-- تصویر -->
           <div class="flex justify-center">
             <div class="relative">
               <div class="w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 bg-white/10 backdrop-blur rounded-full flex items-center justify-center floating relative">
@@ -205,6 +205,7 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -425,80 +426,100 @@
 
   <div id="footer-container"></div>
 
-  <!-- ============ SCRIPTS - ترتیب درست ============ -->
+  <!-- ============ SCRIPTS ============ -->
   <!-- 1. Typed.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
-  <!-- 2. اسکریپت اصلی سایت (هدر/فوتر) -->
+  <!-- 2. اسکریپت اصلی سایت -->
   <script src="/js/script.js"></script>
-  <!-- 3. اسکریپت صفحه درباره من -->
+  <!-- 3. اسکریپت صفحه -->
   <script>
-    // ===== صبر کن تا همه چیز لود شود =====
-    window.addEventListener('load', function() {
+    (function() {
+      'use strict';
 
-      // ===== TYPED.JS - نام =====
-      var typedNameEl = document.getElementById('typed-name');
-      if (typedNameEl && typeof Typed !== 'undefined') {
-        // متن پیش‌فرض را پاک کن تا Typed جایگزین شود
-        typedNameEl.textContent = '';
-        new Typed('#typed-name', {
-          strings: ['Bardia Klidari'],
-          typeSpeed: 100,
-          showCursor: false
-        });
-      }
+      // صبر کن تا همه چیز کامل لود شود
+      window.addEventListener('load', function() {
 
-      // ===== TYPED.JS - نقش =====
-      var typedRoleEl = document.getElementById('typed-role');
-      if (typedRoleEl && typeof Typed !== 'undefined') {
-        typedRoleEl.textContent = '';
-        var currentLang = localStorage.getItem('lang') || 'fa';
-        var roleStrings = currentLang === 'fa'
-          ? ['توسعه‌دهنده فول‌استک | Unity Expert', 'متخصص سئو و طراحی وب', 'مهندس پرامپت هوش مصنوعی', 'مشارکت‌کننده اوپن‌سورس AI']
-          : ['Full Stack Developer | Unity Expert', 'SEO & Web Design Specialist', 'AI Prompt Engineer', 'Open Source AI Contributor'];
+        // ===== TYPED NAME =====
+        var nameEl = document.getElementById('typed-name');
+        if (nameEl && typeof Typed !== 'undefined') {
+          // پاک کردن کامل قبل از شروع
+          nameEl.innerHTML = '';
+          try {
+            new Typed('#typed-name', {
+              strings: ['Bardia Klidari'],
+              typeSpeed: 100,
+              showCursor: false,
+              onComplete: function() {
+                // بعد از تمام شدن، متن نهایی بگذار
+                nameEl.textContent = 'Bardia Klidari';
+              }
+            });
+          } catch(e) {
+            nameEl.textContent = 'Bardia Klidari';
+          }
+        } else if (nameEl) {
+          nameEl.textContent = 'Bardia Klidari';
+        }
 
-        new Typed('#typed-role', {
-          strings: roleStrings,
-          typeSpeed: 80,
-          backSpeed: 50,
-          backDelay: 2000,
-          loop: true,
-          showCursor: true,
-          cursorChar: '|'
-        });
-      }
+        // ===== TYPED ROLE =====
+        var roleEl = document.getElementById('typed-role');
+        if (roleEl && typeof Typed !== 'undefined') {
+          roleEl.innerHTML = '';
+          var currentLang = localStorage.getItem('lang') || 'fa';
+          var roleStrings = currentLang === 'fa'
+            ? [
+                'توسعه‌دهنده فول‌استک | Unity Expert',
+                'متخصص سئو و طراحی وب',
+                'مهندس پرامپت هوش مصنوعی',
+                'مشارکت‌کننده اوپن‌سورس AI'
+              ]
+            : [
+                'Full Stack Developer | Unity Expert',
+                'SEO & Web Design Specialist',
+                'AI Prompt Engineer',
+                'Open Source AI Contributor'
+              ];
 
-      // ===== SCROLL REVEAL =====
-      var revealElements = document.querySelectorAll('.scroll-reveal');
-      if (revealElements.length > 0 && 'IntersectionObserver' in window) {
-        var observer = new IntersectionObserver(function(entries) {
-          entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('revealed');
-              observer.unobserve(entry.target);
-            }
+          try {
+            new Typed('#typed-role', {
+              strings: roleStrings,
+              typeSpeed: 80,
+              backSpeed: 50,
+              backDelay: 2000,
+              loop: true,
+              showCursor: true,
+              cursorChar: '|'
+            });
+          } catch(e) {
+            roleEl.textContent = roleStrings[0];
+          }
+        } else if (roleEl) {
+          roleEl.textContent = 'توسعه‌دهنده فول‌استک | Unity Expert';
+        }
+
+        // ===== SCROLL REVEAL =====
+        var revealElements = document.querySelectorAll('.scroll-reveal');
+        if (revealElements.length > 0 && 'IntersectionObserver' in window) {
+          var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+          revealElements.forEach(function(el) {
+            observer.observe(el);
           });
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        } else {
+          revealElements.forEach(function(el) {
+            el.classList.add('revealed');
+          });
+        }
 
-        revealElements.forEach(function(el) {
-          observer.observe(el);
-        });
-      } else {
-        // Fallback: اگر IntersectionObserver نبود
-        revealElements.forEach(function(el) {
-          el.classList.add('revealed');
-        });
-      }
-
-      // ===== FADE IN BODY =====
-      document.body.style.opacity = '0';
-      document.body.style.transition = 'opacity 0.5s ease';
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          document.body.style.opacity = '1';
-        });
       });
-
-    });
+    })();
   </script>
 </body>
 </html>
