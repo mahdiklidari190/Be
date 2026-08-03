@@ -87,65 +87,82 @@
         .gradient-bg-soft{background:linear-gradient(135deg,rgba(102,126,234,.1) 0%,rgba(118,75,162,.1) 100%)}
 
         /* ==========================================
-           ANIMATIONS - هماهنگ و روان
+           ANIMATIONS
            ========================================== */
-        @keyframes heroFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-18px); }
-        }
-        @keyframes iconFloatA {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-        }
-        @keyframes iconFloatB {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-14px); }
-        }
-        @keyframes iconFloatC {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes blob {
-            0%, 100% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        @keyframes spinSlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
-            50% { box-shadow: 0 8px 35px rgba(118, 75, 162, 0.7); }
-        }
-        @keyframes pulseRing {
-            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.5); }
-            70% { box-shadow: 0 0 0 15px rgba(102, 126, 234, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
-        }
-        @keyframes progressFill {
-            0% { width: 0%; }
-            100% { width: 98%; }
-        }
+        @keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+        @keyframes iconFloatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+        @keyframes iconFloatB{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+        @keyframes iconFloatC{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        @keyframes blob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-50px) scale(1.1)}66%{transform:translate(-20px,20px) scale(.9)}}
+        @keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        @keyframes pulseGlow{0%,100%{box-shadow:0 8px 25px rgba(102,126,234,.4)}50%{box-shadow:0 8px 35px rgba(118,75,162,.7)}}
+        @keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(102,126,234,.5)}70%{box-shadow:0 0 0 15px rgba(102,126,234,0)}100%{box-shadow:0 0 0 0 rgba(102,126,234,0)}}
+        @keyframes progressFill{0%{width:0}100%{width:98%}}
 
-        /* کلاس‌های انیمیشن */
-        .hero-float { animation: heroFloat 5s ease-in-out infinite; }
-        .icon-float-a { animation: iconFloatA 4s ease-in-out infinite; }
-        .icon-float-b { animation: iconFloatB 4.5s ease-in-out infinite; animation-delay: 0.5s; }
-        .icon-float-c { animation: iconFloatC 3.8s ease-in-out infinite; animation-delay: 1s; }
-        .icon-float-d { animation: iconFloatA 4.2s ease-in-out infinite; animation-delay: 1.5s; }
-        .blob-anim { animation: blob 10s infinite; }
-        .spin-slow { animation: spinSlow 25s linear infinite; }
-        .pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
-        .pulse-ring { animation: pulseRing 2s infinite; }
-        .progress-fill { animation: progressFill 2.5s ease-out forwards; }
+        .hero-float{animation:heroFloat 5s ease-in-out infinite}
+        .icon-float-a{animation:iconFloatA 4s ease-in-out infinite}
+        .icon-float-b{animation:iconFloatB 4.5s ease-in-out infinite;animation-delay:.5s}
+        .icon-float-c{animation:iconFloatC 3.8s ease-in-out infinite;animation-delay:1s}
+        .icon-float-d{animation:iconFloatA 4.2s ease-in-out infinite;animation-delay:1.5s}
+        .blob-anim{animation:blob 10s infinite}
+        .spin-slow{animation:spinSlow 25s linear infinite}
+        .pulse-glow{animation:pulseGlow 3s ease-in-out infinite}
+        .pulse-ring{animation:pulseRing 2s infinite}
+        .progress-fill{animation:progressFill 2.5s ease-out forwards}
+
+        /* ==========================================
+           BUTTONS - سایز استاندارد موبایل
+           ========================================== */
+        .btn-primary,.btn-secondary{
+            display:inline-flex;align-items:center;justify-content:center;
+            font-weight:700;text-align:center;
+            transition:all .3s cubic-bezier(.4,0,.2,1);
+            cursor:pointer;text-decoration:none;
+            min-height:44px;
+        }
+        /* موبایل کوچک */
+        .btn-primary,.btn-secondary{
+            padding:10px 16px;font-size:13px;border-radius:12px;width:100%;
+        }
+        /* موبایل بزرگ */
+        @media(min-width:480px){
+            .btn-primary,.btn-secondary{padding:12px 20px;font-size:14px;border-radius:14px}
+        }
+        /* تبلت */
+        @media(min-width:640px){
+            .btn-primary,.btn-secondary{padding:14px 28px;font-size:15px;border-radius:16px;width:auto}
+        }
+        /* دسکتاپ */
+        @media(min-width:1024px){
+            .btn-primary,.btn-secondary{padding:16px 32px;font-size:16px;border-radius:50px}
+        }
+        .btn-primary:hover{transform:scale(1.05);box-shadow:0 15px 30px -5px rgba(102,126,234,.5)}
+        .btn-secondary:hover{transform:scale(1.05);box-shadow:0 10px 25px -5px rgba(102,126,234,.3)}
+        .btn-primary:active,.btn-secondary:active{transform:scale(.98)}
 
         /* ===== SCROLL TOP ===== */
-        .scroll-top-btn{position:fixed;bottom:30px;left:30px;z-index:50;width:55px;height:55px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;box-shadow:0 10px 25px rgba(102,126,234,.4);opacity:0;visibility:hidden;transform:translateY(20px);transition:all .4s cubic-bezier(.4,0,.2,1);animation:pulseGlow 3s ease-in-out infinite}
+        .scroll-top-btn{
+            position:fixed;bottom:16px;left:16px;z-index:50;
+            width:44px;height:44px;border-radius:50%;
+            background:linear-gradient(135deg,#667eea,#764ba2);
+            color:#fff;display:flex;align-items:center;justify-content:center;
+            cursor:pointer;border:none;
+            box-shadow:0 8px 20px rgba(102,126,234,.4);
+            opacity:0;visibility:hidden;transform:translateY(20px);
+            transition:all .4s cubic-bezier(.4,0,.2,1);
+            animation:pulseGlow 3s ease-in-out infinite;
+        }
         .scroll-top-btn.visible{opacity:1;visibility:visible;transform:translateY(0)}
-        .scroll-top-btn:hover{transform:translateY(-5px) scale(1.05)}
-        .scroll-top-btn i{font-size:20px}
-        @media(max-width:640px){.scroll-top-btn{width:50px;height:50px;bottom:20px;left:20px}.scroll-top-btn i{font-size:18px}}
+        .scroll-top-btn:hover{transform:translateY(-4px) scale(1.05)}
+        .scroll-top-btn i{font-size:16px}
+        @media(min-width:640px){
+            .scroll-top-btn{width:50px;height:50px;bottom:24px;left:24px}
+            .scroll-top-btn i{font-size:18px}
+        }
+        @media(min-width:1024px){
+            .scroll-top-btn{width:55px;height:55px;bottom:30px;left:30px}
+            .scroll-top-btn i{font-size:20px}
+        }
 
         /* ===== SERVICE CARD ===== */
         .service-card{position:relative;overflow:hidden;transition:all .4s cubic-bezier(.4,0,.2,1)}
@@ -161,9 +178,10 @@
         .service-content{position:relative;z-index:2;transition:color .4s}
 
         /* ===== PORTFOLIO ===== */
-        .portfolio-card{position:relative;overflow:hidden;border-radius:20px;transition:all .5s cubic-bezier(.4,0,.2,1)}
+        .portfolio-card{position:relative;overflow:hidden;border-radius:16px;transition:all .5s cubic-bezier(.4,0,.2,1)}
         .portfolio-card:hover{transform:translateY(-8px);box-shadow:0 25px 50px -12px rgba(102,126,234,.4)}
         @media(hover:none){.portfolio-card:hover{transform:none}}
+        @media(min-width:640px){.portfolio-card{border-radius:20px}}
 
         /* ===== BLOB ===== */
         .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;z-index:0;pointer-events:none}
@@ -183,19 +201,19 @@
         ::-webkit-scrollbar-thumb{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:10px}
 
         /* ===== ICON BOX ===== */
-        .icon-box{width:80px;height:80px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:linear-gradient(135deg,rgba(102,126,234,.15),rgba(118,75,162,.15));color:#667eea;transition:all .4s}
-        @media(max-width:640px){.icon-box{width:64px;height:64px;font-size:1.75rem}}
+        .icon-box{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.75rem;background:linear-gradient(135deg,rgba(102,126,234,.15),rgba(118,75,162,.15));color:#667eea;transition:all .4s}
+        @media(min-width:640px){.icon-box{width:80px;height:80px;border-radius:20px;font-size:2.2rem}}
         html.dark .icon-box,body.dark .icon-box{background:linear-gradient(135deg,rgba(102,126,234,.2),rgba(118,75,162,.2))}
 
         /* ===== BK LOGO ===== */
-        .bk-logo{display:inline-flex;align-items:center;justify-content:center;width:70px;height:70px;border-radius:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:2rem;font-weight:900;box-shadow:0 10px 30px rgba(102,126,234,.4);letter-spacing:2px}
-        @media(max-width:640px){.bk-logo{width:55px;height:55px;font-size:1.5rem}}
+        .bk-logo{display:inline-flex;align-items:center;justify-content:center;width:55px;height:55px;border-radius:16px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:1.5rem;font-weight:900;box-shadow:0 10px 30px rgba(102,126,234,.4);letter-spacing:2px}
+        @media(min-width:640px){.bk-logo{width:70px;height:70px;border-radius:20px;font-size:2rem}}
 
         /* ===== WAVE ===== */
         .wave-bg{position:relative}
-        .wave-bg::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:60px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' d='M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L0,120Z'/%3E%3C/svg%3E") no-repeat bottom;background-size:cover}
+        .wave-bg::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:40px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' d='M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L0,120Z'/%3E%3C/svg%3E") no-repeat bottom;background-size:cover}
         html.dark .wave-bg::after,body.dark .wave-bg::after{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath fill='%230f172a' d='M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L0,120Z'/%3E%3C/svg%3E") no-repeat bottom;background-size:cover}
-        @media(max-width:640px){.wave-bg::after{height:40px}}
+        @media(min-width:640px){.wave-bg::after{height:60px}}
 
         /* ===== SHINE ===== */
         .shine-effect{position:relative;overflow:hidden}
@@ -212,12 +230,21 @@
         .faq-toggle i{transition:transform .3s ease}
         .faq-toggle.active i{transform:rotate(180deg)}
 
-        /* ===== RESPONSIVE ===== */
-        @media(max-width:640px){
-            .hero-title{font-size:2rem!important;line-height:1.3!important}
-            .section-title{font-size:1.75rem!important}
-            .btn-primary,.btn-secondary{padding:12px 20px!important;font-size:.9rem!important;width:100%;justify-content:center}
-        }
+        /* ===== RESPONSIVE TYPOGRAPHY ===== */
+        .hero-title{font-size:1.75rem;line-height:1.3}
+        @media(min-width:480px){.hero-title{font-size:2rem}}
+        @media(min-width:640px){.hero-title{font-size:2.5rem}}
+        @media(min-width:768px){.hero-title{font-size:3rem}}
+        @media(min-width:1024px){.hero-title{font-size:3.5rem}}
+        @media(min-width:1280px){.hero-title{font-size:4rem}}
+        @media(min-width:1536px){.hero-title{font-size:4.5rem}}
+
+        .section-title{font-size:1.5rem}
+        @media(min-width:480px){.section-title{font-size:1.75rem}}
+        @media(min-width:640px){.section-title{font-size:2rem}}
+        @media(min-width:768px){.section-title{font-size:2.5rem}}
+        @media(min-width:1024px){.section-title{font-size:3rem}}
+
         @media(min-width:1920px){.container{max-width:1600px}}
 
         .noscript-warning{text-align:center;padding:20px;background:#fff3cd;color:#856404}
@@ -234,95 +261,95 @@
     <main id="main-content" role="main">
 
         <!-- ============ HERO ============ -->
-        <section id="home" class="relative py-12 sm:py-20 md:py-32 wave-bg overflow-hidden" aria-labelledby="hero-heading">
-            <div class="blob w-64 sm:w-80 md:w-96 h-64 sm:h-80 md:h-96 bg-primary top-10 -right-20 blob-anim" aria-hidden="true"></div>
-            <div class="blob w-64 sm:w-80 md:w-96 h-64 sm:h-80 md:h-96 bg-secondary top-40 -left-20 blob-anim" style="animation-delay:2s" aria-hidden="true"></div>
-            <div class="blob w-56 sm:w-72 md:w-80 h-56 sm:h-72 md:h-80 bg-primary bottom-10 right-1/3 blob-anim hidden md:block" style="animation-delay:4s" aria-hidden="true"></div>
+        <section id="home" class="relative py-10 sm:py-16 md:py-24 lg:py-32 wave-bg overflow-hidden" aria-labelledby="hero-heading">
+            <div class="blob w-48 sm:w-64 md:w-80 lg:w-96 h-48 sm:h-64 md:h-80 lg:h-96 bg-primary top-10 -right-10 sm:-right-20 blob-anim" aria-hidden="true"></div>
+            <div class="blob w-48 sm:w-64 md:w-80 lg:w-96 h-48 sm:h-64 md:h-80 lg:h-96 bg-secondary top-40 -left-10 sm:-left-20 blob-anim" style="animation-delay:2s" aria-hidden="true"></div>
+            <div class="blob w-40 sm:w-56 md:w-72 lg:w-80 h-40 sm:h-56 md:h-72 lg:h-80 bg-primary bottom-10 right-1/3 blob-anim hidden md:block" style="animation-delay:4s" aria-hidden="true"></div>
 
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                <div class="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
 
                     <!-- TEXT -->
                     <div class="text-right order-1">
-                        <p class="inline-flex items-center gap-2 gradient-bg-soft text-primary dark:text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-4 sm:mb-6 border border-primary/20">
+                        <p class="inline-flex items-center gap-1.5 sm:gap-2 gradient-bg-soft text-primary dark:text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs md:text-sm font-bold mb-3 sm:mb-4 md:mb-6 border border-primary/20">
                             <i class="fas fa-rocket" aria-hidden="true"></i>
                             <span>BK - خالق تجربه‌های دیجیتال</span>
                         </p>
-                        <h1 id="hero-heading" class="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mb-4 sm:mb-6 text-gray-800 dark:text-white">
+                        <h1 id="hero-heading" class="hero-title font-black leading-tight mb-3 sm:mb-4 md:mb-6 text-gray-800 dark:text-white">
                             خدمات <span class="gradient-text">طراحی سایت</span>،
                             <span class="gradient-text">سئو</span>،
                             <span class="gradient-text">بازی‌سازی</span> و
                             <span class="gradient-text">هوش مصنوعی</span>
                         </h1>
-                        <p class="hero-subtitle text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed">
+                        <p class="hero-subtitle text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 md:mb-8 leading-relaxed">
                             با بیش از ۶ سال تجربه، پروژه‌های طراحی وبسایت، بهینه‌سازی موتورهای جستجو، ساخت بازی، اپلیکیشن موبایل، اتوماسیون و پیاده‌سازی هوش مصنوعی را از ایده تا اجرا می‌بریم.
                         </p>
-                        <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
-                            <a href="#services" class="btn-primary px-6 sm:px-8 py-3 sm:py-4 gradient-bg text-white rounded-full hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 hover:scale-105 font-bold pulse-ring text-center">
-                                <i class="fas fa-magic ml-2" aria-hidden="true"></i>شروع پروژه
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:gap-4">
+                            <a href="#services" class="btn-primary gradient-bg text-white pulse-ring">
+                                <i class="fas fa-magic ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>شروع پروژه
                             </a>
-                            <a href="#portfolio" class="btn-secondary px-6 sm:px-8 py-3 sm:py-4 bg-white dark:bg-slate-800 text-gray-800 dark:text-white rounded-full hover:shadow-xl transition-all duration-300 border-2 border-primary/30 font-bold text-center">
-                                <i class="fas fa-folder-open ml-2" aria-hidden="true"></i>مشاهده نمونه کارها
+                            <a href="#portfolio" class="btn-secondary bg-white dark:bg-slate-800 text-gray-800 dark:text-white border-2 border-primary/30">
+                                <i class="fas fa-folder-open ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>مشاهده نمونه کارها
                             </a>
                         </div>
 
                         <!-- STATS -->
-                        <div class="grid grid-cols-3 gap-2 sm:gap-4 mt-8 sm:mt-12">
-                            <div class="stat-item text-center p-2 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
-                                <div class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black gradient-text">+۱۰۰</div>
-                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">پروژه موفق</div>
+                        <div class="grid grid-cols-3 gap-1.5 sm:gap-2 md:gap-4 mt-6 sm:mt-8 md:mt-12">
+                            <div class="stat-item text-center p-1.5 sm:p-2 md:p-4 rounded-xl sm:rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
+                                <div class="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black gradient-text">+۱۰۰</div>
+                                <div class="text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">پروژه موفق</div>
                             </div>
-                            <div class="stat-item text-center p-2 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
-                                <div class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black gradient-text">۶+</div>
-                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">سال تجربه</div>
+                            <div class="stat-item text-center p-1.5 sm:p-2 md:p-4 rounded-xl sm:rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
+                                <div class="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black gradient-text">۶+</div>
+                                <div class="text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">سال تجربه</div>
                             </div>
-                            <div class="stat-item text-center p-2 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
-                                <div class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black gradient-text">+۵۰</div>
-                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">مشتری راضی</div>
+                            <div class="stat-item text-center p-1.5 sm:p-2 md:p-4 rounded-xl sm:rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
+                                <div class="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black gradient-text">+۵۰</div>
+                                <div class="text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">مشتری راضی</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ===== HERO CARD - انیمیشن هماهنگ ===== -->
-                    <div class="relative flex justify-center order-2 mt-10 lg:mt-0">
-                        <div class="relative w-full max-w-xs sm:max-w-sm md:max-w-md">
+                    <!-- HERO CARD -->
+                    <div class="relative flex justify-center order-2 mt-8 sm:mt-10 lg:mt-0">
+                        <div class="relative w-full max-w-[260px] sm:max-w-xs md:max-w-sm lg:max-w-md">
 
-                            <!-- کارت اصلی: انیمیشن بالا و پایین -->
+                            <!-- کارت اصلی -->
                             <div class="hero-float">
-                                <div class="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl shine-effect">
-                                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                                <div class="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl shine-effect">
+                                    <div class="flex items-center justify-between mb-3 sm:mb-4 md:mb-6">
                                         <div class="bk-logo" aria-label="لوگو BK">BK</div>
                                         <div class="text-left">
-                                            <div class="text-xs text-gray-500 dark:text-gray-400">میانگین</div>
-                                            <div class="text-xl sm:text-2xl font-bold gradient-text">۹۸٪</div>
+                                            <div class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">میانگین</div>
+                                            <div class="text-lg sm:text-xl md:text-2xl font-bold gradient-text">۹۸٪</div>
                                         </div>
                                     </div>
-                                    <h2 class="text-lg sm:text-xl font-bold mb-2 text-gray-800 dark:text-white">کیفیت تحویل پروژه</h2>
-                                    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">پروژه‌های تحویل شده با رضایت مشتری</p>
-                                    <div class="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden" role="progressbar" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100">
-                                        <div class="gradient-bg h-2 rounded-full progress-fill" style="width:98%"></div>
+                                    <h2 class="text-base sm:text-lg md:text-xl font-bold mb-1.5 sm:mb-2 text-gray-800 dark:text-white">کیفیت تحویل پروژه</h2>
+                                    <p class="text-[11px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2.5 sm:mb-3 md:mb-4">پروژه‌های تحویل شده با رضایت مشتری</p>
+                                    <div class="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-1.5 sm:h-2 overflow-hidden" role="progressbar" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="gradient-bg h-1.5 sm:h-2 rounded-full progress-fill" style="width:98%"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- آیکون React - بالا راست -->
-                            <div class="absolute -top-3 sm:-top-5 -right-3 sm:-right-5 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 shadow-xl icon-float-a" aria-hidden="true">
-                                <i class="fab fa-react text-xl sm:text-3xl text-primary spin-slow"></i>
+                            <!-- آیکون React -->
+                            <div class="absolute -top-2 sm:-top-3 md:-top-5 -right-2 sm:-right-3 md:-right-5 bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-2.5 md:p-4 shadow-xl icon-float-a" aria-hidden="true">
+                                <i class="fab fa-react text-base sm:text-xl md:text-3xl text-primary spin-slow"></i>
                             </div>
 
-                            <!-- آیکون Gamepad - پایین چپ -->
-                            <div class="absolute -bottom-3 sm:-bottom-5 -left-3 sm:-left-5 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 shadow-xl icon-float-b" aria-hidden="true">
-                                <i class="fas fa-gamepad text-xl sm:text-3xl text-secondary"></i>
+                            <!-- آیکون Gamepad -->
+                            <div class="absolute -bottom-2 sm:-bottom-3 md:-bottom-5 -left-2 sm:-left-3 md:-left-5 bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-2.5 md:p-4 shadow-xl icon-float-b" aria-hidden="true">
+                                <i class="fas fa-gamepad text-base sm:text-xl md:text-3xl text-secondary"></i>
                             </div>
 
-                            <!-- آیکون Search - وسط چپ -->
-                            <div class="absolute top-1/2 -translate-y-1/2 -left-6 sm:-left-12 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl icon-float-c hidden sm:block" aria-hidden="true">
-                                <i class="fas fa-search text-lg sm:text-2xl text-primary"></i>
+                            <!-- آیکون Search -->
+                            <div class="absolute top-1/2 -translate-y-1/2 -left-4 sm:-left-6 md:-left-12 bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl md:rounded-2xl p-1.5 sm:p-2 md:p-3 shadow-xl icon-float-c hidden sm:block" aria-hidden="true">
+                                <i class="fas fa-search text-sm sm:text-lg md:text-2xl text-primary"></i>
                             </div>
 
-                            <!-- آیکون Robot - پایین راست -->
-                            <div class="absolute -bottom-6 right-6 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl icon-float-d hidden md:block" aria-hidden="true">
-                                <i class="fas fa-robot text-lg sm:text-2xl text-secondary"></i>
+                            <!-- آیکون Robot -->
+                            <div class="absolute -bottom-4 sm:-bottom-5 md:-bottom-6 right-4 sm:right-5 md:right-6 bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl md:rounded-2xl p-1.5 sm:p-2 md:p-3 shadow-xl icon-float-d hidden md:block" aria-hidden="true">
+                                <i class="fas fa-robot text-sm sm:text-lg md:text-2xl text-secondary"></i>
                             </div>
 
                         </div>
@@ -332,80 +359,80 @@
         </section>
 
         <!-- ============ SERVICES ============ -->
-        <section id="services" class="py-12 sm:py-20 md:py-28 bg-gray-50 dark:bg-slate-800/30 relative overflow-hidden" aria-labelledby="services-heading">
-            <div class="blob w-56 sm:w-72 h-56 sm:h-72 bg-primary/20 top-20 -right-10 blob-anim" aria-hidden="true"></div>
-            <div class="blob w-64 sm:w-80 h-64 sm:h-80 bg-secondary/20 bottom-10 -left-10 blob-anim" style="animation-delay:3s" aria-hidden="true"></div>
+        <section id="services" class="py-10 sm:py-16 md:py-24 lg:py-28 bg-gray-50 dark:bg-slate-800/30 relative overflow-hidden" aria-labelledby="services-heading">
+            <div class="blob w-40 sm:w-56 md:w-72 h-40 sm:h-56 md:h-72 bg-primary/20 top-20 -right-10 blob-anim" aria-hidden="true"></div>
+            <div class="blob w-48 sm:w-64 md:w-80 h-48 sm:h-64 md:h-80 bg-secondary/20 bottom-10 -left-10 blob-anim" style="animation-delay:3s" aria-hidden="true"></div>
 
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="text-center mb-10 sm:mb-16 reveal">
-                    <p class="inline-flex items-center gap-2 gradient-bg text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4"><i class="fas fa-star" aria-hidden="true"></i>خدمات ما</p>
-                    <h2 id="services-heading" class="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-3 sm:mb-4 text-gray-800 dark:text-white">خدمات <span class="gradient-text">حرفه‌ای</span> BK</h2>
-                    <p class="text-sm sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">از طراحی سایت تا هوش مصنوعی، همه نیازهای دیجیتال شما</p>
+                <div class="text-center mb-8 sm:mb-12 md:mb-16 reveal">
+                    <p class="inline-flex items-center gap-1.5 sm:gap-2 gradient-bg text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs md:text-sm font-bold mb-2 sm:mb-3 md:mb-4"><i class="fas fa-star" aria-hidden="true"></i>خدمات ما</p>
+                    <h2 id="services-heading" class="section-title font-black mb-2 sm:mb-3 md:mb-4 text-gray-800 dark:text-white">خدمات <span class="gradient-text">حرفه‌ای</span> BK</h2>
+                    <p class="text-xs sm:text-sm md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-2 sm:px-4">از طراحی سایت تا هوش مصنوعی، همه نیازهای دیجیتال شما</p>
                 </div>
 
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.1s">
+                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.1s">
                         <div class="service-content">
-                            <div class="service-icon icon-box mb-4" aria-hidden="true"><i class="fas fa-laptop-code"></i></div>
-                            <h3 class="service-title text-lg sm:text-xl font-bold mb-3 text-gray-800 dark:text-white">طراحی سایت</h3>
-                            <p class="service-desc text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">طراحی وبسایت مدرن با React، Next.js و Laravel</p>
-                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-sm">سفارش<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
+                            <div class="service-icon icon-box mb-3 sm:mb-4" aria-hidden="true"><i class="fas fa-laptop-code"></i></div>
+                            <h3 class="service-title text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">طراحی سایت</h3>
+                            <p class="service-desc text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">طراحی وبسایت مدرن با React، Next.js و Laravel</p>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-[11px] sm:text-xs md:text-sm">سفارش<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
                         </div>
                     </article>
-                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.15s">
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.15s">
                         <div class="service-content">
-                            <div class="service-icon icon-box mb-4" aria-hidden="true"><i class="fas fa-chart-line"></i></div>
-                            <h3 class="service-title text-lg sm:text-xl font-bold mb-3 text-gray-800 dark:text-white">سئو</h3>
-                            <p class="service-desc text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">بهینه‌سازی برای گوگل و افزایش ترافیک ارگانیک</p>
-                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-sm">تحلیل رایگان<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
+                            <div class="service-icon icon-box mb-3 sm:mb-4" aria-hidden="true"><i class="fas fa-chart-line"></i></div>
+                            <h3 class="service-title text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">سئو</h3>
+                            <p class="service-desc text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">بهینه‌سازی برای گوگل و افزایش ترافیک ارگانیک</p>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-[11px] sm:text-xs md:text-sm">تحلیل رایگان<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
                         </div>
                     </article>
-                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.2s">
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.2s">
                         <div class="service-content">
-                            <div class="service-icon icon-box mb-4" aria-hidden="true"><i class="fas fa-gamepad"></i></div>
-                            <h3 class="service-title text-lg sm:text-xl font-bold mb-3 text-gray-800 dark:text-white">بازی‌سازی</h3>
-                            <p class="service-desc text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">ساخت بازی ۲D و ۳D با Unity</p>
-                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-sm">شروع پروژه<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
+                            <div class="service-icon icon-box mb-3 sm:mb-4" aria-hidden="true"><i class="fas fa-gamepad"></i></div>
+                            <h3 class="service-title text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">بازی‌سازی</h3>
+                            <p class="service-desc text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">ساخت بازی ۲D و ۳D با Unity</p>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-[11px] sm:text-xs md:text-sm">شروع پروژه<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
                         </div>
                     </article>
-                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.25s">
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.25s">
                         <div class="service-content">
-                            <div class="service-icon icon-box mb-4" aria-hidden="true"><i class="fas fa-mobile-alt"></i></div>
-                            <h3 class="service-title text-lg sm:text-xl font-bold mb-3 text-gray-800 dark:text-white">اپلیکیشن موبایل</h3>
-                            <p class="service-desc text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">اپ اندروید و iOS با React Native و Flutter</p>
-                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-sm">سفارش<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
+                            <div class="service-icon icon-box mb-3 sm:mb-4" aria-hidden="true"><i class="fas fa-mobile-alt"></i></div>
+                            <h3 class="service-title text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">اپلیکیشن موبایل</h3>
+                            <p class="service-desc text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">اپ اندروید و iOS با React Native و Flutter</p>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-[11px] sm:text-xs md:text-sm">سفارش<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
                         </div>
                     </article>
-                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.3s">
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.3s">
                         <div class="service-content">
-                            <div class="service-icon icon-box mb-4" aria-hidden="true"><i class="fas fa-desktop"></i></div>
-                            <h3 class="service-title text-lg sm:text-xl font-bold mb-3 text-gray-800 dark:text-white">نرم‌افزار ویندوز</h3>
-                            <p class="service-desc text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">نرم‌افزار دسکتاپ با Electron و C#</p>
-                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-sm">سفارش<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
+                            <div class="service-icon icon-box mb-3 sm:mb-4" aria-hidden="true"><i class="fas fa-desktop"></i></div>
+                            <h3 class="service-title text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">نرم‌افزار ویندوز</h3>
+                            <p class="service-desc text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">نرم‌افزار دسکتاپ با Electron و C#</p>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-[11px] sm:text-xs md:text-sm">سفارش<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
                         </div>
                     </article>
-                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.35s">
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.35s">
                         <div class="service-content">
-                            <div class="service-icon icon-box mb-4" aria-hidden="true"><i class="fas fa-cogs"></i></div>
-                            <h3 class="service-title text-lg sm:text-xl font-bold mb-3 text-gray-800 dark:text-white">اتوماسیون</h3>
-                            <p class="service-desc text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">اتوماسیون فرآیندها با n8n و Python</p>
-                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-sm">مشاوره<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
+                            <div class="service-icon icon-box mb-3 sm:mb-4" aria-hidden="true"><i class="fas fa-cogs"></i></div>
+                            <h3 class="service-title text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">اتوماسیون</h3>
+                            <p class="service-desc text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">اتوماسیون فرآیندها با n8n و Python</p>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-[11px] sm:text-xs md:text-sm">مشاوره<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
                         </div>
                     </article>
-                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.4s">
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.4s">
                         <div class="service-content">
-                            <div class="service-icon icon-box mb-4" aria-hidden="true"><i class="fab fa-telegram"></i></div>
-                            <h3 class="service-title text-lg sm:text-xl font-bold mb-3 text-gray-800 dark:text-white">بات تلگرام</h3>
-                            <p class="service-desc text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">بات سفارشی با پرداخت و مدیریت گروه</p>
-                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-sm">سفارش<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
+                            <div class="service-icon icon-box mb-3 sm:mb-4" aria-hidden="true"><i class="fab fa-telegram"></i></div>
+                            <h3 class="service-title text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">بات تلگرام</h3>
+                            <p class="service-desc text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">بات سفارشی با پرداخت و مدیریت گروه</p>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-[11px] sm:text-xs md:text-sm">سفارش<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
                         </div>
                     </article>
-                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.45s">
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl md:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay:.45s">
                         <div class="service-content">
-                            <div class="service-icon icon-box mb-4" aria-hidden="true"><i class="fas fa-brain"></i></div>
-                            <h3 class="service-title text-lg sm:text-xl font-bold mb-3 text-gray-800 dark:text-white">هوش مصنوعی LLM</h3>
-                            <p class="service-desc text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">پیاده‌سازی مدل LLM اختصاصی روی سرور شما</p>
-                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-sm">مشاوره<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
+                            <div class="service-icon icon-box mb-3 sm:mb-4" aria-hidden="true"><i class="fas fa-brain"></i></div>
+                            <h3 class="service-title text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-gray-800 dark:text-white">هوش مصنوعی LLM</h3>
+                            <p class="service-desc text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3 sm:mb-4">پیاده‌سازی مدل LLM اختصاصی روی سرور شما</p>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary text-[11px] sm:text-xs md:text-sm">مشاوره<i class="fas fa-arrow-left mr-1" aria-hidden="true"></i></a>
                         </div>
                     </article>
                 </div>
@@ -413,47 +440,47 @@
         </section>
 
         <!-- ============ PORTFOLIO ============ -->
-        <section id="portfolio" class="py-12 sm:py-20 md:py-28 relative overflow-hidden" aria-labelledby="portfolio-heading">
+        <section id="portfolio" class="py-10 sm:py-16 md:py-24 lg:py-28 relative overflow-hidden" aria-labelledby="portfolio-heading">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="text-center mb-10 sm:mb-16 reveal">
-                    <p class="inline-flex items-center gap-2 gradient-bg text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4"><i class="fas fa-briefcase" aria-hidden="true"></i>نمونه کارها</p>
-                    <h2 id="portfolio-heading" class="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-3 sm:mb-4 text-gray-800 dark:text-white"><span class="gradient-text">گالری</span> نمونه کارهای BK</h2>
+                <div class="text-center mb-8 sm:mb-12 md:mb-16 reveal">
+                    <p class="inline-flex items-center gap-1.5 sm:gap-2 gradient-bg text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs md:text-sm font-bold mb-2 sm:mb-3 md:mb-4"><i class="fas fa-briefcase" aria-hidden="true"></i>نمونه کارها</p>
+                    <h2 id="portfolio-heading" class="section-title font-black mb-2 sm:mb-3 md:mb-4 text-gray-800 dark:text-white"><span class="gradient-text">گالری</span> نمونه کارهای BK</h2>
                 </div>
-                <nav aria-label="نمونه کارها" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                <nav aria-label="نمونه کارها" class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
                     <a href="https://klidari.ir/games.html" class="portfolio-card group block reveal shine-effect" style="transition-delay:.1s">
-                        <div class="aspect-[4/5] gradient-bg p-4 sm:p-6 flex flex-col items-center justify-center text-center relative">
-                            <div class="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-xs font-bold">۱۲+ پروژه</div>
-                            <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true"><i class="fas fa-gamepad text-2xl sm:text-4xl text-white"></i></div>
-                            <h3 class="text-base sm:text-xl font-black text-white mb-1 sm:mb-3">بازی‌ها</h3>
-                            <p class="text-white/90 text-[10px] sm:text-sm mb-3 sm:mb-6">Unity و موبایلی</p>
-                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-2 text-xs sm:text-base">مشاهده<i class="fas fa-arrow-left text-xs" aria-hidden="true"></i></div>
+                        <div class="aspect-[4/5] gradient-bg p-3 sm:p-4 md:p-6 flex flex-col items-center justify-center text-center relative">
+                            <div class="absolute top-1.5 sm:top-2 md:top-4 right-1.5 sm:right-2 md:right-4 bg-white/20 backdrop-blur px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-white text-[9px] sm:text-[10px] md:text-xs font-bold">۱۲+ پروژه</div>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-white/20 backdrop-blur rounded-xl sm:rounded-2xl md:rounded-3xl flex items-center justify-center mb-2 sm:mb-3 md:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true"><i class="fas fa-gamepad text-xl sm:text-2xl md:text-4xl lg:text-5xl text-white"></i></div>
+                            <h3 class="text-sm sm:text-base md:text-xl lg:text-2xl font-black text-white mb-0.5 sm:mb-1 md:mb-3">بازی‌ها</h3>
+                            <p class="text-white/90 text-[9px] sm:text-[10px] md:text-sm mb-2 sm:mb-3 md:mb-6">Unity و موبایلی</p>
+                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-1.5 md:gap-2 text-[10px] sm:text-xs md:text-base">مشاهده<i class="fas fa-arrow-left text-[9px] sm:text-[10px] md:text-xs" aria-hidden="true"></i></div>
                         </div>
                     </a>
                     <a href="https://klidari.ir/projects.html" class="portfolio-card group block reveal shine-effect" style="transition-delay:.2s">
-                        <div class="aspect-[4/5] bg-gradient-to-br from-secondary to-primary p-4 sm:p-6 flex flex-col items-center justify-center text-center relative">
-                            <div class="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-xs font-bold">۲۰+ پروژه</div>
-                            <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true"><i class="fas fa-laptop-code text-2xl sm:text-4xl text-white"></i></div>
-                            <h3 class="text-base sm:text-xl font-black text-white mb-1 sm:mb-3">پروژه‌ها</h3>
-                            <p class="text-white/90 text-[10px] sm:text-sm mb-3 sm:mb-6">سایت و اپلیکیشن</p>
-                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-2 text-xs sm:text-base">مشاهده<i class="fas fa-arrow-left text-xs" aria-hidden="true"></i></div>
+                        <div class="aspect-[4/5] bg-gradient-to-br from-secondary to-primary p-3 sm:p-4 md:p-6 flex flex-col items-center justify-center text-center relative">
+                            <div class="absolute top-1.5 sm:top-2 md:top-4 right-1.5 sm:right-2 md:right-4 bg-white/20 backdrop-blur px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-white text-[9px] sm:text-[10px] md:text-xs font-bold">۲۰+ پروژه</div>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-white/20 backdrop-blur rounded-xl sm:rounded-2xl md:rounded-3xl flex items-center justify-center mb-2 sm:mb-3 md:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true"><i class="fas fa-laptop-code text-xl sm:text-2xl md:text-4xl lg:text-5xl text-white"></i></div>
+                            <h3 class="text-sm sm:text-base md:text-xl lg:text-2xl font-black text-white mb-0.5 sm:mb-1 md:mb-3">پروژه‌ها</h3>
+                            <p class="text-white/90 text-[9px] sm:text-[10px] md:text-sm mb-2 sm:mb-3 md:mb-6">سایت و اپلیکیشن</p>
+                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-1.5 md:gap-2 text-[10px] sm:text-xs md:text-base">مشاهده<i class="fas fa-arrow-left text-[9px] sm:text-[10px] md:text-xs" aria-hidden="true"></i></div>
                         </div>
                     </a>
                     <a href="https://klidari.ir/tools.html" class="portfolio-card group block reveal shine-effect" style="transition-delay:.3s">
-                        <div class="aspect-[4/5] gradient-bg p-4 sm:p-6 flex flex-col items-center justify-center text-center relative">
-                            <div class="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-xs font-bold">۱۰+ ابزار</div>
-                            <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true"><i class="fas fa-tools text-2xl sm:text-4xl text-white"></i></div>
-                            <h3 class="text-base sm:text-xl font-black text-white mb-1 sm:mb-3">ابزارها</h3>
-                            <p class="text-white/90 text-[10px] sm:text-sm mb-3 sm:mb-6">توسعه و سئو</p>
-                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-2 text-xs sm:text-base">مشاهده<i class="fas fa-arrow-left text-xs" aria-hidden="true"></i></div>
+                        <div class="aspect-[4/5] gradient-bg p-3 sm:p-4 md:p-6 flex flex-col items-center justify-center text-center relative">
+                            <div class="absolute top-1.5 sm:top-2 md:top-4 right-1.5 sm:right-2 md:right-4 bg-white/20 backdrop-blur px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-white text-[9px] sm:text-[10px] md:text-xs font-bold">۱۰+ ابزار</div>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-white/20 backdrop-blur rounded-xl sm:rounded-2xl md:rounded-3xl flex items-center justify-center mb-2 sm:mb-3 md:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true"><i class="fas fa-tools text-xl sm:text-2xl md:text-4xl lg:text-5xl text-white"></i></div>
+                            <h3 class="text-sm sm:text-base md:text-xl lg:text-2xl font-black text-white mb-0.5 sm:mb-1 md:mb-3">ابزارها</h3>
+                            <p class="text-white/90 text-[9px] sm:text-[10px] md:text-sm mb-2 sm:mb-3 md:mb-6">توسعه و سئو</p>
+                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-1.5 md:gap-2 text-[10px] sm:text-xs md:text-base">مشاهده<i class="fas fa-arrow-left text-[9px] sm:text-[10px] md:text-xs" aria-hidden="true"></i></div>
                         </div>
                     </a>
                     <a href="https://klidari.ir/articles.html" class="portfolio-card group block reveal shine-effect" style="transition-delay:.4s">
-                        <div class="aspect-[4/5] bg-gradient-to-br from-primary to-secondary p-4 sm:p-6 flex flex-col items-center justify-center text-center relative">
-                            <div class="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-xs font-bold">۳۰+ مقاله</div>
-                            <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true"><i class="fas fa-newspaper text-2xl sm:text-4xl text-white"></i></div>
-                            <h3 class="text-base sm:text-xl font-black text-white mb-1 sm:mb-3">مقاله‌ها</h3>
-                            <p class="text-white/90 text-[10px] sm:text-sm mb-3 sm:mb-6">آموزش و تکنولوژی</p>
-                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-2 text-xs sm:text-base">مشاهده<i class="fas fa-arrow-left text-xs" aria-hidden="true"></i></div>
+                        <div class="aspect-[4/5] bg-gradient-to-br from-primary to-secondary p-3 sm:p-4 md:p-6 flex flex-col items-center justify-center text-center relative">
+                            <div class="absolute top-1.5 sm:top-2 md:top-4 right-1.5 sm:right-2 md:right-4 bg-white/20 backdrop-blur px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-white text-[9px] sm:text-[10px] md:text-xs font-bold">۳۰+ مقاله</div>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-white/20 backdrop-blur rounded-xl sm:rounded-2xl md:rounded-3xl flex items-center justify-center mb-2 sm:mb-3 md:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true"><i class="fas fa-newspaper text-xl sm:text-2xl md:text-4xl lg:text-5xl text-white"></i></div>
+                            <h3 class="text-sm sm:text-base md:text-xl lg:text-2xl font-black text-white mb-0.5 sm:mb-1 md:mb-3">مقاله‌ها</h3>
+                            <p class="text-white/90 text-[9px] sm:text-[10px] md:text-sm mb-2 sm:mb-3 md:mb-6">آموزش و تکنولوژی</p>
+                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-1.5 md:gap-2 text-[10px] sm:text-xs md:text-base">مشاهده<i class="fas fa-arrow-left text-[9px] sm:text-[10px] md:text-xs" aria-hidden="true"></i></div>
                         </div>
                     </a>
                 </nav>
@@ -461,101 +488,101 @@
         </section>
 
         <!-- ============ FAQ ============ -->
-        <section id="faq" class="py-12 sm:py-20 bg-gray-50 dark:bg-slate-800/30" aria-labelledby="faq-heading">
+        <section id="faq" class="py-10 sm:py-16 md:py-24 lg:py-28 bg-gray-50 dark:bg-slate-800/30" aria-labelledby="faq-heading">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-                <div class="text-center mb-10 sm:mb-16 reveal">
-                    <p class="inline-flex items-center gap-2 gradient-bg text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4"><i class="fas fa-question-circle" aria-hidden="true"></i>سوالات متداول</p>
-                    <h2 id="faq-heading" class="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-3 sm:mb-4 text-gray-800 dark:text-white">سوالات <span class="gradient-text">پرتکرار</span></h2>
+                <div class="text-center mb-8 sm:mb-12 md:mb-16 reveal">
+                    <p class="inline-flex items-center gap-1.5 sm:gap-2 gradient-bg text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs md:text-sm font-bold mb-2 sm:mb-3 md:mb-4"><i class="fas fa-question-circle" aria-hidden="true"></i>سوالات متداول</p>
+                    <h2 id="faq-heading" class="section-title font-black mb-2 sm:mb-3 md:mb-4 text-gray-800 dark:text-white">سوالات <span class="gradient-text">پرتکرار</span></h2>
                 </div>
-                <div class="space-y-4">
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                <div class="space-y-3 sm:space-y-4">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">خدمات BK شامل چه مواردی است؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">خدمات BK شامل چه مواردی است؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">BK مجموعه کاملی از خدمات دیجیتال را ارائه می‌دهد: طراحی سایت با React و Laravel، سئو و بهینه‌سازی گوگل، بازی‌سازی با Unity، اپلیکیشن موبایل اندروید و iOS، نرم‌افزار ویندوز، اتوماسیون فرآیندها، ساخت بات تلگرام و پیاده‌سازی مدل‌های هوش مصنوعی LLM روی سرور اختصاصی شما.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">BK مجموعه کاملی از خدمات دیجیتال را ارائه می‌دهد: طراحی سایت با React و Laravel، سئو و بهینه‌سازی گوگل، بازی‌سازی با Unity، اپلیکیشن موبایل اندروید و iOS، نرم‌افزار ویندوز، اتوماسیون فرآیندها، ساخت بات تلگرام و پیاده‌سازی مدل‌های هوش مصنوعی LLM روی سرور اختصاصی شما.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">هزینه طراحی سایت چقدر است؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">هزینه طراحی سایت چقدر است؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">هزینه طراحی سایت بسته به نوع پروژه (شرکتی، فروشگاهی، شخصی)، امکانات مورد نیاز و پیچیدگی آن متفاوت است. BK مشاوره رایگان ارائه می‌دهد و بعد از بررسی نیازهای شما، قیمت دقیق و شفاف اعلام می‌شود.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">هزینه طراحی سایت بسته به نوع پروژه (شرکتی، فروشگاهی، شخصی)، امکانات مورد نیاز و پیچیدگی آن متفاوت است. BK مشاوره رایگان ارائه می‌دهد و بعد از بررسی نیازهای شما، قیمت دقیق و شفاف اعلام می‌شود.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">مدت زمان تحویل پروژه چقدر است؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">مدت زمان تحویل پروژه چقدر است؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">سایت‌های ساده ۱ تا ۲ هفته، سایت‌های پیچیده ۴ تا ۸ هفته، اپلیکیشن موبایل ۶ تا ۱۲ هفته، بازی‌سازی ۴ تا ۱۶ هفته و پروژه‌های هوش مصنوعی ۲ تا ۶ هفته. زمان دقیق در قرارداد مشخص می‌شود.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">سایت‌های ساده ۱ تا ۲ هفته، سایت‌های پیچیده ۴ تا ۸ هفته، اپلیکیشن موبایل ۶ تا ۱۲ هفته، بازی‌سازی ۴ تا ۱۶ هفته و پروژه‌های هوش مصنوعی ۲ تا ۶ هفته. زمان دقیق در قرارداد مشخص می‌شود.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">آیا اپلیکیشن موبایل هم طراحی می‌کنید؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">آیا اپلیکیشن موبایل هم طراحی می‌کنید؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">بله! BK اپلیکیشن‌های موبایل برای اندروید و iOS با React Native، Flutter و Unity توسعه می‌دهد. از اپ‌های فروشگاهی و اجتماعی تا بازی‌های موبایلی. انتشار در گوگل پلی و اپ استور نیز انجام می‌شود.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">بله! BK اپلیکیشن‌های موبایل برای اندروید و iOS با React Native، Flutter و Unity توسعه می‌دهد. از اپ‌های فروشگاهی و اجتماعی تا بازی‌های موبایلی. انتشار در گوگل پلی و اپ استور نیز انجام می‌شود.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">آیا نرم‌افزار ویندوز هم می‌سازید؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">آیا نرم‌افزار ویندوز هم می‌سازید؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">بله! BK نرم‌افزارهای دسکتاپ ویندوز را با Electron، C# و WPF توسعه می‌دهد. از نرم‌افزارهای حسابداری و مدیریتی تا ابزارهای تخصصی. نسخه مک و لینوکس نیز در صورت نیاز ارائه می‌شود.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">بله! BK نرم‌افزارهای دسکتاپ ویندوز را با Electron، C# و WPF توسعه می‌دهد. از نرم‌افزارهای حسابداری و مدیریتی تا ابزارهای تخصصی. نسخه مک و لینوکس نیز در صورت نیاز ارائه می‌شود.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">اتوماسیون شامل چه خدماتی است؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">اتوماسیون شامل چه خدماتی است؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">BK اتوماسیون فرآیندهای کسب و کار شما را با n8n، Zapier، Make و اسکریپت‌های سفارشی Python انجام می‌دهد. خودکارسازی ارسال ایمیل، مدیریت شبکه‌های اجتماعی، پردازش داده و اتصال سیستم‌ها از جمله خدمات اتوماسیون ماست.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">BK اتوماسیون فرآیندهای کسب و کار شما را با n8n، Zapier، Make و اسکریپت‌های سفارشی Python انجام می‌دهد. خودکارسازی ارسال ایمیل، مدیریت شبکه‌های اجتماعی، پردازش داده و اتصال سیستم‌ها از جمله خدمات اتوماسیون ماست.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">آیا بات تلگرام می‌سازید؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">آیا بات تلگرام می‌سازید؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">بله! BK بات‌های تلگرامی سفارشی می‌سازد: بات فروشگاهی با درگاه پرداخت، بات مدیریت گروه و کانال، بات پشتیبانی مشتری با هوش مصنوعی، بات اطلاع‌رسانی و هر نوع بات سفارشی دیگری.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">بله! BK بات‌های تلگرامی سفارشی می‌سازد: بات فروشگاهی با درگاه پرداخت، بات مدیریت گروه و کانال، بات پشتیبانی مشتری با هوش مصنوعی، بات اطلاع‌رسانی و هر نوع بات سفارشی دیگری.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">پیاده‌سازی مدل هوش مصنوعی LLM چگونه است؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">پیاده‌سازی مدل هوش مصنوعی LLM چگونه است؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">BK مدل‌های زبانی بزرگ (LLM) مانند LLaMA، Mistral و مدل‌های فارسی را روی سرور اختصاصی شما پیاده‌سازی می‌کند. بدون وابستگی به سرویس‌های خارجی، هوش مصنوعی اختصاصی خودتان را دارید. مناسب برای چت‌بات سازمانی، تحلیل متن، تولید محتوا و هر کاربرد AI دیگر. داده‌های شما کاملاً خصوصی و روی سرور خودتان باقی می‌ماند.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">BK مدل‌های زبانی بزرگ (LLM) مانند LLaMA، Mistral و مدل‌های فارسی را روی سرور اختصاصی شما پیاده‌سازی می‌کند. بدون وابستگی به سرویس‌های خارجی، هوش مصنوعی اختصاصی خودتان را دارید. مناسب برای چت‌بات سازمانی، تحلیل متن، تولید محتوا و هر کاربرد AI دیگر. داده‌های شما کاملاً خصوصی و روی سرور خودتان باقی می‌ماند.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">آیا بعد از تحویل پروژه پشتیبانی دارید؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">آیا بعد از تحویل پروژه پشتیبانی دارید؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">بله! BK پس از تحویل هر پروژه، پشتیبانی رایگان ۳ ماهه ارائه می‌دهد. بعد از آن نیز با قرارداد پشتیبانی ماهانه، همیشه در دسترس شما هستیم. رفع باگ، به‌روزرسانی و اضافه کردن امکانات جدید از جمله خدمات پشتیبانی ماست.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">بله! BK پس از تحویل هر پروژه، پشتیبانی رایگان ۳ ماهه ارائه می‌دهد. بعد از آن نیز با قرارداد پشتیبانی ماهانه، همیشه در دسترس شما هستیم. رفع باگ، به‌روزرسانی و اضافه کردن امکانات جدید از جمله خدمات پشتیبانی ماست.</p></div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg reveal">
                         <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false">
-                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">چگونه می‌توانم پروژه خود را شروع کنم؟</h3>
-                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                            <h3 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-white">چگونه می‌توانم پروژه خود را شروع کنم؟</h3>
+                            <i class="fas fa-chevron-down text-primary text-xs sm:text-sm ml-2 flex-shrink-0" aria-hidden="true"></i>
                         </button>
-                        <div class="faq-answer mt-3"><p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">کافی است از طریق ایمیل، تلگرام یا تماس تلفنی با ما در ارتباط باشید. در جلسه مشاوره رایگان، نیازهای شما بررسی می‌شود، پیشنهاد فنی و قیمت ارائه می‌گردد و پس از تأیید، پروژه شروع می‌شود. پاسخ‌گویی ۲۴ ساعته و ۷ روز هفته.</p></div>
+                        <div class="faq-answer mt-2 sm:mt-3"><p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 leading-relaxed">کافی است از طریق ایمیل، تلگرام یا تماس تلفنی با ما در ارتباط باشید. در جلسه مشاوره رایگان، نیازهای شما بررسی می‌شود، پیشنهاد فنی و قیمت ارائه می‌گردد و پس از تأیید، پروژه شروع می‌شود. پاسخ‌گویی ۲۴ ساعته و ۷ روز هفته.</p></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- ============ CTA ============ -->
-        <section id="contact" class="py-12 sm:py-20 relative overflow-hidden" aria-labelledby="cta-heading">
+        <section id="contact" class="py-10 sm:py-16 md:py-24 lg:py-28 relative overflow-hidden" aria-labelledby="cta-heading">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="gradient-bg rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-16 text-center shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 sm:w-64 h-32 sm:h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" aria-hidden="true"></div>
-                    <div class="absolute bottom-0 left-0 w-24 sm:w-48 h-24 sm:h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" aria-hidden="true"></div>
+                <div class="gradient-bg rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 lg:p-16 text-center shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 sm:w-32 md:w-64 h-24 sm:h-32 md:h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" aria-hidden="true"></div>
+                    <div class="absolute bottom-0 left-0 w-20 sm:w-24 md:w-48 h-20 sm:h-24 md:h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" aria-hidden="true"></div>
                     <div class="relative z-10">
-                        <p class="inline-block bg-white/20 backdrop-blur text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-4 sm:mb-6"><i class="fas fa-paper-plane ml-1 sm:ml-2" aria-hidden="true"></i>آماده همکاری؟</p>
-                        <h2 id="cta-heading" class="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-4 sm:mb-6">پروژه رویایی خود را با BK بسازید</h2>
-                        <p class="text-sm sm:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">از طراحی سایت تا هوش مصنوعی، هر پروژه‌ای که در ذهن دارید را به واقعیت تبدیل می‌کنیم. مشاوره رایگان!</p>
-                        <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center">
-                            <a href="mailto:unity.tim.ir@gmail.com" class="bg-white text-primary px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:scale-105 transition-all shadow-xl text-sm sm:text-base"><i class="fas fa-envelope ml-2" aria-hidden="true"></i>ارسال ایمیل</a>
-                            <a href="https://t.me/BK_1ir" class="bg-white/10 backdrop-blur border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:bg-white hover:text-primary transition-all text-sm sm:text-base" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram ml-2" aria-hidden="true"></i>تماس تلگرام</a>
-                            <a href="tel:09211243320" class="bg-white/10 backdrop-blur border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:bg-white hover:text-primary transition-all text-sm sm:text-base"><i class="fas fa-phone ml-2" aria-hidden="true"></i>تماس مستقیم</a>
+                        <p class="inline-block bg-white/20 backdrop-blur text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs md:text-sm font-bold mb-3 sm:mb-4 md:mb-6"><i class="fas fa-paper-plane ml-1 sm:ml-2" aria-hidden="true"></i>آماده همکاری؟</p>
+                        <h2 id="cta-heading" class="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-white mb-3 sm:mb-4 md:mb-6">پروژه رویایی خود را با BK بسازید</h2>
+                        <p class="text-xs sm:text-sm md:text-lg lg:text-xl text-white/90 mb-5 sm:mb-6 md:mb-8 max-w-2xl mx-auto px-2 sm:px-4">از طراحی سایت تا هوش مصنوعی، هر پروژه‌ای که در ذهن دارید را به واقعیت تبدیل می‌کنیم. مشاوره رایگان!</p>
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:gap-4 justify-center">
+                            <a href="mailto:unity.tim.ir@gmail.com" class="btn-primary bg-white text-primary shadow-xl"><i class="fas fa-envelope ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>ارسال ایمیل</a>
+                            <a href="https://t.me/BK_1ir" class="btn-secondary bg-white/10 backdrop-blur border-2 border-white text-white" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>تماس تلگرام</a>
+                            <a href="tel:09211243320" class="btn-secondary bg-white/10 backdrop-blur border-2 border-white text-white"><i class="fas fa-phone ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>تماس مستقیم</a>
                         </div>
                     </div>
                 </div>
