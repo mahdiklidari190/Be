@@ -1,446 +1,1408 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="بردیا کلیدری - طراح وب، متخصص SEO و توسعه‌دهنده هوش مصنوعی (Open Source)">
-  <meta name="keywords" content="بردیا کلیدری, طراحی سایت, SEO, هوش مصنوعی, Prompt Engineering, PHP, Laravel, Unity, Cyber Security, Ollama">
-  <title>بردیا کلیدری | طراح وب و متخصص هوش مصنوعی</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-  <script>
-    tailwind.config = { darkMode: 'class', theme: { extend: {} } }
-  </script>
+    <!-- ============ CHARACTER ENCODING & VIEWPORT ============ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#6779e3">
+    <meta name="color-scheme" content="light dark">
+
+    <!-- ============ PRIMARY SEO META TAGS ============ -->
+    <title>طراحی سایت، سئو و بازی‌سازی | BK - بردیا کلیداری</title>
+    <meta name="description" content="خدمات حرفه‌ای طراحی سایت، سئو (SEO) و بازی‌سازی با Unity توسط بردیا کلیداری (BK) با ۶+ سال تجربه. طراحی وبسایت ریسپانسیو، بهینه‌سازی گوگل و ساخت بازی موبایل.">
+    <meta name="keywords" content="طراحی سایت, سئو, SEO, بهینه‌سازی گوگل, بازی‌سازی, ساخت بازی, Unity, React, Laravel, طراحی وبسایت, برنامه‌نویس وب, فریلنسر, بردیا کلیداری, BK, افزایش رتبه گوگل, طراحی سایت ارزان, سئو سایت">
+    <meta name="author" content="Bardia Klidari">
+    <meta name="publisher" content="BK - Bardia Klidari">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="bingbot" content="index, follow">
+    <link rel="canonical" href="https://klidari.ir/">
+
+    <!-- ============ HREFLANG TAGS ============ -->
+    <link rel="alternate" hreflang="fa-IR" href="https://klidari.ir/">
+    <link rel="alternate" hreflang="fa" href="https://klidari.ir/">
+    <link rel="alternate" hreflang="en-US" href="https://klidari.ir/en/">
+    <link rel="alternate" hreflang="x-default" href="https://klidari.ir/">
+
+    <!-- ============ OPEN GRAPH META TAGS ============ -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://klidari.ir/">
+    <meta property="og:title" content="طراحی سایت، سئو و بازی‌سازی | BK - بردیا کلیداری">
+    <meta property="og:description" content="خدمات حرفه‌ای طراحی سایت، سئو و بازی‌سازی با ۶+ سال تجربه. طراحی وبسایت ریسپانسیو، بهینه‌سازی گوگل و ساخت بازی Unity.">
+    <meta property="og:image" content="https://klidari.ir/assets/images/og-cover.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="BK - خدمات طراحی سایت، سئو و بازی‌سازی">
+    <meta property="og:site_name" content="BK | Bardia Klidari">
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <!-- ============ TWITTER CARD META TAGS ============ -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://klidari.ir/">
+    <meta name="twitter:title" content="طراحی سایت، سئو و بازی‌سازی | BK - بردیا کلیداری">
+    <meta name="twitter:description" content="خدمات حرفه‌ای طراحی سایت، سئو و بازی‌سازی با ۶+ سال تجربه. طراحی وبسایت ریسپانسیو، بهینه‌سازی گوگل و ساخت بازی Unity.">
+    <meta name="twitter:image" content="https://klidari.ir/assets/images/og-cover.jpg">
+    <meta name="twitter:image:alt" content="BK - خدمات طراحی سایت، سئو و بازی‌سازی">
+    <meta name="twitter:creator" content="@bardia_klidari">
+    <meta name="twitter:site" content="@bardia_klidari">
+
+    <!-- ============ FAVICON & ICONS ============ -->
+    <link rel="icon" type="image/png" sizes="32x32" href="https://klidari.ir/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://klidari.ir/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://klidari.ir/apple-touch-icon.png">
+    <link rel="manifest" href="https://klidari.ir/site.webmanifest">
+
+    <!-- ============ PERFORMANCE: PRECONNECT & PRELOAD ============ -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preload" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" as="style">
+
+    <!-- ============ TAILWIND CSS CDN ============ -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    screens: {
+                        'xs': '375px',
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                        '2xl': '1536px',
+                        '3xl': '1920px',
+                    },
+                    colors: {
+                        primary: '#6779e3',
+                        secondary: '#7451ab',
+                    },
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'Tahoma', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-slow': 'float 8s ease-in-out infinite',
+                        'blob': 'blob 10s infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        blob: {
+                            '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 8px 25px rgba(103, 121, 227, 0.4)' },
+                            '50%': { boxShadow: '0 8px 35px rgba(116, 81, 171, 0.7)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- ============ FONTS & ICONS ============ -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ============ STRUCTURED DATA: WebSite Schema ============ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "BK | Bardia Klidari",
+        "alternateName": ["کلیداری", "Bardia Klidari", "BK"],
+        "url": "https://klidari.ir/",
+        "inLanguage": "fa-IR",
+        "description": "خدمات طراحی سایت، سئو و بازی‌سازی",
+        "publisher": {
+            "@type": "Person",
+            "name": "Bardia Klidari"
+        },
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://klidari.ir/search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    <!-- ============ STRUCTURED DATA: Person Schema ============ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": "https://klidari.ir/#person",
+        "name": "Bardia Klidari",
+        "alternateName": "بردیا کلیداری",
+        "givenName": "Bardia",
+        "familyName": "Klidari",
+        "url": "https://klidari.ir/",
+        "image": "https://klidari.ir/assets/images/profile.jpg",
+        "jobTitle": "Full Stack Developer & Unity Expert",
+        "description": "توسعه‌دهنده وب و بازی با بیش از ۶ سال تجربه در طراحی سایت، سئو و بازی‌سازی",
+        "worksFor": {
+            "@type": "Organization",
+            "name": "BK"
+        },
+        "sameAs": [
+            "https://www.instagram.com/bardiyaklidari",
+            "https://github.com/bardiyaklidari",
+            "https://www.linkedin.com/in/bardiyaklidari",
+            "https://t.me/bardiyaklidari"
+        ],
+        "knowsAbout": [
+            "Web Design",
+            "SEO",
+            "Game Development",
+            "Unity",
+            "React",
+            "Laravel",
+            "JavaScript",
+            "C#"
+        ],
+        "knowsLanguage": ["fa", "en"]
+    }
+    </script>
+
+    <!-- ============ STRUCTURED DATA: Organization Schema ============ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": "https://klidari.ir/#organization",
+        "name": "BK",
+        "alternateName": "کلیداری",
+        "url": "https://klidari.ir/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://klidari.ir/assets/images/logo.png",
+            "width": 512,
+            "height": 512
+        },
+        "founder": {
+            "@type": "Person",
+            "name": "Bardia Klidari"
+        },
+        "foundingDate": "2019",
+        "description": "خدمات طراحی سایت، سئو و بازی‌سازی",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "IR"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "info@klidari.ir",
+            "contactType": "customer service",
+            "availableLanguage": ["fa", "en"]
+        },
+        "sameAs": [
+            "https://www.instagram.com/bardiyaklidari",
+            "https://github.com/bardiyaklidari",
+            "https://www.linkedin.com/in/bardiyaklidari"
+        ]
+    }
+    </script>
+
+    <!-- ============ STRUCTURED DATA: Service Schemas ============ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "@id": "https://klidari.ir/#web-design-service",
+        "name": "طراحی سایت",
+        "serviceType": "Web Design & Development",
+        "description": "طراحی و توسعه سایت‌های مدرن، ریسپانسیو و کاربرپسند با React، Next.js و Laravel",
+        "provider": {
+            "@type": "Person",
+            "name": "Bardia Klidari",
+            "url": "https://klidari.ir/"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Iran"
+        },
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "خدمات طراحی سایت",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "طراحی UI/UX حرفه‌ای"
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "توسعه فرانت‌اند با React"
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "توسعه بک‌اند با Laravel"
+                    }
+                }
+            ]
+        }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "@id": "https://klidari.ir/#seo-service",
+        "name": "سئو و بهینه‌سازی موتورهای جستجو",
+        "serviceType": "Search Engine Optimization",
+        "description": "بهینه‌سازی سایت برای گوگل، افزایش ترافیک ارگانیک و رتبه‌بندی در صفحه اول",
+        "provider": {
+            "@type": "Person",
+            "name": "Bardia Klidari",
+            "url": "https://klidari.ir/"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Iran"
+        }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "@id": "https://klidari.ir/#game-dev-service",
+        "name": "بازی‌سازی با Unity",
+        "serviceType": "Game Development",
+        "description": "توسعه بازی‌های موبایل، وب و دسکتاپ با Unity و C#",
+        "provider": {
+            "@type": "Person",
+            "name": "Bardia Klidari",
+            "url": "https://klidari.ir/"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Iran"
+        }
+    }
+    </script>
+
+    <!-- ============ STRUCTURED DATA: BreadcrumbList ============ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "خانه",
+                "item": "https://klidari.ir/"
+            }
+        ]
+    }
+    </script>
+
+    <!-- ============ STRUCTURED DATA: ItemList (Portfolio) ============ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "نمونه کارهای BK",
+        "description": "مجموعه‌ای از پروژه‌ها و دستاوردهای BK",
+        "numberOfItems": 4,
+        "itemListOrder": "https://schema.org/ItemListOrderAscending",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                    "@type": "CreativeWork",
+                    "name": "بازی‌های ساخته شده با Unity",
+                    "url": "https://klidari.ir/games.html",
+                    "description": "مجموعه بازی‌های ساخته شده با Unity برای موبایل و وب"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                    "@type": "CreativeWork",
+                    "name": "پروژه‌های طراحی سایت",
+                    "url": "https://klidari.ir/projects.html",
+                    "description": "نمونه کارهای طراحی و توسعه وبسایت"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                    "@type": "CreativeWork",
+                    "name": "ابزارهای توسعه و سئو",
+                    "url": "https://klidari.ir/tools.html",
+                    "description": "ابزارهای کاربردی برای توسعه‌دهندگان و متخصصان سئو"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                    "@type": "CreativeWork",
+                    "name": "مقالات آموزشی",
+                    "url": "https://klidari.ir/articles.html",
+                    "description": "مقالات آموزشی در حوزه برنامه‌نویسی و سئو"
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- ============ STRUCTURED DATA: FAQPage ============ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "خدمات BK شامل چه مواردی است؟",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "BK خدمات طراحی سایت حرفه‌ای با React و Laravel، سئو و بهینه‌سازی موتورهای جستجو، و بازی‌سازی با Unity را ارائه می‌دهد."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "هزینه طراحی سایت چقدر است؟",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "هزینه طراحی سایت بسته به نوع پروژه، امکانات مورد نیاز و پیچیدگی آن متفاوت است. برای دریافت مشاوره رایگان و استعلام قیمت با ما تماس بگیرید."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "مدت زمان تحویل پروژه چقدر است؟",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "مدت زمان تحویل بسته به پیچیدگی پروژه متفاوت است. پروژه‌های ساده ۱ تا ۲ هفته و پروژه‌های پیچیده ۴ تا ۸ هفته زمان نیاز دارند."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- ============ CSS STYLES ============ -->
+    <style>
+        * { 
+            font-family: 'Vazirmatn', Tahoma, sans-serif; 
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        /* Visually Hidden (for SEO content) */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #6779e3 0%, #7451ab 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #6779e3 0%, #7451ab 100%);
+        }
+
+        .gradient-bg-soft {
+            background: linear-gradient(135deg, rgba(103,121,227,0.1) 0%, rgba(116,81,171,0.1) 100%);
+        }
+
+        /* ============ Scroll To Top Button ============ */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 50;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6779e3, #7451ab);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 10px 25px rgba(103, 121, 227, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        .scroll-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .scroll-top-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(116, 81, 171, 0.6);
+        }
+
+        .scroll-top-btn:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        .scroll-top-btn i {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .dark .scroll-top-btn {
+            box-shadow: 0 10px 25px rgba(116, 81, 171, 0.5);
+        }
+
+        @media (max-width: 640px) {
+            .scroll-top-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                left: 20px;
+            }
+            .scroll-top-btn i {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .scroll-top-btn {
+                width: 45px;
+                height: 45px;
+                bottom: 15px;
+                left: 15px;
+            }
+            .scroll-top-btn i {
+                font-size: 16px;
+            }
+        }
+
+        /* Service Card */
+        .service-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6779e3, #7451ab);
+            transition: right 0.5s ease;
+            z-index: 0;
+        }
+
+        .service-card:hover::before {
+            right: 0;
+        }
+
+        .service-card:hover .service-content {
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card:hover .service-icon {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card:hover .service-title,
+        .service-card:hover .service-desc {
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card:hover .service-title {
+            color: white !important;
+        }
+
+        .service-card:hover .service-desc {
+            color: rgba(255,255,255,0.9) !important;
+        }
+
+        .service-card:hover .service-list-item {
+            color: white !important;
+        }
+
+        .service-card:hover .service-list-item i {
+            color: white !important;
+        }
+
+        .service-card:hover .service-link {
+            color: white !important;
+        }
+
+        .service-content {
+            position: relative;
+            z-index: 2;
+            transition: color 0.4s;
+        }
+
+        /* Portfolio Card */
+        .portfolio-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(103, 121, 227, 0.4);
+        }
+
+        @media (hover: none) {
+            .portfolio-card:hover {
+                transform: none;
+            }
+        }
+
+        /* Floating Shapes */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Glass Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Scroll animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        .dark ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6779e3, #7451ab);
+            border-radius: 10px;
+        }
+
+        /* Icon Box */
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, rgba(103,121,227,0.15), rgba(116,81,171,0.15));
+            color: #6779e3;
+            transition: all 0.4s;
+        }
+
+        @media (max-width: 640px) {
+            .icon-box {
+                width: 64px;
+                height: 64px;
+                font-size: 1.75rem;
+            }
+        }
+
+        .dark .icon-box {
+            background: linear-gradient(135deg, rgba(103,121,227,0.2), rgba(116,81,171,0.2));
+        }
+
+        /* BK Logo */
+        .bk-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #6779e3, #7451ab);
+            color: white;
+            font-size: 2rem;
+            font-weight: 900;
+            box-shadow: 0 10px 30px rgba(103, 121, 227, 0.4);
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 640px) {
+            .bk-logo {
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Pulse */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(103, 121, 227, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(103, 121, 227, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(103, 121, 227, 0); }
+        }
+
+        .pulse-ring { animation: pulse-ring 2s infinite; }
+
+        /* Wave */
+        .wave-bg {
+            position: relative;
+        }
+        .wave-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' d='M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L0,120Z'/%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
+        }
+        .dark .wave-bg::after {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath fill='%230f172a' d='M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L0,120Z'/%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
+        }
+
+        @media (max-width: 640px) {
+            .wave-bg::after { height: 40px; }
+        }
+
+        /* Responsive Typography */
+        @media (max-width: 640px) {
+            .hero-title { font-size: 2rem !important; line-height: 1.3 !important; }
+            .hero-subtitle { font-size: 1rem !important; }
+            .section-title { font-size: 1.75rem !important; }
+            .btn-primary, .btn-secondary { 
+                padding: 12px 20px !important; 
+                font-size: 0.9rem !important;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1600px;
+            }
+        }
+
+        /* Shine Effect on Cards */
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+        .shine-effect:hover::after {
+            opacity: 1;
+            left: 100%;
+        }
+
+        /* Stats */
+        .stat-item {
+            transition: all 0.3s ease;
+        }
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        /* FAQ Accordion */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .faq-answer.open {
+            max-height: 200px;
+        }
+
+        .faq-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-toggle.active i {
+            transform: rotate(180deg);
+        }
+
+        /* Noscript Fallback */
+        .noscript-warning {
+            text-align: center;
+            padding: 20px;
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+<body class="bg-white dark:bg-slate-900 transition-colors duration-500 overflow-x-hidden">
 
-  <div id="header-container"></div>
+    <div id="header-container"></div>
 
-  <!-- Hero Section -->
-  <section class="parallax-bg">
-    <div class="container mx-auto px-4 py-16 md:py-20 relative z-10">
-      <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-        <div class="text-center md:text-right">
-          <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
-            <span id="typed-name"></span>
-          </h1>
-          <p class="text-xl md:text-2xl text-white/90 mb-6 min-h-[3rem]">
-            <span id="typed-role"></span>
-          </p>
-          <div class="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
-            <a href="#contact" class="btn-cool bg-white text-indigo-600 px-6 md:px-8 py-3 md:py-4 rounded-full font-bold flex items-center space-x-2 space-x-reverse">
-              <i class="fas fa-rocket"></i><span>شروع همکاری</span>
-            </a>
-            <a href="https://github.com/mahdiklidari190/ollama/blob/main/docs/api/anthropic-compatibility.mdx" target="_blank" class="btn-cool-outline bg-white/10 backdrop-blur text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-bold border border-white/30 flex items-center space-x-2 space-x-reverse">
-              <i class="fab fa-github"></i><span>پروژه اوپن‌سورس من</span>
-            </a>
-          </div>
+    <!-- ============ NOSCRIPT FALLBACK ============ -->
+    <noscript>
+        <div class="noscript-warning">
+            <p>لطفاً جاوااسکریپت را فعال کنید تا صفحه به‌طور کامل نمایش داده شود.</p>
         </div>
-        <div class="flex justify-center">
-          <div class="relative">
-            <div class="w-72 h-72 md:w-96 md:h-96 bg-white/10 backdrop-blur rounded-full flex items-center justify-center floating relative">
-              <div class="absolute inset-0 rounded-full border-4 border-white/20 animate-spin" style="animation-duration: 15s;"></div>
-              <i class="fas fa-code text-6xl md:text-9xl text-white/80"></i>
+    </noscript>
+
+    <!-- ============ SCROLL TO TOP BUTTON ============ -->
+    <button id="scrollTopBtn" class="scroll-top-btn" aria-label="برو به بالای صفحه" title="برو به بالای صفحه">
+        <i class="fas fa-arrow-up" aria-hidden="true"></i>
+    </button>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main id="main-content" role="main">
+
+        <!-- ============ HERO SECTION ============ -->
+        <section id="home" class="relative py-12 sm:py-20 md:py-32 wave-bg overflow-hidden" aria-labelledby="hero-heading">
+            <!-- Decorative Blobs -->
+            <div class="blob w-64 sm:w-80 md:w-96 h-64 sm:h-80 md:h-96 bg-primary top-10 -right-20 animate-blob" aria-hidden="true"></div>
+            <div class="blob w-64 sm:w-80 md:w-96 h-64 sm:h-80 md:h-96 bg-secondary top-40 -left-20 animate-blob" style="animation-delay: 2s;" aria-hidden="true"></div>
+            <div class="blob w-56 sm:w-72 md:w-80 h-56 sm:h-72 md:h-80 bg-primary bottom-10 right-1/3 animate-blob hidden md:block" style="animation-delay: 4s;" aria-hidden="true"></div>
+
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                    <div class="text-right order-2 lg:order-1">
+                        <p class="inline-flex items-center gap-2 gradient-bg-soft text-primary dark:text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-4 sm:mb-6 border border-primary/20">
+                            <i class="fas fa-rocket" aria-hidden="true"></i>
+                            <span>BK - خالق تجربه‌های دیجیتال</span>
+                        </p>
+                        
+                        <!-- H1: Only ONE per page - Main keyword in first 100 words -->
+                        <h1 id="hero-heading" class="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mb-4 sm:mb-6 text-gray-800 dark:text-white">
+                            خدمات <span class="gradient-text">طراحی سایت</span>،
+                            <span class="gradient-text">سئو</span> و
+                            <span class="gradient-text">بازی‌سازی</span>
+                        </h1>
+                        
+                        <p class="hero-subtitle text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed">
+                            با بیش از ۶ سال تجربه، پروژه‌های طراحی وبسایت، بهینه‌سازی موتورهای جستجو و ساخت بازی‌های جذاب با Unity را از ایده تا اجرا می‌بریم. بردیا کلیداری (BK) متخصص توسعه وب و بازی در ایران.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+                            <a href="#services" class="btn-primary px-6 sm:px-8 py-3 sm:py-4 gradient-bg text-white rounded-full hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 hover:scale-105 font-bold pulse-ring text-center" title="مشاهده خدمات طراحی سایت و سئو">
+                                <i class="fas fa-magic ml-2" aria-hidden="true"></i>
+                                شروع پروژه
+                            </a>
+                            <a href="#portfolio" class="btn-secondary px-6 sm:px-8 py-3 sm:py-4 bg-white dark:bg-slate-800 text-gray-800 dark:text-white rounded-full hover:shadow-xl transition-all duration-300 border-2 border-primary/30 font-bold text-center" title="مشاهده نمونه کارهای طراحی سایت و بازی">
+                                <i class="fas fa-folder-open ml-2" aria-hidden="true"></i>
+                                مشاهده نمونه کارها
+                            </a>
+                        </div>
+
+                        <!-- Stats with microdata -->
+                        <div class="grid grid-cols-3 gap-2 sm:gap-4 mt-8 sm:mt-12" itemscope itemtype="https://schema.org/QuantitativeValueDistribution">
+                            <div class="stat-item text-center p-2 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
+                                <div class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black gradient-text" itemprop="value" content="100">+۱۰۰</div>
+                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1" itemprop="name">پروژه موفق طراحی سایت و سئو</div>
+                            </div>
+                            <div class="stat-item text-center p-2 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
+                                <div class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black gradient-text" itemprop="value" content="6">۶+</div>
+                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1" itemprop="name">سال تجربه برنامه‌نویسی</div>
+                            </div>
+                            <div class="stat-item text-center p-2 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all cursor-default">
+                                <div class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black gradient-text" itemprop="value" content="50">+۵۰</div>
+                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1" itemprop="name">مشتری راضی</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative flex justify-center order-1 lg:order-2 mb-8 lg:mb-0">
+                        <div class="relative w-full max-w-xs sm:max-w-sm md:max-w-md">
+                            <!-- Main Card -->
+                            <div class="relative animate-float">
+                                <div class="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl shine-effect">
+                                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                                        <div class="bk-logo" aria-label="لوگو BK">
+                                            BK
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">میانگین</div>
+                                            <div class="text-xl sm:text-2xl font-bold gradient-text">۹۸٪</div>
+                                        </div>
+                                    </div>
+                                    <h2 class="text-lg sm:text-xl font-bold mb-2 text-gray-800 dark:text-white">کیفیت تحویل پروژه</h2>
+                                    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">پروژه‌های تحویل شده با رضایت مشتری</p>
+                                    <div class="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden" role="progressbar" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100" aria-label="کیفیت تحویل ۹۸ درصد">
+                                        <div class="gradient-bg h-2 rounded-full animate-pulse" style="width: 98%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Floating Elements -->
+                            <div class="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-xl animate-float-slow" aria-hidden="true">
+                                <i class="fab fa-react text-xl sm:text-3xl text-primary animate-spin-slow"></i>
+                            </div>
+                            <div class="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-xl animate-float" style="animation-delay: 1s;" aria-hidden="true">
+                                <i class="fas fa-gamepad text-xl sm:text-3xl text-secondary"></i>
+                            </div>
+                            <div class="absolute top-1/2 -left-8 sm:-left-16 bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-xl animate-float hidden sm:block" style="animation-delay: 2s;" aria-hidden="true">
+                                <i class="fas fa-search text-lg sm:text-2xl text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+        </section>
 
-  <!-- About Section -->
-  <section id="about" class="py-16 md:py-20 bg-white dark:bg-gray-800 transition-colors duration-500">
-    <div class="container mx-auto px-4">
-      <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 md:mb-16 scroll-reveal">
-        <span class="gradient-text">درباره من</span>
-      </h2>
-      <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-        <div class="scroll-reveal">
-          <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-1 transform rotate-3 hover:rotate-0 transition-transform duration-500">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8">
-              <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">مسیر حرفه‌ای من</h3>
-              <ul class="space-y-3 text-gray-600 dark:text-gray-300 text-sm md:text-base">
-                <li class="flex items-start"><i class="fas fa-check-circle text-indigo-500 ml-3 mt-1 flex-shrink-0"></i> <span>طراحی وب‌سایت‌های مدرن و بهینه‌سازی SEO</span></li>
-                <li class="flex items-start"><i class="fas fa-check-circle text-indigo-500 ml-3 mt-1 flex-shrink-0"></i> <span>توسعه بک‌اند قدرتمند با PHP و Laravel</span></li>
-                <li class="flex items-start"><i class="fas fa-check-circle text-indigo-500 ml-3 mt-1 flex-shrink-0"></i> <span>مهندسی پرامپت و مشارکت در پروژه‌های اوپن‌سورس AI</span></li>
-                <li class="flex items-start"><i class="fas fa-check-circle text-indigo-500 ml-3 mt-1 flex-shrink-0"></i> <span>سابقه قوی در توسعه بازی، امنیت سایبری و منطق پیچیده با Unity</span></li>
-              </ul>
+        <!-- ============ SERVICES SECTION ============ -->
+        <section id="services" class="py-12 sm:py-20 md:py-28 bg-gray-50 dark:bg-slate-800/30 relative overflow-hidden" aria-labelledby="services-heading">
+            <div class="blob w-56 sm:w-72 h-56 sm:h-72 bg-primary/20 top-20 -right-10 animate-blob" aria-hidden="true"></div>
+            <div class="blob w-64 sm:w-80 h-64 sm:h-80 bg-secondary/20 bottom-10 -left-10 animate-blob" style="animation-delay: 3s;" aria-hidden="true"></div>
+
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-10 sm:mb-16 reveal">
+                    <p class="inline-flex items-center gap-2 gradient-bg text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4">
+                        <i class="fas fa-star" aria-hidden="true"></i>
+                        خدمات ما
+                    </p>
+                    <h2 id="services-heading" class="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-3 sm:mb-4 text-gray-800 dark:text-white">
+                        خدمات <span class="gradient-text">حرفه‌ای</span> BK
+                    </h2>
+                    <p class="text-sm sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
+                        سه حوزه تخصصی طراحی وبسایت، سئو و بازی‌سازی برای رشد کسب و کار شما
+                    </p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                    <!-- Service 1: Web Design -->
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay: 0.1s;" itemscope itemtype="https://schema.org/Service">
+                        <meta itemprop="serviceType" content="Web Design">
+                        <div class="service-content">
+                            <div class="service-icon icon-box mb-4 sm:mb-6" aria-hidden="true">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <h3 class="service-title text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800 dark:text-white" itemprop="name">طراحی سایت</h3>
+                            <p class="service-desc text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed mb-4 sm:mb-6" itemprop="description">
+                                طراحی سایت‌های مدرن، ریسپانسیو و کاربرپسند با استفاده از جدیدترین تکنولوژی‌ها مانند React، Next.js و Laravel. بهینه‌سازی سرعت و تجربه کاربری در طراحی وبسایت.
+                            </p>
+                            <ul class="space-y-2 mb-4 sm:mb-6">
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    طراحی UI/UX حرفه‌ای
+                                </li>
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    کاملاً ریسپانسیو و موبایل فرندلی
+                                </li>
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    سرعت بارگذاری بالا و سئو تکنیکال
+                                </li>
+                            </ul>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary hover:gap-3 gap-2 transition-all text-sm sm:text-base" title="سفارش طراحی سایت">
+                                سفارش طراحی سایت
+                                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Service 2: SEO -->
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl hover:shadow-2xl transition-all reveal" style="transition-delay: 0.2s;" itemscope itemtype="https://schema.org/Service">
+                        <meta itemprop="serviceType" content="Search Engine Optimization">
+                        <div class="service-content">
+                            <div class="service-icon icon-box mb-4 sm:mb-6" aria-hidden="true">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="service-title text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800 dark:text-white" itemprop="name">سئو و بهینه‌سازی</h3>
+                            <p class="service-desc text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed mb-4 sm:mb-6" itemprop="description">
+                                بهینه‌سازی سایت برای موتورهای جستجو، افزایش ترافیک ارگانیک و رتبه‌بندی در صفحه اول گوگل. سئو تکنیکال، محتوایی و لینک‌سازی.
+                            </p>
+                            <ul class="space-y-2 mb-4 sm:mb-6">
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    سئو تکنیکال و بهینه‌سازی سرعت
+                                </li>
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    بهینه‌سازی محتوا و کلمات کلیدی
+                                </li>
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    گزارش‌گیری ماهانه و تحلیل رقبا
+                                </li>
+                            </ul>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary hover:gap-3 gap-2 transition-all text-sm sm:text-base" title="تحلیل رایگان سئو">
+                                تحلیل رایگان سئو
+                                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Service 3: Game Development -->
+                    <article class="service-card bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl hover:shadow-2xl transition-all reveal sm:col-span-2 lg:col-span-1" style="transition-delay: 0.3s;" itemscope itemtype="https://schema.org/Service">
+                        <meta itemprop="serviceType" content="Game Development">
+                        <div class="service-content">
+                            <div class="service-icon icon-box mb-4 sm:mb-6" aria-hidden="true">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <h3 class="service-title text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800 dark:text-white" itemprop="name">بازی‌سازی</h3>
+                            <p class="service-desc text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed mb-4 sm:mb-6" itemprop="description">
+                                توسعه بازی‌های جذاب و حرفه‌ای با Unity برای پلتفرم‌های موبایل، وب و دسکتاپ. ساخت بازی ۲D و ۳D با گرافیک بالا.
+                            </p>
+                            <ul class="space-y-2 mb-4 sm:mb-6">
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    Unity و C#
+                                </li>
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    بازی ۲D و ۳D
+                                </li>
+                                <li class="service-list-item flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-check-circle text-primary ml-2" aria-hidden="true"></i>
+                                    چند پلتفرمی (موبایل، وب، دسکتاپ)
+                                </li>
+                            </ul>
+                            <a href="#contact" class="service-link inline-flex items-center font-bold text-primary hover:gap-3 gap-2 transition-all text-sm sm:text-base" title="شروع پروژه بازی‌سازی">
+                                شروع پروژه بازی‌سازی
+                                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </article>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="scroll-reveal text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed space-y-4 text-justify">
-          <p>من <strong>بردیا کلیدری</strong> هستم. سفر حرفه‌ای من از دنیای هیجان‌انگیز توسعه بازی با <strong>Unity</strong> شروع شد؛ جایی که یاد گرفتم چطور سیستم‌های پیچیده، بهینه و خلاقانه بسازم. این تجربه، پایه‌ای قوی برای درک عمیق منطق برنامه‌نویسی و امنیت برای من ایجاد کرد.</p>
-          <p>امروز، تمرکز اصلی من بر <strong>طراحی وب‌سایت‌های مدرن</strong>، <strong>توسعه بک‌اند با PHP/Laravel</strong>، <strong>بهینه‌سازی موتورهای جستجو (SEO)</strong> و <strong>توسعه راهکارهای هوش مصنوعی</strong> است. من به صورت فعال روی پروژه‌های اوپن‌سورس هوش مصنوعی (مانند پیاده‌سازی سازگاری Anthropic در <a href="https://github.com/mahdiklidari190/ollama/blob/main/docs/api/anthropic-compatibility.mdx" target="_blank" class="text-indigo-600 dark:text-indigo-400 hover:underline">پروژه Ollama</a>) کار می‌کنم.</p>
-          <p>ترکیب دانش SEO، طراحی وب، توسعه بک‌اند، امنیت و هوش مصنوعی به من این امکان را می‌دهد تا محصولاتی بسازم که نه تنها از نظر فنی بی‌نقص و هوشمند هستند، بلکه در موتورهای جستجو نیز به خوبی دیده می‌شوند.</p>
-          <div class="flex flex-wrap gap-2 mt-6 justify-center md:justify-start">
-            <span class="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 rounded-full text-xs md:text-sm">#WebDesign</span>
-            <span class="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded-full text-xs md:text-sm">#PHP_Laravel</span>
-            <span class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded-full text-xs md:text-sm">#Technical_SEO</span>
-            <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded-full text-xs md:text-sm">#AI_Prompt_Engineering</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+        </section>
 
-  <!-- Skills Section (UPDATED: Added Unity, Programming Languages, Cyber Security) -->
-  <section id="skills" class="py-16 md:py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
-    <div class="container mx-auto px-4">
-      <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 md:mb-16 scroll-reveal">
-        <span class="gradient-text">مهارت‌های تخصصی</span>
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-        
-        <!-- Skill 1: SEO -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-search text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">Technical SEO</div>
-                <div class="text-xs text-gray-500">سطح: متخصص</div>
-              </div>
+        <!-- ============ PORTFOLIO SECTION ============ -->
+        <section id="portfolio" class="py-12 sm:py-20 md:py-28 relative overflow-hidden" aria-labelledby="portfolio-heading">
+            <div class="blob w-64 sm:w-96 h-64 sm:h-96 bg-primary/10 top-0 right-0 animate-blob" aria-hidden="true"></div>
+
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-10 sm:mb-16 reveal">
+                    <p class="inline-flex items-center gap-2 gradient-bg text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4">
+                        <i class="fas fa-briefcase" aria-hidden="true"></i>
+                        نمونه کارها
+                    </p>
+                    <h2 id="portfolio-heading" class="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-3 sm:mb-4 text-gray-800 dark:text-white">
+                        <span class="gradient-text">گالری</span> نمونه کارهای BK
+                    </h2>
+                    <p class="text-sm sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
+                        مجموعه‌ای از بهترین پروژه‌های طراحی سایت، بازی‌سازی، ابزارها و مقالات آموزشی
+                    </p>
+                </div>
+
+                <nav aria-label="نمونه کارها" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                    <!-- Games -->
+                    <a href="https://klidari.ir/games.html" class="portfolio-card group block reveal shine-effect" style="transition-delay: 0.1s;" title="مشاهده بازی‌های ساخته شده با Unity" aria-label="بازی‌های Unity و موبایلی - ۱۲+ پروژه">
+                        <div class="aspect-[4/5] gradient-bg p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center text-center relative">
+                            <div class="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-xs font-bold">
+                                ۱۲+ پروژه
+                            </div>
+                            <div class="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/20 backdrop-blur rounded-2xl sm:rounded-3xl flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true">
+                                <i class="fas fa-gamepad text-2xl sm:text-4xl lg:text-5xl text-white"></i>
+                            </div>
+                            <h3 class="text-base sm:text-xl lg:text-2xl font-black text-white mb-1 sm:mb-3">بازی‌ها</h3>
+                            <p class="text-white/90 text-[10px] sm:text-sm mb-3 sm:mb-6">Unity و موبایلی</p>
+                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-2 group-hover:gap-2 sm:group-hover:gap-3 transition-all text-xs sm:text-base">
+                                مشاهده
+                                <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Projects -->
+                    <a href="https://klidari.ir/projects.html" class="portfolio-card group block reveal shine-effect" style="transition-delay: 0.2s;" title="مشاهده پروژه‌های طراحی سایت" aria-label="پروژه‌های طراحی سایت و اپلیکیشن - ۲۰+ پروژه">
+                        <div class="aspect-[4/5] bg-gradient-to-br from-secondary to-primary p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center text-center relative">
+                            <div class="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-xs font-bold">
+                                ۲۰+ پروژه
+                            </div>
+                            <div class="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/20 backdrop-blur rounded-2xl sm:rounded-3xl flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true">
+                                <i class="fas fa-laptop-code text-2xl sm:text-4xl lg:text-5xl text-white"></i>
+                            </div>
+                            <h3 class="text-base sm:text-xl lg:text-2xl font-black text-white mb-1 sm:mb-3">پروژه‌ها</h3>
+                            <p class="text-white/90 text-[10px] sm:text-sm mb-3 sm:mb-6">طراحی سایت و اپلیکیشن</p>
+                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-2 group-hover:gap-2 sm:group-hover:gap-3 transition-all text-xs sm:text-base">
+                                مشاهده
+                                <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Tools -->
+                    <a href="https://klidari.ir/tools.html" class="portfolio-card group block reveal shine-effect" style="transition-delay: 0.3s;" title="مشاهده ابزارهای توسعه و سئو" aria-label="ابزارهای توسعه و سئو - ۱۰+ ابزار">
+                        <div class="aspect-[4/5] gradient-bg p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center text-center relative">
+                            <div class="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-xs font-bold">
+                                ۱۰+ ابزار
+                            </div>
+                            <div class="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/20 backdrop-blur rounded-2xl sm:rounded-3xl flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true">
+                                <i class="fas fa-tools text-2xl sm:text-4xl lg:text-5xl text-white"></i>
+                            </div>
+                            <h3 class="text-base sm:text-xl lg:text-2xl font-black text-white mb-1 sm:mb-3">ابزارها</h3>
+                            <p class="text-white/90 text-[10px] sm:text-sm mb-3 sm:mb-6">توسعه و سئو</p>
+                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-2 group-hover:gap-2 sm:group-hover:gap-3 transition-all text-xs sm:text-base">
+                                مشاهده
+                                <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Articles -->
+                    <a href="https://klidari.ir/articles.html" class="portfolio-card group block reveal shine-effect" style="transition-delay: 0.4s;" title="مشاهده مقالات آموزشی" aria-label="مقالات آموزشی برنامه‌نویسی و سئو - ۳۰+ مقاله">
+                        <div class="aspect-[4/5] bg-gradient-to-br from-primary to-secondary p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center text-center relative">
+                            <div class="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-xs font-bold">
+                                ۳۰+ مقاله
+                            </div>
+                            <div class="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/20 backdrop-blur rounded-2xl sm:rounded-3xl flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform" aria-hidden="true">
+                                <i class="fas fa-newspaper text-2xl sm:text-4xl lg:text-5xl text-white"></i>
+                            </div>
+                            <h3 class="text-base sm:text-xl lg:text-2xl font-black text-white mb-1 sm:mb-3">مقاله‌ها</h3>
+                            <p class="text-white/90 text-[10px] sm:text-sm mb-3 sm:mb-6">آموزش برنامه‌نویسی و سئو</p>
+                            <div class="inline-flex items-center text-white font-bold gap-1 sm:gap-2 group-hover:gap-2 sm:group-hover:gap-3 transition-all text-xs sm:text-base">
+                                مشاهده
+                                <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </a>
+                </nav>
             </div>
-            <span class="text-2xl font-bold text-indigo-600">95%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-indigo-500 to-purple-600" style="width: 95%"></div>
-          </div>
-        </div>
+        </section>
 
-        <!-- Skill 2: PHP & Laravel -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-laravel text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">PHP & Laravel</div>
-                <div class="text-xs text-gray-500">سطح: پیشرفته</div>
-              </div>
+        <!-- ============ WHY US SECTION ============ -->
+        <section class="py-12 sm:py-20 bg-gray-50 dark:bg-slate-800/30" aria-labelledby="why-us-heading">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+                    <div class="reveal">
+                        <p class="inline-flex items-center gap-2 gradient-bg text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4">
+                            <i class="fas fa-award" aria-hidden="true"></i>
+                            چرا BK؟
+                        </p>
+                        <h2 id="why-us-heading" class="section-title text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 text-gray-800 dark:text-white">
+                            چرا <span class="gradient-text">BK</span> را انتخاب کنید؟
+                        </h2>
+                        <p class="text-sm sm:text-lg text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed">
+                            بردیا کلیداری (BK) با ترکیب خلاقیت، تخصص فنی در طراحی سایت و سئو، و درک عمیق از نیازهای مشتری، بهترین نتیجه را برای پروژه شما به ارمغان می‌آورد.
+                        </p>
+
+                        <div class="space-y-3 sm:space-y-4">
+                            <div class="flex items-start gap-3 sm:gap-4">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 gradient-bg rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                                    <i class="fas fa-bolt text-white text-sm sm:text-base"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-1">سرعت بالای تحویل</h3>
+                                    <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">تحویل به موقع پروژه‌های طراحی سایت و سئو با رعایت کیفیت</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 sm:gap-4">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 gradient-bg rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                                    <i class="fas fa-headset text-white text-sm sm:text-base"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-1">پشتیبانی ۲۴/۷</h3>
+                                    <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">همیشه در دسترس شما برای رفع مشکلات و بهبود پروژه</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 sm:gap-4">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 gradient-bg rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                                    <i class="fas fa-shield-alt text-white text-sm sm:text-base"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-1">امنیت بالا</h3>
+                                    <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">رعایت استانداردهای امنیتی در همه پروژه‌های طراحی و توسعه</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative reveal" style="transition-delay: 0.2s;">
+                        <div class="grid grid-cols-2 gap-3 sm:gap-6">
+                            <div class="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 text-center hover:scale-105 transition-transform shine-effect">
+                                <div class="text-3xl sm:text-5xl mb-2 sm:mb-3" aria-hidden="true">🚀</div>
+                                <div class="text-2xl sm:text-3xl font-black gradient-text">۹۸٪</div>
+                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">رضایت مشتری</div>
+                            </div>
+                            <div class="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 text-center hover:scale-105 transition-transform mt-4 sm:mt-8 shine-effect">
+                                <div class="text-3xl sm:text-5xl mb-2 sm:mb-3" aria-hidden="true">⭐</div>
+                                <div class="text-2xl sm:text-3xl font-black gradient-text">۴.۹/۵</div>
+                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">امتیاز کیفیت</div>
+                            </div>
+                            <div class="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 text-center hover:scale-105 transition-transform shine-effect">
+                                <div class="text-3xl sm:text-5xl mb-2 sm:mb-3" aria-hidden="true">🏆</div>
+                                <div class="text-2xl sm:text-3xl font-black gradient-text">+۱۰۰</div>
+                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">پروژه موفق</div>
+                            </div>
+                            <div class="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 text-center hover:scale-105 transition-transform mt-4 sm:mt-8 shine-effect">
+                                <div class="text-3xl sm:text-5xl mb-2 sm:mb-3" aria-hidden="true">💎</div>
+                                <div class="text-2xl sm:text-3xl font-black gradient-text">۶+</div>
+                                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">سال تجربه</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <span class="text-2xl font-bold text-red-600">90%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-red-500 to-pink-600" style="width: 90%"></div>
-          </div>
-        </div>
+        </section>
 
-        <!-- Skill 3: Prompt Engineering -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-wand-magic-sparkles text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">Prompt Engineering</div>
-                <div class="text-xs text-gray-500">سطح: متخصص</div>
-              </div>
+        <!-- ============ FAQ SECTION (NEW - for AI Search & FAQ Schema) ============ -->
+        <section id="faq" class="py-12 sm:py-20" aria-labelledby="faq-heading">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+                <div class="text-center mb-10 sm:mb-16 reveal">
+                    <p class="inline-flex items-center gap-2 gradient-bg text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-3 sm:mb-4">
+                        <i class="fas fa-question-circle" aria-hidden="true"></i>
+                        سوالات متداول
+                    </p>
+                    <h2 id="faq-heading" class="section-title text-2xl sm:text-3xl md:text-5xl font-black mb-3 sm:mb-4 text-gray-800 dark:text-white">
+                        سوالات <span class="gradient-text">پرتکرار</span>
+                    </h2>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- FAQ 1 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                        <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false" onclick="this.nextElementSibling.classList.toggle('open'); this.classList.toggle('active'); this.setAttribute('aria-expanded', this.classList.contains('active'))">
+                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">خدمات BK شامل چه مواردی است؟</h3>
+                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer mt-3">
+                            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                                BK خدمات طراحی سایت حرفه‌ای با React و Laravel، سئو و بهینه‌سازی موتورهای جستجو برای افزایش رتبه گوگل، و بازی‌سازی با Unity برای موبایل و وب را ارائه می‌دهد. همچنین مشاوره فنی رایگان و پشتیبانی پس از تحویل پروژه نیز ارائه می‌شود.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                        <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false" onclick="this.nextElementSibling.classList.toggle('open'); this.classList.toggle('active'); this.setAttribute('aria-expanded', this.classList.contains('active'))">
+                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">هزینه طراحی سایت چقدر است؟</h3>
+                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer mt-3">
+                            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                                هزینه طراحی سایت بسته به نوع پروژه، امکانات مورد نیاز و پیچیدگی آن متفاوت است. برای دریافت مشاوره رایگان و استعلام قیمت دقیق با ما تماس بگیرید. BK بهترین قیمت را با بالاترین کیفیت ارائه می‌دهد.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg reveal">
+                        <button class="faq-toggle w-full flex items-center justify-between text-right" aria-expanded="false" onclick="this.nextElementSibling.classList.toggle('open'); this.classList.toggle('active'); this.setAttribute('aria-expanded', this.classList.contains('active'))">
+                            <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">مدت زمان تحویل پروژه چقدر است؟</h3>
+                            <i class="fas fa-chevron-down text-primary" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer mt-3">
+                            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                                مدت زمان تحویل بسته به پیچیدگی پروژه متفاوت است. پروژه‌های طراحی سایت ساده ۱ تا ۲ هفته و پروژه‌های پیچیده با امکانات سفارشی ۴ تا ۸ هفته زمان نیاز دارند. بازی‌سازی نیز بسته به پلتفرم و پیچیدگی ممکن است بیشتر طول بکشد.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <span class="text-2xl font-bold text-green-600">95%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-green-500 to-emerald-600" style="width: 95%"></div>
-          </div>
-        </div>
+        </section>
 
-        <!-- Skill 4: JavaScript & React -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-react text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">JavaScript & React</div>
-                <div class="text-xs text-gray-500">سطح: پیشرفته</div>
-              </div>
+        <!-- ============ CTA SECTION ============ -->
+        <section id="contact" class="py-12 sm:py-20 relative overflow-hidden" aria-labelledby="cta-heading">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="gradient-bg rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-16 text-center shadow-2xl relative overflow-hidden">
+                    <!-- Decorative Circles -->
+                    <div class="absolute top-0 right-0 w-32 sm:w-64 h-32 sm:h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" aria-hidden="true"></div>
+                    <div class="absolute bottom-0 left-0 w-24 sm:w-48 h-24 sm:h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" aria-hidden="true"></div>
+
+                    <div class="relative z-10">
+                        <p class="inline-block bg-white/20 backdrop-blur text-white px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold mb-4 sm:mb-6">
+                            <i class="fas fa-paper-plane ml-1 sm:ml-2" aria-hidden="true"></i>
+                            آماده همکاری؟
+                        </p>
+                        <h2 id="cta-heading" class="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-4 sm:mb-6">
+                            پروژه رویایی خود را با BK بسازید
+                        </h2>
+                        <p class="text-sm sm:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
+                            با ما تماس بگیرید و ایده طراحی سایت، سئو یا بازی خود را به واقعیت تبدیل کنید. مشاوره رایگان ارائه می‌دهیم!
+                        </p>
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center">
+                            <a href="mailto:info@klidari.ir" class="bg-white text-primary px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:scale-105 transition-all shadow-xl text-sm sm:text-base" title="ارسال ایمیل به BK">
+                                <i class="fas fa-envelope ml-2" aria-hidden="true"></i>
+                                ارسال ایمیل
+                            </a>
+                            <a href="https://t.me/bardiyaklidari" class="bg-white/10 backdrop-blur border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold hover:bg-white hover:text-primary transition-all text-sm sm:text-base" title="تماس مستقیم با BK از طریق تلگرام" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-telegram ml-2" aria-hidden="true"></i>
+                                تماس مستقیم
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <span class="text-2xl font-bold text-cyan-600">85%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-cyan-500 to-blue-600" style="width: 85%"></div>
-          </div>
-        </div>
+        </section>
 
-        <!-- Skill 5: Python & Automation -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-python text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">Python & Automation</div>
-                <div class="text-xs text-gray-500">سطح: پیشرفته</div>
-              </div>
-            </div>
-            <span class="text-2xl font-bold text-yellow-600">80%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-yellow-500 to-orange-600" style="width: 80%"></div>
-          </div>
-        </div>
+    </main>
 
-        <!-- Skill 6: Git & Version Control -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-git-alt text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">Git & Version Control</div>
-                <div class="text-xs text-gray-500">سطح: پیشرفته</div>
-              </div>
-            </div>
-            <span class="text-2xl font-bold text-gray-600 dark:text-gray-400">90%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-gray-600 to-gray-800" style="width: 90%"></div>
-          </div>
-        </div>
+    <!-- ============ SEO CONTENT (Hidden but visible to crawlers) ============ -->
+    <section class="sr-only">
+        <h2>درباره BK - بردیا کلیداری</h2>
+        <p>
+            بردیا کلیداری (BK) یک توسعه‌دهنده وب و بازی با بیش از ۶ سال تجربه در حوزه طراحی سایت، سئو (SEO) و بازی‌سازی است. 
+            تخصص اصلی BK در طراحی وبسایت با React، Next.js و Laravel، بهینه‌سازی موتورهای جستجو برای افزایش رتبه گوگل، 
+            و توسعه بازی با Unity برای پلتفرم‌های موبایل، وب و دسکتاپ است.
+        </p>
+        <h2>خدمات طراحی سایت BK</h2>
+        <p>
+            طراحی سایت حرفه‌ای با جدیدترین تکنولوژی‌ها شامل React، Next.js، Laravel و Tailwind CSS. 
+            طراحی وبسایت‌های ریسپانسیو، سریع و بهینه‌سازی شده برای موتورهای جستجو. 
+            توسعه فرانت‌اند و بک‌اند با بهترین استانداردها و امنیت بالا.
+        </p>
+        <h2>خدمات سئو و بهینه‌سازی</h2>
+        <p>
+            بهینه‌سازی سایت برای موتورهای جستجو (SEO) شامل سئو تکنیکال، بهینه‌سازی محتوا، لینک‌سازی، 
+            تحلیل رقبا و گزارش‌گیری ماهانه. افزایش ترافیک ارگانیک و رتبه‌بندی در صفحه اول گوگل.
+        </p>
+        <h2>خدمات بازی‌سازی با Unity</h2>
+        <p>
+            توسعه بازی‌های ۲D و ۳D با Unity و C# برای پلتفرم‌های موبایل (اندروید و iOS)، وب (WebGL) و دسکتاپ. 
+            از ایده اولیه تا انتشار بازی در استورها با پشتیبانی کامل.
+        </p>
+        <h2>کلمات کلیدی مرتبط</h2>
+        <p>
+            طراحی سایت حرفه‌ای، سئو سایت، بهینه‌سازی گوگل، بازی‌سازی Unity، ساخت بازی موبایل، 
+            برنامه‌نویس وب، فریلنسر طراحی سایت، افزایش رتبه گوگل، طراحی سایت ارزان، سئو تکنیکال، 
+            توسعه بازی، طراحی وبسایت ریسپانسیو، برنامه‌نویس React، برنامه‌نویس Laravel
+        </p>
+    </section>
 
-        <!-- NEW Skill 7: Unity 3D -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-unity text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">Unity 3D</div>
-                <div class="text-xs text-gray-500">سطح: پیشرفته</div>
-              </div>
-            </div>
-            <span class="text-2xl font-bold text-pink-600">85%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-pink-500 to-rose-600" style="width: 85%"></div>
-          </div>
-        </div>
+    <!-- ============ JAVASCRIPT ============ -->
+    <script>
+        // ============ SCROLL TO TOP ============
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
 
-        <!-- NEW Skill 8: Programming Languages -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-code text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">زبان‌های برنامه‌نویسی</div>
-                <div class="text-xs text-gray-500">C#, C++, JS, PHP</div>
-              </div>
-            </div>
-            <span class="text-2xl font-bold text-blue-600">90%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-blue-500 to-teal-600" style="width: 90%"></div>
-          </div>
-        </div>
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        }, { passive: true });
 
-        <!-- NEW Skill 9: Cyber Security -->
-        <div class="skill-card card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl scroll-reveal">
-          <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-shield-alt text-white text-2xl"></i>
-              </div>
-              <div>
-                <div class="font-bold text-lg text-gray-800 dark:text-white">امنیت سایبری</div>
-                <div class="text-xs text-gray-500">تست نفوذ و ایمن‌سازی</div>
-              </div>
-            </div>
-            <span class="text-2xl font-bold text-red-600">80%</span>
-          </div>
-          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="skill-progress h-full bg-gradient-to-r from-red-600 to-orange-600" style="width: 80%"></div>
-          </div>
-        </div>
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
 
-      </div>
-    </div>
-  </section>
+        // ============ SCROLL REVEAL ============
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-  <!-- Expertise Areas Section -->
-  <section id="expertise" class="py-16 md:py-20 bg-white dark:bg-gray-800 transition-colors duration-500">
-    <div class="container mx-auto px-4">
-      <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 md:mb-16 scroll-reveal">
-        <span class="gradient-text">حوزه‌های تخصصی</span>
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-        
-        <div class="card-hover bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl shadow-lg text-center scroll-reveal border border-transparent hover:border-indigo-500 transition-colors">
-          <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-paint-brush text-3xl text-indigo-600 dark:text-indigo-300"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">طراحی وب و UI/UX</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">طراحی رابط‌های کاربری مدرن، ریسپانسیو و کاربرپسند با تمرکز بر تجربه کاربری (UX) و نرخ تبدیل.</p>
-        </div>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
 
-        <div class="card-hover bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl shadow-lg text-center scroll-reveal border border-transparent hover:border-red-500 transition-colors">
-          <div class="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-server text-3xl text-red-600 dark:text-red-300"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">توسعه بک‌اند (Laravel)</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">طراحی APIهای RESTful، مدیریت پایگاه داده‌های پیچیده و توسعه سیستم‌های مقیاس‌پذیر با PHP و Laravel.</p>
-        </div>
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        <div class="card-hover bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl shadow-lg text-center scroll-reveal border border-transparent hover:border-green-500 transition-colors">
-          <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-chart-line text-3xl text-green-600 dark:text-green-300"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">سئو تکنیکال و محتوا</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">بهینه‌سازی سرعت، ساختار داده (Schema)، تحقیق کلمات کلیدی و استراتژی‌های کلاه سفید برای رتبه‌های برتر گوگل.</p>
-        </div>
+        // ============ SMOOTH SCROLL ============
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#' || href.length < 2) return;
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
 
-        <div class="card-hover bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl shadow-lg text-center scroll-reveal border border-transparent hover:border-purple-500 transition-colors">
-          <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-wand-magic-sparkles text-3xl text-purple-600 dark:text-purple-300"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">مهندسی پرامپت (Prompt Eng)</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">تسلط کامل بر نوشتن پرامپت‌های پیشرفته برای مدل‌های زبانی بزرگ (LLMs) جهت تولید محتوا، کد و تحلیل داده.</p>
-        </div>
-
-        <div class="card-hover bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl shadow-lg text-center scroll-reveal border border-transparent hover:border-blue-500 transition-colors">
-          <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fab fa-github text-3xl text-blue-600 dark:text-blue-300"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">توسعه اوپن‌سورس AI</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">مشارکت فعال در پروژه‌های جهانی هوش مصنوعی، مستندسازی APIها و توسعه ابزارهای یکپارچه‌سازی مدل‌ها.</p>
-        </div>
-
-        <div class="card-hover bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl shadow-lg text-center scroll-reveal border border-transparent hover:border-pink-500 transition-colors">
-          <div class="w-16 h-16 bg-pink-100 dark:bg-pink-900 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-gamepad text-3xl text-pink-600 dark:text-pink-300"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-2 text-gray-800 dark:text-white">منطق بازی و Unity</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">تجربه ارزشمند در پیاده‌سازی منطق‌های پیچیده، بهینه‌سازی رندر و فیزیک در موتور بازی‌سازی یونیتی.</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Experience Section -->
-  <section id="experience" class="py-16 md:py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
-    <div class="container mx-auto px-4">
-      <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 md:mb-16 scroll-reveal">
-        <span class="gradient-text">سوابق حرفه‌ای</span>
-      </h2>
-      <div class="max-w-4xl mx-auto space-y-8">
-        
-        <div class="timeline-item scroll-reveal mb-8 relative">
-          <div class="flex items-start space-x-4 space-x-reverse">
-            <div class="flex-shrink-0 w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white shadow-lg z-10">
-              <i class="fas fa-brain"></i>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-5 md:p-6 rounded-2xl shadow-xl flex-1 card-hover border-r-4 border-purple-500">
-              <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                <h3 class="text-lg md:text-xl font-bold text-gray-800 dark:text-white">توسعه‌دهنده و محقق هوش مصنوعی (Open Source)</h3>
-                <span class="text-xs md:text-sm text-purple-600 dark:text-purple-400 font-semibold bg-purple-50 dark:bg-purple-900/30 px-3 py-1 rounded-full">اکنون</span>
-              </div>
-              <p class="text-gray-500 dark:text-gray-400 text-sm mb-2 font-medium">مشارکت‌کننده فعال در جامعه اوپن‌سورس</p>
-              <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-3">تمرکز بر یکپارچه‌سازی و توسعه APIهای مدل‌های زبانی بزرگ. از جمله مشارکت در مستندسازی و توسعه سازگاری Anthropic در پروژه جهانی <a href="https://github.com/mahdiklidari190/ollama/blob/main/docs/api/anthropic-compatibility.mdx" target="_blank" class="text-purple-600 dark:text-purple-400 hover:underline font-bold">Ollama</a>.</p>
-              <div class="flex flex-wrap gap-2">
-                <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">Prompt Engineering</span>
-                <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">LLM Integration</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="timeline-item scroll-reveal mb-8 relative">
-          <div class="flex items-start space-x-4 space-x-reverse">
-            <div class="flex-shrink-0 w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg z-10">
-              <i class="fas fa-laptop-code"></i>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-5 md:p-6 rounded-2xl shadow-xl flex-1 card-hover border-r-4 border-indigo-500">
-              <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                <h3 class="text-lg md:text-xl font-bold text-gray-800 dark:text-white">طراح وب و متخصص SEO</h3>
-                <span class="text-xs md:text-sm text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">اکنون</span>
-              </div>
-              <p class="text-gray-500 dark:text-gray-400 text-sm mb-2 font-medium">فریلنسر و مشاور مستقل</p>
-              <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">طراحی و پیاده‌سازی وب‌سایت‌های سریع و بهینه با PHP/Laravel. انجام تحقیقات کلمات کلیدی، بهینه‌سازی On-Page و Technical SEO برای افزایش ارگانیک ترافیک و بهبود رتبه سایت‌ها در گوگل.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="timeline-item scroll-reveal mb-8 relative">
-          <div class="flex items-start space-x-4 space-x-reverse">
-            <div class="flex-shrink-0 w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg z-10">
-              <i class="fab fa-unity"></i>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-5 md:p-6 rounded-2xl shadow-xl flex-1 card-hover border-r-4 border-pink-500">
-              <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                <h3 class="text-lg md:text-xl font-bold text-gray-800 dark:text-white">توسعه‌دهنده بازی (Unity 3D)</h3>
-                <span class="text-xs md:text-sm text-pink-600 dark:text-pink-400 font-semibold bg-pink-50 dark:bg-pink-900/30 px-3 py-1 rounded-full">سابقه حرفه‌ای</span>
-              </div>
-              <p class="text-gray-500 dark:text-gray-400 text-sm mb-2 font-medium">استودیوهای توسعه بازی</p>
-              <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">توسعه مکانیک‌های بازی، برنامه‌نویسی با C#، بهینه‌سازی Performance و کار با سیستم‌های فیزیک و انیمیشن. این تجربه دیدگاه مهندسی عمیقی به من برای حل مسائل پیچیده در وب، هوش مصنوعی و امنیت سایبری داده است.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact" class="py-16 md:py-20 bg-white dark:bg-gray-800 transition-colors duration-500">
-    <div class="container mx-auto px-4">
-      <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 md:mb-16 scroll-reveal">
-        <span class="gradient-text">بیایید همکاری کنیم</span>
-      </h2>
-      <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12">
-        <div class="scroll-reveal space-y-6">
-          <h3 class="text-xl md:text-2xl font-bold mb-2 text-gray-800 dark:text-white">پروژه بعدی رو باهم بسازیم</h3>
-          <p class="text-gray-600 dark:text-gray-300 text-sm md:text-base">چه به دنبال طراحی یک وب‌سایت بهینه برای SEO و توسعه با Laravel باشید، چه نیاز به مشاوره در زمینه هوش مصنوعی، امنیت یا پرامپت‌نویسی داشته باشید، من آماده‌ام تا ایده‌های شما را به واقعیت تبدیل کنم.</p>
-          
-          <div class="space-y-4">
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center flex-shrink-0"><i class="fas fa-envelope text-indigo-600 dark:text-indigo-300"></i></div>
-              <div><p class="text-xs text-gray-500 dark:text-gray-400">ایمیل</p><a href="mailto:unity.tim.ir@gmail.com" class="font-medium text-gray-800 dark:text-white hover:text-indigo-600 transition">unity.tim.ir@gmail.com</a></div>
-            </div>
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center flex-shrink-0"><i class="fas fa-phone text-indigo-600 dark:text-indigo-300"></i></div>
-              <div><p class="text-xs text-gray-500 dark:text-gray-400">تماس مستقیم</p><a href="tel:09211243320" class="font-medium text-gray-800 dark:text-white hover:text-indigo-600 transition">09211243320</a></div>
-            </div>
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-[#0A66C2]/10 dark:bg-[#0A66C2]/20 rounded-full flex items-center justify-center flex-shrink-0"><i class="fab fa-linkedin text-[#0A66C2] text-xl"></i></div>
-              <div><p class="text-xs text-gray-500 dark:text-gray-400">لینکدین</p><a href="https://ir.linkedin.com/in/bardia-klidari-64a32a30b" target="_blank" class="font-medium text-gray-800 dark:text-white hover:text-[#0A66C2] transition">linkedin.com/in/bardia-klidari</a></div>
-            </div>
-            <div class="flex items-center space-x-3 space-x-reverse">
-              <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0"><i class="fab fa-github text-gray-800 dark:text-white text-xl"></i></div>
-              <div><p class="text-xs text-gray-500 dark:text-gray-400">گیت‌هاب</p><a href="https://github.com/mahdiklidari190" target="_blank" class="font-medium text-gray-800 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition">github.com/mahdiklidari190</a></div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="scroll-reveal bg-gray-50 dark:bg-gray-900 p-6 md:p-8 rounded-2xl shadow-xl">
-          <h3 class="text-lg md:text-xl font-bold mb-4 text-gray-800 dark:text-white">فرم تماس سریع</h3>
-          <form id="contactForm" class="space-y-4">
-            <input id="contactName" type="text" required placeholder="نام شما" class="w-full px-4 py-3 rounded-lg border dark:border-gray-700 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-            <input id="contactPhone" type="tel" required placeholder="شماره تماس شما (۱۱ رقم)" class="w-full px-4 py-3 rounded-lg border dark:border-gray-700 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-            <textarea id="contactMessage" rows="4" required placeholder="توضیحات پروژه یا سوال شما..." class="w-full px-4 py-3 rounded-lg border dark:border-gray-700 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></textarea>
-            <button type="submit" class="btn-cool w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-bold flex items-center justify-center space-x-2 space-x-reverse text-sm">
-              <i class="fas fa-paper-plane"></i><span>ارسال پیام</span>
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div id="footer-container"></div>
-  <script src="/js/script.js"></script>
+        // ============ PERFORMANCE: Lazy load animations ============
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => {
+                document.querySelectorAll('.blob').forEach(el => {
+                    el.style.willChange = 'transform';
+                });
+            });
+        }
+    </script>
+    <div id="footer-container"></div>
+    <script src="/js/script.js"></script>
 </body>
 </html>
