@@ -111,34 +111,93 @@
         .progress-fill{animation:progressFill 2.5s ease-out forwards}
 
         /* ==========================================
-           BUTTONS - سایز استاندارد موبایل
+           BUTTONS - سایز بهینه برای همه نمایشگرها
            ========================================== */
         .btn-primary,.btn-secondary{
             display:inline-flex;align-items:center;justify-content:center;
             font-weight:700;text-align:center;
             transition:all .3s cubic-bezier(.4,0,.2,1);
             cursor:pointer;text-decoration:none;
-            min-height:44px;
+            min-height:40px;
+            white-space:nowrap;
+            width:auto;
         }
-        /* موبایل کوچک */
+        
+        /* موبایل خیلی کوچک (< 375px) */
         .btn-primary,.btn-secondary{
-            padding:10px 16px;font-size:13px;border-radius:12px;width:100%;
+            padding:8px 14px;font-size:11px;border-radius:10px;
         }
-        /* موبایل بزرگ */
+        
+        /* موبایل (>= 375px) */
+        @media(min-width:375px){
+            .btn-primary,.btn-secondary{
+                padding:10px 16px;font-size:12px;border-radius:12px;
+            }
+        }
+        
+        /* موبایل بزرگ (>= 480px) */
         @media(min-width:480px){
-            .btn-primary,.btn-secondary{padding:12px 20px;font-size:14px;border-radius:14px}
+            .btn-primary,.btn-secondary{
+                padding:11px 18px;font-size:13px;border-radius:12px;
+                min-height:42px;
+            }
         }
-        /* تبلت */
+        
+        /* تبلت (>= 640px) */
         @media(min-width:640px){
-            .btn-primary,.btn-secondary{padding:14px 28px;font-size:15px;border-radius:16px;width:auto}
+            .btn-primary,.btn-secondary{
+                padding:12px 22px;font-size:14px;border-radius:14px;
+                min-height:44px;
+            }
         }
-        /* دسکتاپ */
+        
+        /* تبلت بزرگ (>= 768px) */
+        @media(min-width:768px){
+            .btn-primary,.btn-secondary{
+                padding:13px 26px;font-size:14px;border-radius:14px;
+                min-height:46px;
+            }
+        }
+        
+        /* دسکتاپ (>= 1024px) */
         @media(min-width:1024px){
-            .btn-primary,.btn-secondary{padding:16px 32px;font-size:16px;border-radius:50px}
+            .btn-primary,.btn-secondary{
+                padding:14px 30px;font-size:15px;border-radius:50px;
+                min-height:48px;
+            }
         }
-        .btn-primary:hover{transform:scale(1.05);box-shadow:0 15px 30px -5px rgba(102,126,234,.5)}
-        .btn-secondary:hover{transform:scale(1.05);box-shadow:0 10px 25px -5px rgba(102,126,234,.3)}
+        
+        /* دسکتاپ بزرگ (>= 1280px) */
+        @media(min-width:1280px){
+            .btn-primary,.btn-secondary{
+                padding:16px 34px;font-size:16px;border-radius:50px;
+                min-height:52px;
+            }
+        }
+
+        .btn-primary:hover{transform:scale(1.03);box-shadow:0 15px 30px -5px rgba(102,126,234,.5)}
+        .btn-secondary:hover{transform:scale(1.03);box-shadow:0 10px 25px -5px rgba(102,126,234,.3)}
         .btn-primary:active,.btn-secondary:active{transform:scale(.98)}
+
+        /* فاصله بین دکمه‌ها در موبایل */
+        .btn-group{
+            display:flex;flex-wrap:wrap;gap:8px;
+        }
+        @media(min-width:375px){
+            .btn-group{gap:10px}
+        }
+        @media(min-width:480px){
+            .btn-group{gap:12px}
+        }
+        @media(min-width:640px){
+            .btn-group{flex-direction:row;gap:12px}
+        }
+        @media(min-width:768px){
+            .btn-group{gap:14px}
+        }
+        @media(min-width:1024px){
+            .btn-group{gap:16px}
+        }
 
         /* ===== SCROLL TOP ===== */
         .scroll-top-btn{
@@ -284,12 +343,12 @@
                         <p class="hero-subtitle text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 md:mb-8 leading-relaxed">
                             با بیش از ۶ سال تجربه، پروژه‌های طراحی وبسایت، بهینه‌سازی موتورهای جستجو، ساخت بازی، اپلیکیشن موبایل، اتوماسیون و پیاده‌سازی هوش مصنوعی را از ایده تا اجرا می‌بریم.
                         </p>
-                        <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:gap-4">
+                        <div class="btn-group">
                             <a href="#services" class="btn-primary gradient-bg text-white pulse-ring">
-                                <i class="fas fa-magic ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>شروع پروژه
+                                <i class="fas fa-magic ml-1 sm:ml-1.5 text-xs" aria-hidden="true"></i>شروع پروژه
                             </a>
                             <a href="#portfolio" class="btn-secondary bg-white dark:bg-slate-800 text-gray-800 dark:text-white border-2 border-primary/30">
-                                <i class="fas fa-folder-open ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>مشاهده نمونه کارها
+                                <i class="fas fa-folder-open ml-1 sm:ml-1.5 text-xs" aria-hidden="true"></i>مشاهده نمونه کارها
                             </a>
                         </div>
 
@@ -579,10 +638,10 @@
                         <p class="inline-block bg-white/20 backdrop-blur text-white px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs md:text-sm font-bold mb-3 sm:mb-4 md:mb-6"><i class="fas fa-paper-plane ml-1 sm:ml-2" aria-hidden="true"></i>آماده همکاری؟</p>
                         <h2 id="cta-heading" class="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-white mb-3 sm:mb-4 md:mb-6">پروژه رویایی خود را با BK بسازید</h2>
                         <p class="text-xs sm:text-sm md:text-lg lg:text-xl text-white/90 mb-5 sm:mb-6 md:mb-8 max-w-2xl mx-auto px-2 sm:px-4">از طراحی سایت تا هوش مصنوعی، هر پروژه‌ای که در ذهن دارید را به واقعیت تبدیل می‌کنیم. مشاوره رایگان!</p>
-                        <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:gap-4 justify-center">
-                            <a href="mailto:unity.tim.ir@gmail.com" class="btn-primary bg-white text-primary shadow-xl"><i class="fas fa-envelope ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>ارسال ایمیل</a>
-                            <a href="https://t.me/BK_1ir" class="btn-secondary bg-white/10 backdrop-blur border-2 border-white text-white" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>تماس تلگرام</a>
-                            <a href="tel:09211243320" class="btn-secondary bg-white/10 backdrop-blur border-2 border-white text-white"><i class="fas fa-phone ml-1.5 sm:ml-2 text-xs sm:text-sm" aria-hidden="true"></i>تماس مستقیم</a>
+                        <div class="btn-group">
+                            <a href="mailto:unity.tim.ir@gmail.com" class="btn-primary bg-white text-primary shadow-xl"><i class="fas fa-envelope ml-1 sm:ml-1.5 text-xs" aria-hidden="true"></i>ارسال ایمیل</a>
+                            <a href="https://t.me/BK_1ir" class="btn-secondary bg-white/10 backdrop-blur border-2 border-white text-white" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram ml-1 sm:ml-1.5 text-xs" aria-hidden="true"></i>تماس تلگرام</a>
+                            <a href="tel:09211243320" class="btn-secondary bg-white/10 backdrop-blur border-2 border-white text-white"><i class="fas fa-phone ml-1 sm:ml-1.5 text-xs" aria-hidden="true"></i>تماس مستقیم</a>
                         </div>
                     </div>
                 </div>
