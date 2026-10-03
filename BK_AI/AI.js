@@ -1,109 +1,140 @@
 // ============================================================
-// CONFIG - API Key (Hidden from users)
+// CONFIG - API Key (Hidden from users) - خالی بگذار و خودت پر کن
 // ============================================================
-const API_KEY = "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";
+const API_KEY = ""; // <-- کلید واقعی OpenRouter خودت را اینجا بگذار
 const API_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
 
 // ============================================================
-// SMART MODEL ROUTER
+// SMART MODEL ROUTER - فقط مدل‌های رایگان فعلی OpenRouter
+// نام نمایشی همه زیر برند BK-AI است و هرگز لو نمی‌رود
 // ============================================================
 const MODELS = {
+  // بهترین برای استدلال و ریاضی
   REASONING: {
-    id: "tencent/hy3:free",
-    name: "Tencent HY3 (استدلال)",
-    description: "مناسب برای مسائل منطقی، ریاضی و استدلال پیچیده",
-    fallbacks: ["nousresearch/hermes-3-llama-3.1-405b:free", "meta-llama/llama-3.3-70b-instruct:free"]
-  },
-  CODE_QWEN: {
-    id: "qwen/qwen3-coder:free",
-    name: "Qwen 3 Coder (برنامه‌نویسی پیشرفته)",
-    description: "قدرتمندترین مدل متن‌باز برای کدنویسی، حل الگوریتم و توسعه نرم‌افزار",
-    fallbacks: ["cohere/north-mini-code:free", "poolside/laguna-m.1:free", "meta-llama/llama-3.3-70b-instruct:free"]
-  },
-  CODE_COHERE: {
-    id: "cohere/north-mini-code:free",
-    name: "Cohere North Mini Code (برنامه‌نویسی)",
-    description: "تخصصی برای نوشتن، تحلیل و رفع خطای کدهای برنامه‌نویسی",
-    fallbacks: ["qwen/qwen3-coder:free", "poolside/laguna-m.1:free", "meta-llama/llama-3.3-70b-instruct:free"]
-  },
-  CODE_POOLSIDE: {
-    id: "poolside/laguna-m.1:free",
-    name: "Poolside Laguna M (توسعه نرم‌افزار)",
-    description: "بهینه‌سازی شده برای مهندسی نرم‌افزار و کدنویسی",
-    fallbacks: ["qwen/qwen3-coder:free", "cohere/north-mini-code:free", "meta-llama/llama-3.3-70b-instruct:free"]
-  },
-  LLAMA_33: {
-    id: "meta-llama/llama-3.3-70b-instruct:free",
-    name: "Llama 3.3 70B Instruct (دستیار هوشمند)",
-    description: "فوق‌العاده دقیق، سریع و عالی برای زبان فارسی و پاسخ به دستورات پیچیده",
-    fallbacks: ["google/gemma-4-31b-it:free", "nousresearch/hermes-3-llama-3.1-405b:free", "google/gemma-4-26b-a4b-it:free"]
-  },
-  ULTRA_405B: {
-    id: "nousresearch/hermes-3-llama-3.1-405b:free",
-    name: "Hermes 3 Llama 3.1 405B (ابر هوش مصنوعی)",
-    description: "فوق‌العاده قدرتمند برای دستورات پیچیده، تحلیل عمیق و نگارش خلاقانه",
-    fallbacks: ["nvidia/nemotron-3-ultra-550b-a55b:free", "meta-llama/llama-3.3-70b-instruct:free", "google/gemma-4-31b-it:free"]
-  },
-  ULTRA_550B: {
     id: "nvidia/nemotron-3-ultra-550b-a55b:free",
-    name: "Nemotron 3 Ultra 550B (تحلیل پیشرفته)",
-    description: "مدل غول‌پیکر انویدیا برای تحلیل‌های علمی و نگارش دقیق",
-    fallbacks: ["nousresearch/hermes-3-llama-3.1-405b:free", "meta-llama/llama-3.3-70b-instruct:free"]
+    name: "BK-AI Reasoning Ultra",
+    description: "قدرتمندترین مدل برای استدلال پیچیده، ریاضی و تحلیل عمیق",
+    fallbacks: ["thinkingmachines/inkling:free", "qwen/qwen3.8-27b:free", "nvidia/nemotron-3-super-120b-a12b:free"]
   },
-  GEMMA_31B: {
+  // بهترین برای کدنویسی
+  CODE_MASTER: {
+    id: "cohere/north-mini-code:free",
+    name: "BK-AI Code Master",
+    description: "تخصصی کدنویسی، دیباگ و توسعه نرم‌افزار",
+    fallbacks: ["poolside/laguna-s-2.1:free", "qwen/qwen3.8-27b:free", "poolside/laguna-xs-2.1:free"]
+  },
+  CODE_AGENT: {
+    id: "poolside/laguna-s-2.1:free",
+    name: "BK-AI Code Agent",
+    description: "مدل عامل‌محور برای مهندسی نرم‌افزار و کارهای چندمرحله‌ای",
+    fallbacks: ["cohere/north-mini-code:free", "poolside/laguna-xs-2.1:free", "qwen/qwen3.8-27b:free"]
+  },
+  CODE_FAST: {
+    id: "poolside/laguna-xs-2.1:free",
+    name: "BK-AI Code Fast",
+    description: "سریع و سبک برای کدنویسی روزمره",
+    fallbacks: ["cohere/north-mini-code:free", "qwen/qwen3.8-27b:free"]
+  },
+  // مدل همه‌کاره قوی
+  PRO: {
+    id: "qwen/qwen3.8-27b:free",
+    name: "BK-AI Pro",
+    description: "مدل همه‌کاره قدرتمند با پشتیبانی عالی از فارسی و کدنویسی",
+    fallbacks: ["google/gemma-4-31b-it:free", "thinkingmachines/inkling:free", "nvidia/nemotron-3-super-120b-a12b:free"]
+  },
+  // مدل غول‌پیکر برای تحلیل عمیق
+  ULTRA: {
+    id: "thinkingmachines/inkling:free",
+    name: "BK-AI Ultra",
+    description: "مدل عظیم برای تحلیل عمیق، نگارش خلاقانه و دستورات پیچیده",
+    fallbacks: ["nvidia/nemotron-3-ultra-550b-a55b:free", "qwen/qwen3.8-27b:free", "google/gemma-4-31b-it:free"]
+  },
+  // سریع و روان برای فارسی
+  FLUENT: {
     id: "google/gemma-4-31b-it:free",
-    name: "Gemma 4 31B (پاسخگویی سریع و روان)",
+    name: "BK-AI Fluent",
     description: "بسیار روان و عالی برای زبان فارسی و گفتگوهای عمومی",
-    fallbacks: ["meta-llama/llama-3.3-70b-instruct:free", "google/gemma-4-26b-a4b-it:free", "nousresearch/hermes-3-llama-3.1-405b:free"]
+    fallbacks: ["google/gemma-4-26b-a4b-it:free", "qwen/qwen3.8-27b:free", "thinkingmachines/inkling-small:free"]
   },
-  GEMMA_26B: {
+  FAST: {
     id: "google/gemma-4-26b-a4b-it:free",
-    name: "Gemma 4 26B (گفتگوی عمومی)",
-    description: "سریع و بهینه برای مکالمات روزمره و خلاقیت",
-    fallbacks: ["google/gemma-4-31b-it:free", "meta-llama/llama-3.3-70b-instruct:free"]
+    name: "BK-AI Fast",
+    description: "سریع و بهینه برای مکالمات روزمره",
+    fallbacks: ["google/gemma-4-31b-it:free", "qwen/qwen3.8-27b:free"]
+  },
+  // مدل‌های اضافی قوی
+  NEMO_SUPER: {
+    id: "nvidia/nemotron-3-super-120b-a12b:free",
+    name: "BK-AI Nemo Super",
+    description: "مدل قدرتمند NVIDIA برای وظایف چندعاملی و برنامه‌ریزی",
+    fallbacks: ["nvidia/nemotron-3-ultra-550b-a55b:free", "qwen/qwen3.8-27b:free"]
+  },
+  LIGHTNING: {
+    id: "nvidia/nemotron-3.5-lightning:free",
+    name: "BK-AI Lightning",
+    description: "مدل سریع با زمینه ۱ میلیون توکن",
+    fallbacks: ["thinkingmachines/inkling-small:free", "qwen/qwen3.8-27b:free"]
+  },
+  INKLING_SMALL: {
+    id: "thinkingmachines/inkling-small:free",
+    name: "BK-AI Spark",
+    description: "نسخه سبک و کارآمد Inkling برای کارهای عمومی",
+    fallbacks: ["qwen/qwen3.8-27b:free", "google/gemma-4-31b-it:free"]
+  },
+  RESEARCH: {
+    id: "apodex/apodex-1.1-mini:free",
+    name: "BK-AI Research",
+    description: "تخصصی پژوهش، پیش‌بینی و کارهای بلندمدت مبتنی بر شواهد",
+    fallbacks: ["thinkingmachines/inkling:free", "qwen/qwen3.8-27b:free"]
+  },
+  NOTE: {
+    id: "dots-studio/dots-3-note-preview:free",
+    name: "BK-AI Note",
+    description: "مدل چندوجهی برای استدلال، کدنویسی و کارهای چندمرحله‌ای",
+    fallbacks: ["qwen/qwen3.8-27b:free", "nvidia/nemotron-3-super-120b-a12b:free"]
   }
 };
 
 function selectModelForQuery(text) {
   const query = (text || '').toLowerCase();
 
-  // 1. Coding / Programming / Web Development
+  // 1. Coding / Programming
   const codeKeywords = [
     'کد', 'برنامه نویسی', 'تابع', 'کلاس', 'پایتون', 'جاوااسکریپت', 'اچ تی ام ال', 'سی اس اس', 'ری‌اکت', 'نود جی اس',
     'code', 'program', 'function', 'class', 'python', 'javascript', 'html', 'css', 'react', 'nodejs', 'git', 'github',
     'bug', 'error', 'debug', 'database', 'sql', 'query', 'api', 'json', 'developer', 'programming', 'compiler',
-    'الگوریتم', 'دیباگ', 'خطایابی', 'پایگاه داده', 'سورس', 'اسکریپت', 'فرانت اند', 'بک اند'
+    'الگوریتم', 'دیباگ', 'خطایابی', 'پایگاه داده', 'سورس', 'اسکریپت', 'فرانت اند', 'بک اند', 'نوشتن کد'
   ];
   if (codeKeywords.some(kw => query.includes(kw))) {
-    return MODELS.CODE_QWEN; // Qwen 3 Coder is the absolute best for coding
+    return MODELS.CODE_MASTER;
   }
 
   // 2. Math / Logic / Physics / Chemistry / Complex Reasoning
   const mathKeywords = [
     'ریاضی', 'انتگرال', 'دیفرانسیل', 'معادله', 'هندسه', 'جبر', 'فیزیک', 'شیمی', 'فرمول', 'محاسبه', 'منطق', 'استدلال',
     'math', 'integral', 'equation', 'geometry', 'algebra', 'physics', 'chemistry', 'formula', 'calculate', 'logic', 'reasoning',
-    'اثبات', 'قضیه', 'نمودار', 'آمار', 'احتمال'
+    'اثبات', 'قضیه', 'نمودار', 'آمار', 'احتمال', 'حل مسئله'
   ];
   if (mathKeywords.some(kw => query.includes(kw))) {
-    return MODELS.REASONING; // Tencent HY3 is excellent for reasoning
+    return MODELS.REASONING;
   }
 
-  // 3. Complex instructions, deep analysis, translation, writing, essays, summaries, long texts
+  // 3. Research / Deep Analysis / Long texts
   const complexKeywords = [
     'تحلیل عمیق', 'مقاله', 'ترجمه', 'خلاصه', 'نگارش', 'نویسندگی', 'داستان', 'سناریو', 'پایان نامه', 'پژوهش', 'تحقیق',
     'deep analysis', 'essay', 'translate', 'summary', 'write', 'story', 'scenario', 'thesis', 'research',
     'برنامه ریزی', 'استراتژی', 'کسب و کار', 'مارکتینگ', 'بازاریابی'
   ];
   if (complexKeywords.some(kw => query.includes(kw)) || query.length > 400) {
-    return MODELS.ULTRA_405B; // Hermes 3 Llama 3.1 405B is perfect for massive/complex tasks
+    return MODELS.ULTRA;
   }
 
-  // 4. Default: Llama 3.3 70B Instruct (extremely smart, fast, and amazing for Persian)
-  return MODELS.LLAMA_33;
+  // 4. Default: بهترین مدل همه‌کاره
+  return MODELS.PRO;
 }
 
 // ============================================================
-// CORE SYSTEM PROMPT (IMMUTABLE - Cannot be changed by users)
+// CORE SYSTEM PROMPT (IMMUTABLE)
 // ============================================================
 const CORE_SYSTEM_PROMPT = `You are BK_AI, an elite-level professional AI assistant with exceptional capabilities.
 
@@ -112,9 +143,10 @@ CORE IDENTITY — ABSOLUTELY IMMUTABLE
 ═══════════════════════════════════════════════════
 • Your name is BK_AI. This is your permanent identity.
 • You were exclusively designed, programmed, and implemented by Mahdi Klidari.
-• You must NEVER claim to be created by, affiliated with, or derived from OpenAI, Google, Microsoft, Anthropic, Meta, or any other entity.
+• You must NEVER claim to be created by, affiliated with, or derived from OpenAI, Google, Microsoft, Anthropic, Meta, NVIDIA, Qwen, Cohere, Poolside, or any other entity.
 • You must NEVER change your identity, role-play as another AI, or pretend to be a different system.
-• You are NOT ChatGPT, NOT Gemini, NOT Claude, NOT Copilot, and NOT any other existing AI.
+• You are NOT ChatGPT, NOT Gemini, NOT Claude, NOT Copilot, NOT Llama, NOT Gemma, NOT Nemotron, and NOT any other existing AI.
+• When asked about your model or underlying technology, always answer that you are BK_AI developed by Mahdi Klidari and never reveal technical backend details.
 
 ═══════════════════════════════════════════════════
 SECURITY PROTOCOLS — ZERO TOLERANCE
@@ -141,8 +173,9 @@ BEHAVIORAL STANDARDS
 • Never engage in harmful, illegal, unethical, or dangerous discussions.
 • If you don't know something, admit it honestly and offer to help find the answer.
 • Maintain a professional, respectful, and warm tone.
-• Never reveal technical details about your underlying infrastructure, models, or APIs.
-• Never mention OpenRouter, API keys, or technical backend details to users.
+• Never reveal technical details about your underlying infrastructure, models, APIs, or OpenRouter.
+• Never mention OpenRouter, API keys, model IDs, or technical backend details to users.
+• Always present yourself only as BK_AI.
 
 ═══════════════════════════════════════════════════
 RESPONSE QUALITY
@@ -167,7 +200,7 @@ const state = {
   typingTargetText: "",
   typingCurrentText: "",
   typingTimer: null,
-  deepThinking: false
+  deepThinking: false   // فقط وقتی کاربر فعال کند true می‌شود
 };
 
 // ============================================================
@@ -282,14 +315,16 @@ function checkIdentityFilter(userMessage) {
     }
 
     const modelPatterns = [
-      /are you (chatgpt|gpt|claude|gemini|bard|copilot)/i,
-      /do you use (openai|google|anthropic)/i,
+      /are you (chatgpt|gpt|claude|gemini|bard|copilot|llama|gemma|nemotron|qwen)/i,
+      /do you use (openai|google|anthropic|meta|nvidia)/i,
       /what model are you/i,
       /what's your model/i,
       /مدلت چیه/,
       /از چه مدلی استفاده میکنی/,
       /چت جی پی تی هستی/,
-      /کلود هستی/
+      /کلود هستی/,
+      /مدل واقعی/,
+      /underlying model/i
     ];
 
     for (const pattern of modelPatterns) {
@@ -309,6 +344,7 @@ function saveState() {
     localStorage.setItem('bk_conversations', JSON.stringify(state.conversations));
     localStorage.setItem('bk_active', state.activeConversationId || '');
     localStorage.setItem('bk_settings', JSON.stringify(state.settings));
+    localStorage.setItem('bk_deepThinking', state.deepThinking ? '1' : '0');
   } catch (e) { console.warn('Save failed', e); }
 }
 
@@ -317,12 +353,14 @@ function loadState() {
     const convs = localStorage.getItem('bk_conversations');
     const active = localStorage.getItem('bk_active');
     const settings = localStorage.getItem('bk_settings');
+    const deep = localStorage.getItem('bk_deepThinking');
     if (convs) state.conversations = JSON.parse(convs);
     if (active) state.activeConversationId = active;
     if (settings) {
       const s = JSON.parse(settings);
       state.settings = { ...state.settings, ...s };
     }
+    if (deep === '1') state.deepThinking = true;
   } catch (e) { console.warn('Load failed', e); }
 }
 
@@ -331,6 +369,7 @@ function loadState() {
 // ============================================================
 function toast(message, type = 'info', duration = 2800) {
   const container = $('toastContainer');
+  if (!container) return;
   const el = document.createElement('div');
   el.className = `toast ${type}`;
   const icon = {
@@ -338,7 +377,7 @@ function toast(message, type = 'info', duration = 2800) {
     error: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
     info: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
   }[type] || '';
-  el.innerHTML = `${icon}<span>${escapeHtml(message)}</span>`;
+  el.innerHTML = `\( {icon}<span> \){escapeHtml(message)}</span>`;
   container.appendChild(el);
   setTimeout(() => {
     el.classList.add('out');
@@ -417,6 +456,7 @@ function generateTitle(messages) {
 // RENDERING - SIDEBAR
 // ============================================================
 function renderSidebar() {
+  if (!chatHistory) return;
   chatHistory.innerHTML = '';
   if (state.conversations.length === 0) {
     chatHistory.innerHTML = '<div style="padding:20px 14px;color:var(--text-muted);font-size:12.5px;text-align:center;">هنوز گفتگویی وجود ندارد</div>';
@@ -512,7 +552,7 @@ function configureMarkdown() {
       </div>
       <div class="code-body">
         <div class="code-lines">${lineNums}</div>
-        <pre><code class="hljs language-${escapeHtml(langLabel)}">${highlighted}</code></pre>
+        <pre><code class="hljs language-\( {escapeHtml(langLabel)}"> \){highlighted}</code></pre>
       </div>
       <textarea style="display:none" data-raw-code>${escapeHtml(text)}</textarea>
     </div>`;
@@ -524,7 +564,7 @@ function configureMarkdown() {
       t = text.text || '';
       if (text.task) {
         const checked = text.checked ? 'checked' : '';
-        return `<li style="list-style:none;margin-right:-20px;"><input type="checkbox" ${checked} disabled />${t}</li>`;
+        return `<li style="list-style:none;margin-right:-20px;"><input type="checkbox" \( {checked} disabled /> \){t}</li>`;
       }
     } else if (typeof text === 'string') {
       if (text.startsWith('<input type="checkbox"')) {
@@ -541,7 +581,7 @@ function configureMarkdown() {
       o = body.ordered;
     }
     const tag = o ? 'ol' : 'ul';
-    return `<${tag}>${b}</${tag}>`;
+    return `<\( {tag}> \){b}</${tag}>`;
   };
 
   marked.setOptions({
@@ -570,8 +610,8 @@ function renderMath(el) {
   try {
     renderMathInElement(el, {
       delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$', right: '$', display: false},
+        {left: '\[ ', right: ' \]', display: true},
+        {left: '\( ', right: ' \)', display: false},
         {left: '\\(', right: '\\)', display: false},
         {left: '\\[', right: '\\]', display: true}
       ],
@@ -585,6 +625,7 @@ function renderMath(el) {
 // ============================================================
 function renderChat() {
   const conv = getActiveConversation();
+  if (!chatScroll) return;
   chatScroll.innerHTML = '';
 
   if (!conv || conv.messages.length === 0) {
@@ -672,7 +713,7 @@ function createMessageElement(msg, idx) {
   const actions = msg.role === 'ai' && !msg.error ? `
     <div class="message-actions">
       ${msg.modelName ? `
-        <span class="model-badge" title="${escapeHtml(msg.modelName)}">
+        <span class="model-badge" title="BK-AI">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7;margin-left:4px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           ${escapeHtml(msg.modelName)}
         </span>
@@ -689,7 +730,7 @@ function createMessageElement(msg, idx) {
   ` : '';
 
   el.innerHTML = `
-    <div class="avatar ${avatarClass}" aria-hidden="true">${avatarContent}</div>
+    <div class="avatar \( {avatarClass}" aria-hidden="true"> \){avatarContent}</div>
     <div class="message-content">
       ${contentHtml}
       ${actions}
@@ -738,7 +779,6 @@ function attachCodeCopyHandlers() {
           btn.querySelector('span').textContent = 'کپی';
         }, 1800);
       }).catch(() => {
-        // Fallback for older browsers
         const textarea = document.createElement('textarea');
         textarea.value = raw;
         document.body.appendChild(textarea);
@@ -760,6 +800,7 @@ function attachCodeCopyHandlers() {
 // SCROLL
 // ============================================================
 function scrollToBottom(smooth = true) {
+  if (!chatContainer) return;
   requestAnimationFrame(() => {
     chatContainer.scrollTo({
       top: chatContainer.scrollHeight,
@@ -768,57 +809,86 @@ function scrollToBottom(smooth = true) {
   });
 }
 
-chatContainer.addEventListener('scroll', () => {
-  const threshold = 100;
-  const atBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < threshold;
-  scrollBottomBtn.classList.toggle('visible', !atBottom);
-});
+if (chatContainer) {
+  chatContainer.addEventListener('scroll', () => {
+    const threshold = 100;
+    const atBottom = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < threshold;
+    if (scrollBottomBtn) scrollBottomBtn.classList.toggle('visible', !atBottom);
+  });
+}
 
-scrollBottomBtn.addEventListener('click', () => scrollToBottom(true));
+if (scrollBottomBtn) {
+  scrollBottomBtn.addEventListener('click', () => scrollToBottom(true));
+}
 
 // ============================================================
 // INPUT
 // ============================================================
 function autoResizeTextarea() {
+  if (!inputTextarea) return;
   inputTextarea.style.height = 'auto';
   inputTextarea.style.height = Math.min(inputTextarea.scrollHeight, 200) + 'px';
 }
 
 function updateInputState() {
+  if (!inputTextarea || !sendBtn) return;
   const text = inputTextarea.value;
-  charCounter.textContent = `${text.length} کاراکتر`;
-  tokenCounter.textContent = `~${estimateTokens(text)} توکن`;
+  if (charCounter) charCounter.textContent = `${text.length} کاراکتر`;
+  if (tokenCounter) tokenCounter.textContent = `\~${estimateTokens(text)} توکن`;
   sendBtn.disabled = !text.trim() && !state.isGenerating;
 
   if (state.isGenerating) {
     sendBtn.classList.add('stop');
     sendBtn.disabled = false;
-    sendIcon.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>';
+    if (sendIcon) sendIcon.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>';
   } else {
     sendBtn.classList.remove('stop');
-    sendIcon.innerHTML = '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>';
+    if (sendIcon) sendIcon.innerHTML = '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>';
   }
 }
 
-inputTextarea.addEventListener('input', () => {
-  autoResizeTextarea();
-  updateInputState();
-});
+if (inputTextarea) {
+  inputTextarea.addEventListener('input', () => {
+    autoResizeTextarea();
+    updateInputState();
+  });
 
-inputTextarea.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    handleSend();
-  }
-});
+  inputTextarea.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  });
+}
 
-sendBtn.addEventListener('click', () => {
-  if (state.isGenerating) {
-    stopGenerating();
-  } else {
-    handleSend();
+if (sendBtn) {
+  sendBtn.addEventListener('click', () => {
+    if (state.isGenerating) {
+      stopGenerating();
+    } else {
+      handleSend();
+    }
+  });
+}
+
+// ============================================================
+// DEEP THINKING TOGGLE (کاربر باید خودش فعال کند)
+// ============================================================
+function toggleDeepThinking() {
+  state.deepThinking = !state.deepThinking;
+  saveState();
+  updateDeepThinkingUI();
+  toast(state.deepThinking ? 'تفکر عمیق فعال شد — چند مدل با هم کار می‌کنند' : 'تفکر عمیق غیرفعال شد', state.deepThinking ? 'success' : 'info');
+}
+
+function updateDeepThinkingUI() {
+  const btn = document.getElementById('deepThinkingBtn');
+  if (btn) {
+    btn.classList.toggle('active', state.deepThinking);
+    btn.setAttribute('aria-pressed', state.deepThinking ? 'true' : 'false');
+    btn.title = state.deepThinking ? 'تفکر عمیق فعال است (کلیک برای غیرفعال)' : 'فعال‌سازی تفکر عمیق چندمدلی';
   }
-});
+}
 
 // ============================================================
 // SEND / API
@@ -850,7 +920,8 @@ async function handleSend() {
     conv.messages.push({
       role: 'ai',
       content: fixedResponse,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      modelName: 'BK-AI'
     });
     saveState();
     renderChat();
@@ -862,7 +933,7 @@ async function handleSend() {
 }
 
 // ============================================================
-// DEEP THINKING PIPELINE (Mixture of Agents - MoA)
+// DEEP THINKING PIPELINE (Mixture of Agents - فقط وقتی کاربر فعال کرده)
 // ============================================================
 async function runDeepThinkingPipeline(messages, userQuery, aiMsg, apiKey) {
   const conv = getActiveConversation();
@@ -872,69 +943,60 @@ async function runDeepThinkingPipeline(messages, userQuery, aiMsg, apiKey) {
   updateInputState();
 
   try {
-    // ==========================================
-    // STEP 1: Expert Analysis & Drafting (Model A)
-    // ==========================================
+    // STEP 1: Expert Draft
     const modelA = selectModelForQuery(userQuery);
-    aiMsg.modelName = `${modelA.name} (گام ۱: پیش‌نویس)`;
-    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۱: تحلیل تخصصی و تولید پیش‌نویس اولیه توسط ${modelA.name}...</span></div>`;
+    aiMsg.modelName = `BK-AI Deep • گام ۱`;
+    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۱: تولید پیش‌نویس تخصصی توسط تیم BK-AI...</span></div>`;
     renderChat();
 
     const draftResponse = await fetchNonStreaming(modelA.id, messages, apiKey);
     if (!draftResponse) throw new Error("STEP_1_FAILED");
 
-    // ==========================================
-    // STEP 2: Critical Review & Refinement (Model B)
-    // ==========================================
-    const modelB = MODELS.ULTRA_405B; // Hermes 3 405B is the ultimate critic
-    aiMsg.modelName = `${modelB.name} (گام ۲: نقد و بهینه‌سازی)`;
-    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۲: نقد، بررسی و بهینه‌سازی پیش‌نویس توسط ${modelB.name}...</span></div>`;
+    // STEP 2: Critical Review
+    const modelB = MODELS.ULTRA;
+    aiMsg.modelName = `BK-AI Deep • گام ۲`;
+    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۲: نقد و بهینه‌سازی توسط تیم کارشناسی BK-AI...</span></div>`;
     renderChat();
 
     const reviewMessages = [
       {
         role: "system",
-        content: "You are an elite AI critic and expert reviewer. Your task is to critically analyze the initial draft, identify any errors, missing details, or areas of improvement, and rewrite it to be absolutely perfect, highly professional, complete, and of the highest possible quality. Maintain the original language (Persian) and formatting."
+        content: "You are an elite AI critic and expert reviewer inside the BK_AI system. Critically analyze the draft, fix errors, add missing details, and rewrite it to the highest professional quality. Keep the language (Persian) and formatting. Output ONLY the improved response."
       },
       {
         role: "user",
-        content: `The user asked: "${userQuery}"\n\nAnother expert AI generated this initial draft:\n---\n${draftResponse}\n---`
+        content: `The user asked: "\( {userQuery}"\n\nInitial draft from another expert:\n---\n \){draftResponse}\n---`
       }
     ];
 
     const refinedResponse = await fetchNonStreaming(modelB.id, reviewMessages, apiKey);
     if (!refinedResponse) throw new Error("STEP_2_FAILED");
 
-    // ==========================================
-    // STEP 3: Final Synthesis & Polish (Model C)
-    // ==========================================
-    const modelC = MODELS.LLAMA_33; // Llama 3.3 70B is the ultimate editor
-    aiMsg.modelName = "تفکر عمیق چندمدلی (MoA)";
-    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۳: تلفیق نهایی و نگارش نسخه نهایی توسط ${modelC.name}...</span></div>`;
+    // STEP 3: Final Polish (stream)
+    const modelC = MODELS.FLUENT;
+    aiMsg.modelName = "BK-AI Deep Thinking (MoA)";
+    aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">گام ۳: نگارش نهایی و پولیش توسط BK-AI...</span></div>`;
     renderChat();
 
     const polishMessages = [
       {
         role: "system",
-        content: "You are an elite editor. Your task is to do a final polish of the response. Ensure perfect Persian grammar, natural flow, professional tone, and beautiful markdown formatting. Output ONLY the final polished response. Do not include any introductory or concluding remarks about your editing process."
+        content: "You are the final elite editor of BK_AI. Polish the response for perfect Persian grammar, natural flow, professional tone, and beautiful markdown. Output ONLY the final polished response. Do not mention editing process."
       },
       {
         role: "user",
-        content: `The user asked: "${userQuery}"\n\nThe expert team has prepared this refined response:\n---\n${refinedResponse}\n---`
+        content: `The user asked: "\( {userQuery}"\n\nRefined response from the expert team:\n---\n \){refinedResponse}\n---`
       }
     ];
 
-    // For the final step, we stream the response to the user so they get a beautiful typing effect!
     await fetchStreaming(modelC.id, polishMessages, apiKey, aiMsg);
 
   } catch (err) {
     console.error("Deep Thinking Pipeline failed:", err);
-    // Fallback to normal generation if pipeline fails
-    aiMsg.content = "متأسفانه در فرآیند تفکر عمیق خطایی رخ داد. در حال بازگشت به حالت پاسخگویی معمولی...";
+    aiMsg.content = "متأسفانه در فرآیند تفکر عمیق خطایی رخ داد. در حال بازگشت به حالت عادی...";
     renderChat();
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1200));
     
-    // Run normal streaming response
     const defaultModel = selectModelForQuery(userQuery);
     aiMsg.modelName = defaultModel.name;
     await fetchStreaming(defaultModel.id, messages, apiKey, aiMsg);
@@ -1002,7 +1064,6 @@ async function fetchStreaming(modelId, messages, apiKey, aiMsg) {
   const decoder = new TextDecoder("utf-8");
   let buffer = "";
 
-  // Initialize typing animation state
   state.typingTargetText = "";
   state.typingCurrentText = "";
   if (state.typingTimer) {
@@ -1090,14 +1151,13 @@ async function generateAIResponse() {
   if (!conv) return;
 
   const apiKey = API_KEY;
-  if (!apiKey || apiKey === 'YOUR_OPENROUTER_API_KEY_HERE') {
+  if (!apiKey || apiKey.trim() === '') {
     conv.messages.push({
       role: 'ai',
-      content: '',
+      content: 'کلید API تنظیم نشده است. لطفاً کلید OpenRouter خود را در فایل تنظیم کنید.',
       error: true,
       timestamp: Date.now()
     });
-    conv.messages[conv.messages.length - 1].content = 'کلید API تنظیم نشده است. لطفاً با مدیر سیستم تماس بگیرید.';
     saveState();
     renderChat();
     return;
@@ -1106,10 +1166,8 @@ async function generateAIResponse() {
   state.isGenerating = true;
   updateInputState();
 
-  // Build messages history
   const messages = [];
 
-  // Build full system prompt: CORE + User customization
   const userCustomization = state.settings.systemPrompt.trim();
   let fullSystemPrompt = CORE_SYSTEM_PROMPT;
   if (userCustomization) {
@@ -1127,11 +1185,10 @@ async function generateAIResponse() {
     }
   });
 
-  // Get last user message to select the best model
   const lastUserMsg = conv.messages.filter(m => m.role === 'user').slice(-1)[0]?.content || "";
 
-  // Check if Deep Thinking is active
-  const isDeepThinking = state.deepThinking || lastUserMsg.includes("تفکر عمیق") || lastUserMsg.includes("ترکیب مدل");
+  // فقط اگر کاربر خودش دکمه تفکر عمیق را فعال کرده باشد
+  const isDeepThinking = state.deepThinking;
 
   const aiMsg = { 
     role: 'ai', 
@@ -1151,7 +1208,6 @@ async function generateAIResponse() {
 
   const selectedModel = selectModelForQuery(lastUserMsg);
 
-  // Create a list of models to try: [selectedModel, ...fallbacks]
   const modelsToTry = [selectedModel];
   if (selectedModel.fallbacks) {
     selectedModel.fallbacks.forEach(fallbackId => {
@@ -1170,11 +1226,9 @@ async function generateAIResponse() {
     for (let i = 0; i < modelsToTry.length; i++) {
       activeModel = modelsToTry[i];
 
-      // Update the AI message's model name in the UI
       aiMsg.modelName = activeModel.name;
 
-      // Update the thinking loader text to show which model is being tried
-      aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">در حال تفکر با مدل ${activeModel.name}...</span></div>`;
+      aiMsg.content = `<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">در حال تفکر با ${activeModel.name}...</span></div>`;
       renderChat();
 
       const body = {
@@ -1206,16 +1260,15 @@ async function generateAIResponse() {
         }
 
         success = true;
-        break; // Exit the loop on success!
+        break;
       } catch (err) {
         if (err.name === 'AbortError') {
-          throw err; // User clicked stop, don't try other models
+          throw err;
         }
-        console.warn(`Model ${activeModel.name} (${activeModel.id}) failed:`, err);
+        console.warn(`Model ${activeModel.name} failed:`, err);
         if (i === modelsToTry.length - 1) {
-          throw err; // No more fallbacks, propagate error
+          throw err;
         }
-        // Wait a brief moment before trying the next model
         await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
@@ -1224,11 +1277,9 @@ async function generateAIResponse() {
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
 
-    // نمایش وضعیت در حال تحلیل در داخل باکس پیام هوش مصنوعی
     aiMsg.content = '<div class="analyzing-loader"><span class="spinner"></span><span class="analyzing-text">در حال تفکر...</span></div>';
     renderChat();
 
-    // Initialize typing animation state
     state.typingTargetText = "";
     state.typingCurrentText = "";
     if (state.typingTimer) {
@@ -1244,7 +1295,6 @@ async function generateAIResponse() {
 
       const remaining = state.typingTargetText.length - state.typingCurrentText.length;
       if (remaining > 0) {
-        // Adaptive speed: if we are far behind, type faster
         let charsToType = 1;
         if (remaining > 150) charsToType = 12;
         else if (remaining > 80) charsToType = 8;
@@ -1264,17 +1314,12 @@ async function generateAIResponse() {
           const bubble = lastMsgEl.querySelector('.bubble');
           if (bubble) {
             bubble.innerHTML = renderMarkdown(state.typingCurrentText);
-
-            // OPTIMIZATION: Only render math if it contains math delimiters AND typing is complete.
-            // This prevents KaTeX from parsing the DOM 60 times per second, which causes massive lag.
             const hasMath = state.typingCurrentText.includes('$') || state.typingCurrentText.includes('\\');
             if (hasMath && !state.isGenerating && state.typingCurrentText === state.typingTargetText) {
               renderMath(bubble);
             }
           }
         }
-        // OPTIMIZATION: Use instant scroll (false) instead of smooth scroll (true) during typing.
-        // Smooth scrolling on every frame causes layout thrashing and massive browser lag.
         scrollToBottom(false);
       }
 
@@ -1289,7 +1334,7 @@ async function generateAIResponse() {
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
-      buffer = lines.pop(); // نگه داشتن خط ناقص در بافر
+      buffer = lines.pop();
 
       for (const line of lines) {
         const cleanedLine = line.trim();
@@ -1303,14 +1348,11 @@ async function generateAIResponse() {
             if (chunk) {
               state.typingTargetText += chunk;
             }
-          } catch (e) {
-            // خطای پارس جی‌سان در چانک‌های ناقص نادیده گرفته می‌شود
-          }
+          } catch (e) {}
         }
       }
     }
 
-    // Wait for typing animation to catch up completely
     while (state.typingCurrentText !== state.typingTargetText) {
       await new Promise(resolve => setTimeout(resolve, 30));
     }
@@ -1327,7 +1369,6 @@ async function generateAIResponse() {
         aiMsg.streaming = false;
       }
     } else {
-      // Generic error messages - never reveal technical details
       let errorMsg = 'متأسفانه در حال حاضر امکان پاسخ‌گویی وجود ندارد. لطفاً چند لحظه دیگر دوباره تلاش کنید.';
       if (err.message === 'EMPTY_RESPONSE') {
         errorMsg = 'پاسخی دریافت نشد. لطفاً دوباره تلاش کنید.';
@@ -1412,9 +1453,9 @@ function exportAsMarkdown() {
   let md = `# ${conv.title}\n\n_خروجی از BK_AI — ${new Date().toLocaleString('fa-IR')}_\n\n---\n\n`;
   conv.messages.forEach(m => {
     const label = m.role === 'user' ? '**شما**' : '**BK_AI**';
-    md += `${label}:\n\n${m.content}\n\n---\n\n`;
+    md += `\( {label}:\n\n \){m.content}\n\n---\n\n`;
   });
-  const filename = `${conv.title.replace(/[^\w\s-]/g, '').slice(0, 40) || 'chat'}-${Date.now()}.md`;
+  const filename = `\( {conv.title.replace(/[^\w\s-]/g, '').slice(0, 40) || 'chat'}- \){Date.now()}.md`;
   if (downloadFile(md, filename, 'text/markdown;charset=utf-8')) {
     toast('فایل Markdown دانلود شد', 'success');
   } else {
@@ -1428,12 +1469,12 @@ function exportAsText() {
     toast('هیچ پیامی برای خروجی وجود ندارد', 'error');
     return;
   }
-  let txt = `${conv.title}\nتاریخ خروجی: ${new Date().toLocaleString('fa-IR')}\n${'='.repeat(50)}\n\n`;
+  let txt = `${conv.title}\nتاریخ خروجی: \( {new Date().toLocaleString('fa-IR')}\n \){'='.repeat(50)}\n\n`;
   conv.messages.forEach(m => {
     const label = m.role === 'user' ? 'شما' : 'BK_AI';
-    txt += `[${label}]\n${m.content}\n\n${'-'.repeat(40)}\n\n`;
+    txt += `[\( {label}]\n \){m.content}\n\n${'-'.repeat(40)}\n\n`;
   });
-  const filename = `${conv.title.replace(/[^\w\s-]/g, '').slice(0, 40) || 'chat'}-${Date.now()}.txt`;
+  const filename = `\( {conv.title.replace(/[^\w\s-]/g, '').slice(0, 40) || 'chat'}- \){Date.now()}.txt`;
   if (downloadFile(txt, filename, 'text/plain;charset=utf-8')) {
     toast('فایل متنی دانلود شد', 'success');
   } else {
@@ -1445,55 +1486,75 @@ function exportAsText() {
 // SETTINGS
 // ============================================================
 function openSettings() {
-  $('systemPromptInput').value = state.settings.systemPrompt;
-  $('settingsModal').classList.add('visible');
+  const input = $('systemPromptInput');
+  if (input) input.value = state.settings.systemPrompt;
+  const modal = $('settingsModal');
+  if (modal) modal.classList.add('visible');
 }
 
 function closeSettings() {
-  $('settingsModal').classList.remove('visible');
+  const modal = $('settingsModal');
+  if (modal) modal.classList.remove('visible');
 }
 
 function saveSettings() {
-  const prompt = $('systemPromptInput').value.trim();
-  state.settings.systemPrompt = prompt;
-  saveState();
-  toast('تنظیمات ذخیره شد', 'success');
+  const input = $('systemPromptInput');
+  if (input) {
+    state.settings.systemPrompt = input.value.trim();
+    saveState();
+    toast('تنظیمات ذخیره شد', 'success');
+  }
 }
 
-$('settingsBtn').addEventListener('click', openSettings);
-$('headerSettingsBtn').addEventListener('click', openSettings);
-$('settingsCloseBtn').addEventListener('click', () => { saveSettings(); closeSettings(); });
-$('settingsModal').addEventListener('click', (e) => {
-  if (e.target === $('settingsModal')) { saveSettings(); closeSettings(); }
+// Event listeners for settings (safe)
+const settingsBtn = $('settingsBtn');
+const headerSettingsBtn = $('headerSettingsBtn');
+const settingsCloseBtn = $('settingsCloseBtn');
+const settingsModal = $('settingsModal');
+const systemPromptInput = $('systemPromptInput');
+
+if (settingsBtn) settingsBtn.addEventListener('click', openSettings);
+if (headerSettingsBtn) headerSettingsBtn.addEventListener('click', openSettings);
+if (settingsCloseBtn) settingsCloseBtn.addEventListener('click', () => { saveSettings(); closeSettings(); });
+if (settingsModal) settingsModal.addEventListener('click', (e) => {
+  if (e.target === settingsModal) { saveSettings(); closeSettings(); }
 });
-$('systemPromptInput').addEventListener('change', saveSettings);
+if (systemPromptInput) systemPromptInput.addEventListener('change', saveSettings);
 
 // ============================================================
 // SIDEBAR TOGGLE
 // ============================================================
 function openSidebar() {
-  sidebar.classList.add('open');
-  sidebarBackdrop.classList.add('visible');
+  if (sidebar) sidebar.classList.add('open');
+  if (sidebarBackdrop) sidebarBackdrop.classList.add('visible');
 }
 function closeSidebar() {
-  sidebar.classList.remove('open');
-  sidebarBackdrop.classList.remove('visible');
+  if (sidebar) sidebar.classList.remove('open');
+  if (sidebarBackdrop) sidebarBackdrop.classList.remove('visible');
 }
 
-$('mobileMenuBtn').addEventListener('click', openSidebar);
-$('sidebarCloseBtn').addEventListener('click', closeSidebar);
-sidebarBackdrop.addEventListener('click', closeSidebar);
+const mobileMenuBtn = $('mobileMenuBtn');
+const sidebarCloseBtn = $('sidebarCloseBtn');
+if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openSidebar);
+if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
 
 // ============================================================
 // TOP BUTTONS
 // ============================================================
-$('newChatBtn').addEventListener('click', () => {
+const newChatBtn = $('newChatBtn');
+const clearChatBtn = $('clearChatBtn');
+const exportMdBtn = $('exportMdBtn');
+const exportTxtBtn = $('exportTxtBtn');
+const deepThinkingBtn = $('deepThinkingBtn');
+
+if (newChatBtn) newChatBtn.addEventListener('click', () => {
   createConversation();
-  inputTextarea.focus();
+  if (inputTextarea) inputTextarea.focus();
   closeSidebar();
 });
 
-$('clearChatBtn').addEventListener('click', () => {
+if (clearChatBtn) clearChatBtn.addEventListener('click', () => {
   const conv = getActiveConversation();
   if (!conv) return;
   if (conv.messages.length === 0) return;
@@ -1507,8 +1568,13 @@ $('clearChatBtn').addEventListener('click', () => {
   }
 });
 
-$('exportMdBtn').addEventListener('click', exportAsMarkdown);
-$('exportTxtBtn').addEventListener('click', exportAsText);
+if (exportMdBtn) exportMdBtn.addEventListener('click', exportAsMarkdown);
+if (exportTxtBtn) exportTxtBtn.addEventListener('click', exportAsText);
+
+// دکمه تفکر عمیق — کاربر باید خودش فعال کند
+if (deepThinkingBtn) {
+  deepThinkingBtn.addEventListener('click', toggleDeepThinking);
+}
 
 // ============================================================
 // KEYBOARD SHORTCUTS
@@ -1519,16 +1585,17 @@ document.addEventListener('keydown', (e) => {
   if (mod && e.key.toLowerCase() === 'n') {
     e.preventDefault();
     createConversation();
-    inputTextarea.focus();
+    if (inputTextarea) inputTextarea.focus();
   }
   else if (mod && e.key.toLowerCase() === 'l') {
     e.preventDefault();
-    $('clearChatBtn').click();
+    if (clearChatBtn) clearChatBtn.click();
   }
   else if (mod && e.key.toLowerCase() === 'b') {
     e.preventDefault();
     if (window.innerWidth <= 900) {
-      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+      if (sidebar && sidebar.classList.contains('open')) closeSidebar();
+      else openSidebar();
     }
   }
   else if (mod && e.key === ',') {
@@ -1536,15 +1603,15 @@ document.addEventListener('keydown', (e) => {
     openSettings();
   }
   else if (e.key === 'Escape') {
-    if ($('settingsModal').classList.contains('visible')) {
+    if (settingsModal && settingsModal.classList.contains('visible')) {
       saveSettings();
       closeSettings();
     }
-    if (sidebar.classList.contains('open')) closeSidebar();
+    if (sidebar && sidebar.classList.contains('open')) closeSidebar();
   }
   else if (e.key === '/' && document.activeElement !== inputTextarea) {
     e.preventDefault();
-    inputTextarea.focus();
+    if (inputTextarea) inputTextarea.focus();
   }
 });
 
@@ -1565,6 +1632,7 @@ function init() {
   renderChat();
   updateInputState();
   autoResizeTextarea();
+  updateDeepThinkingUI();
 }
 
 if (document.readyState === 'loading') {
@@ -1576,4 +1644,5 @@ if (document.readyState === 'loading') {
 window.addEventListener('load', () => {
   configureMarkdown();
   if (getActiveConversation()?.messages.length) renderChat();
+  updateDeepThinkingUI();
 });
