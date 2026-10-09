@@ -29,7 +29,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #021a14;
+            background: #0b1020;
             position: relative;
             padding: 2rem 1rem;
             color: #fff;
@@ -40,10 +40,10 @@
             position: fixed;
             inset: 0;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(251, 191, 36, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(6, 78, 59, 0.8) 0%, transparent 70%),
-                linear-gradient(135deg, #022c22 0%, #064e3b 50%, #022c22 100%);
+                radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.22) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.20) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.24) 0%, transparent 70%),
+                linear-gradient(135deg, #14172e 0%, #25204a 50%, #14172e 100%);
             z-index: -3;
             animation: bgShift 15s ease-in-out infinite;
         }
@@ -74,7 +74,7 @@
         .orb-1 {
             width: 400px;
             height: 400px;
-            background: #d4af37;
+            background: #667eea;
             top: -150px;
             right: -150px;
             animation: orbFloat1 12s ease-in-out infinite;
@@ -83,7 +83,7 @@
         .orb-2 {
             width: 350px;
             height: 350px;
-            background: #fbbf24;
+            background: #764ba2;
             bottom: -120px;
             left: -120px;
             animation: orbFloat2 14s ease-in-out infinite;
@@ -92,7 +92,7 @@
         .orb-3 {
             width: 300px;
             height: 300px;
-            background: #10b981;
+            background: #667eea;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -145,7 +145,7 @@
             font-weight: 900;
             line-height: 0.9;
             position: relative;
-            background: linear-gradient(135deg, #fbbf24 0%, #d4af37 25%, #f59e0b 50%, #d4af37 75%, #fbbf24 100%);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 25%, #8b5cf6 50%, #667eea 75%, #764ba2 100%);
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -172,7 +172,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #fbbf24, #d4af37);
+            background: linear-gradient(135deg, #764ba2, #667eea);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -210,13 +210,13 @@
         .error-title {
             font-size: clamp(1.5rem, 4.5vw, 2.5rem);
             font-weight: 800;
-            background: linear-gradient(135deg, #fbbf24, #d4af37, #f59e0b);
+            background: linear-gradient(135deg, #764ba2, #667eea, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 1rem;
             animation: fadeIn 1s ease-out 0.5s both;
-            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+            text-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
         }
 
         /* === خط تزئینی === */
@@ -225,7 +225,7 @@
             height: 3px;
             margin: 1.5rem auto;
             position: relative;
-            background: rgba(212, 175, 55, 0.2);
+            background: rgba(102, 126, 234, 0.2);
             border-radius: 3px;
             overflow: hidden;
             animation: fadeIn 1s ease-out 0.6s both;
@@ -238,7 +238,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
             animation: shimmer 2.5s infinite;
         }
 
@@ -277,12 +277,12 @@
             position: relative;
             padding: 3px;
             border-radius: 50px;
-            background: linear-gradient(135deg, #d4af37, #fbbf24, #d4af37, #f59e0b);
+            background: linear-gradient(135deg, #667eea, #764ba2, #667eea, #8b5cf6);
             background-size: 200% 200%;
             animation: borderGlow 4s ease-in-out infinite;
             box-shadow: 
-                0 0 20px rgba(212, 175, 55, 0.3),
-                0 0 40px rgba(212, 175, 55, 0.15);
+                0 0 20px rgba(102, 126, 234, 0.3),
+                0 0 40px rgba(102, 126, 234, 0.15);
             transition: all 0.4s ease;
         }
 
@@ -290,14 +290,14 @@
             0%, 100% { 
                 background-position: 0% 50%;
                 box-shadow: 
-                    0 0 20px rgba(212, 175, 55, 0.3),
-                    0 0 40px rgba(212, 175, 55, 0.15);
+                    0 0 20px rgba(102, 126, 234, 0.3),
+                    0 0 40px rgba(102, 126, 234, 0.15);
             }
             50% { 
                 background-position: 100% 50%;
                 box-shadow: 
-                    0 0 30px rgba(212, 175, 55, 0.5),
-                    0 0 60px rgba(212, 175, 55, 0.25);
+                    0 0 30px rgba(102, 126, 234, 0.5),
+                    0 0 60px rgba(102, 126, 234, 0.25);
             }
         }
 
@@ -309,7 +309,7 @@
             justify-content: center;
             padding: 1.2rem 3.5rem;
             border-radius: 48px;
-            background: radial-gradient(circle at 30% 30%, #0a4a38, #022c22 70%);
+            background: radial-gradient(circle at 30% 30%, #292554, #14172e 70%);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             transition: all 0.4s ease;
@@ -322,7 +322,7 @@
             position: absolute;
             inset: 0;
             border-radius: 48px;
-            border: 2px solid rgba(212, 175, 55, 0.5);
+            border: 2px solid rgba(102, 126, 234, 0.5);
             animation: ripple 2.5s ease-out infinite;
             z-index: 0;
             pointer-events: none;
@@ -353,7 +353,7 @@
             background: linear-gradient(
                 90deg,
                 transparent,
-                rgba(251, 191, 36, 0.25),
+                rgba(118, 75, 162, 0.25),
                 transparent
             );
             transition: left 0.6s ease;
@@ -366,14 +366,14 @@
 
         .back-btn:hover .btn-wrapper {
             box-shadow: 
-                0 0 40px rgba(212, 175, 55, 0.6),
-                0 0 80px rgba(212, 175, 55, 0.3);
+                0 0 40px rgba(102, 126, 234, 0.6),
+                0 0 80px rgba(102, 126, 234, 0.3);
         }
 
         .btn-text {
             position: relative;
             z-index: 2;
-            color: #fbbf24;
+            color: #764ba2;
             font-size: clamp(1rem, 2.8vw, 1.3rem);
             font-weight: 700;
             text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6);
@@ -382,11 +382,11 @@
         }
 
         .back-btn:hover .btn-rectangle {
-            background: radial-gradient(circle at 30% 30%, #0d5a45, #043d2f 70%);
+            background: radial-gradient(circle at 30% 30%, #373064, #201d42 70%);
         }
 
         .back-btn:hover .btn-text {
-            color: #fcd34d;
+            color: #c4b5fd;
             text-shadow: 0 0 20px rgba(252, 211, 77, 0.8);
         }
 
@@ -403,9 +403,9 @@
             position: absolute;
             width: 4px;
             height: 4px;
-            background: #d4af37;
+            background: #667eea;
             border-radius: 50%;
-            box-shadow: 0 0 10px #d4af37;
+            box-shadow: 0 0 10px #667eea;
             animation: floatDot 20s linear infinite;
             opacity: 0.6;
         }
@@ -477,17 +477,17 @@
         /* === افکت لمسی برای موبایل === */
         @media (hover: none) and (pointer: coarse) {
             .back-btn:active .btn-rectangle {
-                background: radial-gradient(circle at 30% 30%, #0d5a45, #043d2f 70%);
+                background: radial-gradient(circle at 30% 30%, #373064, #201d42 70%);
             }
 
             .back-btn:active .btn-wrapper {
                 box-shadow: 
-                    0 0 40px rgba(212, 175, 55, 0.6),
-                    0 0 80px rgba(212, 175, 55, 0.3);
+                    0 0 40px rgba(102, 126, 234, 0.6),
+                    0 0 80px rgba(102, 126, 234, 0.3);
             }
 
             .back-btn:active .btn-text {
-                color: #fcd34d;
+                color: #c4b5fd;
             }
         }
 
@@ -584,7 +584,7 @@
                 this.speedX = (Math.random() - 0.5) * 0.5;
                 this.speedY = (Math.random() - 0.5) * 0.5;
                 this.density = (Math.random() * 30) + 1;
-                this.color = `rgba(212, 175, 55, ${Math.random() * 0.5 + 0.3})`;
+                this.color = `rgba(102, 126, 234, ${Math.random() * 0.5 + 0.3})`;
             }
 
             update() {
@@ -640,7 +640,7 @@
                     
                     if (distance < 120) {
                         let opacity = 1 - (distance / 120);
-                        ctx.strokeStyle = `rgba(212, 175, 55, ${opacity * 0.3})`;
+                        ctx.strokeStyle = `rgba(102, 126, 234, ${opacity * 0.3})`;
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(particles[a].x, particles[a].y);
